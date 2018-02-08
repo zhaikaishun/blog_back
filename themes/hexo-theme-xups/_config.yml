@@ -83,13 +83,13 @@ friends:
   enable: true
   list:
     1:
-      name: Haoren博客
-      title: 网络安全博客
-      link: http://blog.sina.com.cn/u/1825875765
+      name: 翟开顺博客
+      title: 翟开顺个人博客
+      link: http://blog.csdn.net/t1dmzks
     2:
-      name: Maxwell博客
-      title: 技术博客
-      link: http://blog.csdn.net/yeweiouyang
+      name: github
+      title: 翟开顺github
+      link: https://github.com/zhaikaishun
     3:
       name: 朱旋个人博客
       title: 技术博客
@@ -104,23 +104,23 @@ head_links:
     sup:
       0:
         name: Github
-        link: https://github.com/jangdelong
+        link: https://github.com/zhaikaishun
       last:
         name: Hosted by Coding Pages
         link: https://pages.coding.me
     sub:
       sinaweibo:
-        name: 新浪微博
-        link: http://weibo.com/jangdelong
+        name: csdn博客
+        link: http://blog.csdn.net/t1dmzks
       qqweibo:
-        name: Facebook
-        link: https://www.facebook.com/profile.php?id=100011855760219&ref=bookmarks
+        name: Email
+        link: zhaikaishun@126.com
 #----------------------------
 # SEO
 #----------------------------
 SEO:
-  keywords: Jelon, 前端, Web, 张德龙, 前端开发
-  description: Jelon个人前端小站
+  keywords: 挡路人, 大数据, 分布式, 中间件, java
+  description: 挡路人个人小站
 
 #----------------------------
 # 百度分析
