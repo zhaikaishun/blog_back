@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>java本地调用cmd，shell命令，远程调用Linux执行命令方法总结 | 挡路人</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
+    <meta name="description" content="Jelon个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?fd459238242776d173cdc64918fb32f2";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+    <section class="container header-main">
+        <div class="logo">
+            <a href="/">
+                <div class="cover">
+                    <span class="name">挡路人</span>
+                    <span class="description">学有所思，思有所感</span>
+                </div>
+            </a>
+        </div>
+        <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+        <ul class="menu hidden" id="JELON__menu">
+            
+            <li rel="/programme/java-rmi.html" class="item ">
+                <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+            </li>
+            
+            <li rel="/programme/java-rmi.html" class="item ">
+                <a href="/lab/" title="实验室" class="icon-lab">&nbsp;实验室</a>
+            </li>
+            
+            <li rel="/programme/java-rmi.html" class="item ">
+                <a href="/about/" title="关于" class="icon-about">&nbsp;关于</a>
+            </li>
+            
+            <li rel="/programme/java-rmi.html" class="item ">
+                <a href="/comment/" title="留言" class="icon-comment">&nbsp;留言</a>
+            </li>
+            
+        </ul>
+        <div class="profile clearfix">
+            <div class="feeds fl">
+                
+                
+                <p class="links">
+                    
+                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        |
+                    
+                        <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+                        
+                    
+                </p>
+                <p class="sns">
+                    
+                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                    
+                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                    
+                    <a href="javascript: void(0);" class="wechat">
+                        <b>■</b>
+                        公众号
+                        <span class="popover">
+                            <img src="/img/wechat_mp.jpg" width="120" height="120" alt="我的微信订阅号">
+                            <i class="arrow"></i>
+                        </span>
+                    </a>
+                </p>
+                
+            </div>
+            <div class="avatar fr">
+                <img src="/img/jelon.jpg" alt="avatar" title="Jelon" >
+            </div>
+        </div>
+    </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>java本地调用cmd，shell命令，远程调用Linux执行命令方法总结</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        kaishun 发表于
+        <time datetime="2017-07-20T13:25:21.000Z">2017-07-20</time>
+    </p>
+    <div class="post-content">
+        <p>有时候经常会碰到需要远程调用Linux或者本地调用Linux或者本地调用cmd的一些命令，最近小结了一下这几种用法<br><a id="more"></a></p>
+<h2 id="本地调用cmd命令"><a href="#本地调用cmd命令" class="headerlink" title="本地调用cmd命令"></a>本地调用cmd命令</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCmd</span><span class="params">()</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">    String cmd=<span class="string">"cmd /c date"</span>; <span class="comment">//命令的前面必须要有cmd /c</span></div><div class="line">    execCmd(cmd);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">execCmd</span><span class="params">(String cmd)</span></span>&#123;</div><div class="line">    <span class="keyword">try</span>&#123;</div><div class="line">        Runtime rt = Runtime.getRuntime();</div><div class="line">        <span class="comment">//执行命令, 最后一个参数，可以使用new File("path")指定运行的命令的位置</span></div><div class="line">        Process proc = rt.exec(cmd,<span class="keyword">null</span>,<span class="keyword">null</span>);  </div><div class="line">        InputStream stderr =  proc.getInputStream();</div><div class="line">        InputStreamReader isr = <span class="keyword">new</span> InputStreamReader(stderr,<span class="string">"GBK"</span>);</div><div class="line">        BufferedReader br = <span class="keyword">new</span> BufferedReader(isr);</div><div class="line">        String line=<span class="string">""</span>;</div><div class="line">        <span class="keyword">while</span> ((line = br.readLine()) != <span class="keyword">null</span>) &#123; <span class="comment">// 打印出命令执行的结果</span></div><div class="line">            System.out.println(line);</div><div class="line">        &#125;</div><div class="line">    &#125;<span class="keyword">catch</span> (Exception e)&#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="本地调用Linux命令"><a href="#本地调用Linux命令" class="headerlink" title="本地调用Linux命令"></a>本地调用Linux命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void testCmd()throws Exception&#123;</div><div class="line">    String cmd=&quot;/bin/sh -c date&quot;; //命令的前面必须要有/bin/sh -c</div><div class="line">    execCmd(cmd);</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line">public static void execCmd(String cmd)&#123;</div><div class="line">    try&#123;</div><div class="line">        Runtime rt = Runtime.getRuntime();</div><div class="line">        //执行命令, 最后一个参数，可以使用new File(&quot;path&quot;)指定运行的命令的位置</div><div class="line">        Process proc = rt.exec(cmd,null,null);  </div><div class="line">        InputStream stderr =  proc.getInputStream();</div><div class="line">        InputStreamReader isr = new InputStreamReader(stderr,&quot;GBK&quot;);</div><div class="line">        BufferedReader br = new BufferedReader(isr);</div><div class="line">        String line=&quot;&quot;;</div><div class="line">        while ((line = br.readLine()) != null) &#123; // 打印出命令执行的结果</div><div class="line">            System.out.println(line);</div><div class="line">        &#125;</div><div class="line">    &#125;catch (Exception e)&#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="远程调用Linux执行命令"><a href="#远程调用Linux执行命令" class="headerlink" title="远程调用Linux执行命令"></a>远程调用Linux执行命令</h2><p>jar包下载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://central.maven.org/maven2/com/jcraft/jsch/0.1.54/jsch-0.1.54.jar</div></pre></td></tr></table></figure></p>
+<p>或者maven引用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;com.jcraft&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;jsch&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;0.1.54&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure></p>
+<p>参考代码如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.BufferedReader;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"><span class="keyword">import</span> java.io.InputStreamReader;</div><div class="line"><span class="keyword">import</span> com.jcraft.jsch.ChannelExec;</div><div class="line"><span class="keyword">import</span> com.jcraft.jsch.JSch;</div><div class="line"><span class="keyword">import</span> com.jcraft.jsch.JSchException;</div><div class="line"><span class="keyword">import</span> com.jcraft.jsch.Session;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SSHHelper</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 远程 执行命令并返回结果调用过程 是同步的（执行完才会返回）</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> host	主机名</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> user	用户名</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> psw	密码</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> port	端口</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> command	命令</span></div><div class="line"><span class="comment">     * <span class="doctag">@return</span></span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">exec</span><span class="params">(String host,String user,String psw,<span class="keyword">int</span> port,String command)</span></span>&#123;</div><div class="line">        StringBuffer sb= <span class="keyword">new</span> StringBuffer();</div><div class="line">        Session session =<span class="keyword">null</span>;</div><div class="line">        ChannelExec openChannel =<span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            JSch jsch=<span class="keyword">new</span> JSch();</div><div class="line">            session = jsch.getSession(user, host, port);</div><div class="line">            java.util.Properties config = <span class="keyword">new</span> java.util.Properties();</div><div class="line">            config.put(<span class="string">"StrictHostKeyChecking"</span>, <span class="string">"no"</span>);<span class="comment">//跳过公钥的询问</span></div><div class="line">            session.setConfig(config);</div><div class="line">            session.setPassword(psw);</div><div class="line">            session.connect(<span class="number">5000</span>);<span class="comment">//设置连接的超时时间</span></div><div class="line">            openChannel = (ChannelExec) session.openChannel(<span class="string">"exec"</span>);</div><div class="line">            openChannel.setCommand(command); <span class="comment">//执行命令</span></div><div class="line">            <span class="keyword">int</span> exitStatus = openChannel.getExitStatus(); <span class="comment">//退出状态为-1，直到通道关闭</span></div><div class="line">            System.out.println(exitStatus);</div><div class="line"></div><div class="line">            <span class="comment">// 下面是得到输出的内容</span></div><div class="line">            openChannel.connect();</div><div class="line">            InputStream in = openChannel.getInputStream();</div><div class="line">            BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(in));</div><div class="line">            String buf = <span class="keyword">null</span>;</div><div class="line">            <span class="keyword">while</span> ((buf = reader.readLine()) != <span class="keyword">null</span>) &#123;</div><div class="line">                sb.append(buf+<span class="string">"\n"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (JSchException | IOException e) &#123;</div><div class="line">            sb.append(e.getMessage()+<span class="string">"\n"</span>);</div><div class="line">        &#125;<span class="keyword">finally</span>&#123;</div><div class="line">            <span class="keyword">if</span>(openChannel!=<span class="keyword">null</span>&amp;&amp;!openChannel.isClosed())&#123;</div><div class="line">                openChannel.disconnect();</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span>(session!=<span class="keyword">null</span>&amp;&amp;session.isConnected())&#123;</div><div class="line">                session.disconnect();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</div><div class="line">        String exec = exec(<span class="string">"192.168.1.xx"</span>, <span class="string">"user"</span>, <span class="string">"name"</span>, <span class="number">22</span>, <span class="string">"ls"</span>);</div><div class="line">        System.out.println(exec);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/programme/">programme</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/java/" title="java">java</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      <a href="javascript: window.open('http://service.weibo.com/share/share.php?url=' + encodeURIComponent(location.href) + '&title=' + document.title + '&language=zh_cn');" class="share-icon weibo"></a>
+      <a href="javascript: alert('请复制链接到微信并发送');" class="share-icon wechat"></a>
+      <a href="javascript: window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(location.href) + '&title=' + document.title);" class="share-icon qqzone"></a>
+      <a href="javascript: window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + encodeURIComponent(location.href) + '&desc=Jelon个人博客&title=' + document.title + '&callback=' + encodeURIComponent(location.href));" class="share-icon qq"></a>
+      <a href="javascript: window.open('http://shuo.douban.com/!service/share?href=' + encodeURIComponent(location.href) + '&name=' + document.title + '&text=' + document.title);" class="share-icon douban"></a>
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/programme/xml-io-util.html">
+            
+                java本地常用IO操作
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/架构/BIO-NIO-AIO.html">
+            
+                传统的socket之BIO到伪异步IO到NIO最后到AIO简介
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'java-rmi' || 'programme/java-rmi.html',
+    owner: 'jangdelong',
+    repo: 'blog_comments',
+    clientId: 'b08ed25e52c57993e69c',
+    clientSecret: '1cb9545488f0380904b87350e7c5a270ae03bab7'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">(5)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/">大数据</a>
+        <span class="badge">(43)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hdfs/">hdfs</a>
+        <span class="badge">(8)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hadoop/">hadoop</a>
+        <span class="badge">(11)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/架构/">架构</a>
+        <span class="badge">(21)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/spark/">spark</a>
+        <span class="badge">(23)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/算法/">算法</a>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/">随笔</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 文章标签 -->
+<div class="widget-bd tag-wrap">
+  
+    <a class="tag-item" href="/tags/linux/" title="linux">linux (7)</a>
+  
+    <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
+  
+    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
+  
+    <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
+  
+    <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
+  
+    <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
+  
+    <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
+  
+    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
+  
+    <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
+  
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
+  
+    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
+  
+    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
+  
+    <a class="tag-item" href="/tags/曲线拟合/" title="曲线拟合">曲线拟合 (1)</a>
+  
+    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
+  
+    <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
+  
+    <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
+  
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
+  
+    <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
+  
+    <a class="tag-item" href="/tags/xml解析/" title="xml解析">xml解析 (1)</a>
+  
+    <a class="tag-item" href="/tags/资源/" title="资源">资源 (1)</a>
+  
+</div>
+    </section>
+    
+
+    
+
+    
+    <!-- 友情链接 -->
+    <section class="widget">
+        <h3 class="widget-hd"><strong>友情链接</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+        <li>
+            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+        </li>
+    
+        <li>
+            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+        </li>
+    
+        <li>
+            <a href="http://xuanzh.cc/" target="_blank" title="技术博客">朱旋个人博客</a>
+        </li>
+    
+</ul>
+    </section>
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Jelon Loves You</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <!-- 这里放网站js脚本 -->
+<script src="/js/main.js"></script>
+</body>
+</html>

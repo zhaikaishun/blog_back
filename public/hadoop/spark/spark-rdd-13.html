@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>spark RDD算子（十三）之RDD 分区 HashPartitioner，RangePartitioner，自定义分区 | 挡路人</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
+    <meta name="description" content="Jelon个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?fd459238242776d173cdc64918fb32f2";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+    <section class="container header-main">
+        <div class="logo">
+            <a href="/">
+                <div class="cover">
+                    <span class="name">挡路人</span>
+                    <span class="description">学有所思，思有所感</span>
+                </div>
+            </a>
+        </div>
+        <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+        <ul class="menu hidden" id="JELON__menu">
+            
+            <li rel="/hadoop/spark/spark-rdd-13.html" class="item ">
+                <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+            </li>
+            
+            <li rel="/hadoop/spark/spark-rdd-13.html" class="item ">
+                <a href="/lab/" title="实验室" class="icon-lab">&nbsp;实验室</a>
+            </li>
+            
+            <li rel="/hadoop/spark/spark-rdd-13.html" class="item ">
+                <a href="/about/" title="关于" class="icon-about">&nbsp;关于</a>
+            </li>
+            
+            <li rel="/hadoop/spark/spark-rdd-13.html" class="item ">
+                <a href="/comment/" title="留言" class="icon-comment">&nbsp;留言</a>
+            </li>
+            
+        </ul>
+        <div class="profile clearfix">
+            <div class="feeds fl">
+                
+                
+                <p class="links">
+                    
+                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        |
+                    
+                        <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+                        
+                    
+                </p>
+                <p class="sns">
+                    
+                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                    
+                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                    
+                    <a href="javascript: void(0);" class="wechat">
+                        <b>■</b>
+                        公众号
+                        <span class="popover">
+                            <img src="/img/wechat_mp.jpg" width="120" height="120" alt="我的微信订阅号">
+                            <i class="arrow"></i>
+                        </span>
+                    </a>
+                </p>
+                
+            </div>
+            <div class="avatar fr">
+                <img src="/img/jelon.jpg" alt="avatar" title="Jelon" >
+            </div>
+        </div>
+    </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>spark RDD算子（十三）之RDD 分区 HashPartitioner，RangePartitioner，自定义分区</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        kaishun 发表于
+        <time datetime="2017-04-22T13:25:21.000Z">2017-04-22</time>
+    </p>
+    <div class="post-content">
+        <p><strong>关键字</strong>: spark分区方式，java HashPartitioner分区，scala HashPartitioner分区， java RangePartitioner 分区，scala RangePartitioner分区， java 自定义分区，scala自定义分区<br><a id="more"></a></p>
+<h1 id="默认分区和HashPartitioner分区"><a href="#默认分区和HashPartitioner分区" class="headerlink" title="默认分区和HashPartitioner分区"></a><strong>默认分区和HashPartitioner分区</strong></h1><p>默认的分区就是HashPartition分区,默认分区不再介绍，下面介绍HashPartition的使用</p>
+<p>通过上一章 <a href="http://blog.csdn.net/t1dmzks/article/details/71336119#t1" target="_blank" rel="external">mapPartitionsWithIndex的例子</a>，我们可以构建一个方法，用来查看RDD的分区<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div></pre></td><td class="code"><pre><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mapPartIndexFunc</span></span>(i1:<span class="type">Int</span>,iter: <span class="type">Iterator</span>[(<span class="type">Int</span>,<span class="type">Int</span>)]):<span class="type">Iterator</span>[(<span class="type">Int</span>,(<span class="type">Int</span>,<span class="type">Int</span>))]=&#123;</div><div class="line">      <span class="keyword">var</span> res = <span class="type">List</span>[(<span class="type">Int</span>,(<span class="type">Int</span>,<span class="type">Int</span>))]()</div><div class="line">      <span class="keyword">while</span>(iter.hasNext)&#123;</div><div class="line">        <span class="keyword">var</span> next = iter.next()</div><div class="line">        res=res.::(i1,next)</div><div class="line">      &#125;</div><div class="line">      res.iterator</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">printRDDPart</span></span>(rdd:<span class="type">RDD</span>[(<span class="type">Int</span>,<span class="type">Int</span>)]): <span class="type">Unit</span> =&#123;</div><div class="line">      <span class="keyword">var</span> mapPartIndexRDDs = rdd.mapPartitionsWithIndex(mapPartIndexFunc)</div><div class="line">      mapPartIndexRDDs.foreach(println( _))</div><div class="line">    &#125;</div><div class="line">```  </div><div class="line">**<span class="type">HashPartitioner</span>分区  scala**  </div><div class="line">使用pairRdd.partitionBy(<span class="keyword">new</span> spark.<span class="type">HashPartitioner</span>(n)), 可以分为n个区</div><div class="line">```scala</div><div class="line">    <span class="keyword">var</span> pairRdd = sc.parallelize(<span class="type">List</span>((<span class="number">1</span>,<span class="number">1</span>), (<span class="number">1</span>,<span class="number">2</span>), (<span class="number">2</span>,<span class="number">3</span>), (<span class="number">2</span>,<span class="number">4</span>), (<span class="number">3</span>,<span class="number">5</span>), (<span class="number">3</span>,<span class="number">6</span>),(<span class="number">4</span>,<span class="number">7</span>), (<span class="number">4</span>,<span class="number">8</span>),(<span class="number">5</span>,<span class="number">9</span>), (<span class="number">5</span>,<span class="number">10</span>)))</div><div class="line">    <span class="comment">//未分区的输出</span></div><div class="line">    printRDDPart(pairRdd)</div><div class="line">    println(<span class="string">"========================="</span>)</div><div class="line">    <span class="keyword">val</span> partitioned = pairRdd.partitionBy(<span class="keyword">new</span> spark.<span class="type">HashPartitioner</span>(<span class="number">3</span>))</div><div class="line">    <span class="comment">//分区后的输出</span></div><div class="line">    printRDDPart(partitioned)</div><div class="line">-----------输出------------</div><div class="line">(<span class="number">0</span>,(<span class="number">5</span>,<span class="number">10</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">5</span>,<span class="number">9</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">4</span>,<span class="number">8</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">4</span>,<span class="number">7</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">3</span>,<span class="number">6</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">3</span>,<span class="number">5</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">2</span>,<span class="number">4</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">2</span>,<span class="number">3</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">1</span>,<span class="number">2</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">1</span>,<span class="number">1</span>))</div><div class="line">=========================</div><div class="line">(<span class="number">0</span>,(<span class="number">3</span>,<span class="number">6</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">3</span>,<span class="number">5</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">4</span>,<span class="number">8</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">4</span>,<span class="number">7</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">1</span>,<span class="number">2</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">1</span>,<span class="number">1</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">5</span>,<span class="number">10</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">5</span>,<span class="number">9</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">2</span>,<span class="number">4</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">2</span>,<span class="number">3</span>))</div><div class="line">```  </div><div class="line">**<span class="type">HashPartitioner</span>是如何分区的**： 国内很多说法都是有问题的，参考国外的一个说法 <span class="type">Uses</span> <span class="type">Java</span>’s <span class="type">Object</span>.hashCodemethod to determine the partition as partition = key.hashCode() % numPartitions.  翻译过来就是使用java对象的hashCode来决定是哪个分区，对于piarRDD, 分区就是key.hashCode() % numPartitions, <span class="number">3</span>%<span class="number">3</span>=<span class="number">0</span>，所以 (<span class="number">3</span>,<span class="number">6</span>) 这个元素在<span class="number">0</span> 分区， <span class="number">4</span>%<span class="number">3</span>=<span class="number">1</span>，所以元素(<span class="number">4</span>,<span class="number">8</span>) 在<span class="number">1</span> 分区。 下面参考一张图  </div><div class="line">![spark分区](https:<span class="comment">//cdn.edureka.co/blog/wp-content/uploads/2016/03/11.png)  </span></div><div class="line"></div><div class="line"></div><div class="line"># **<span class="type">RangePartitioner</span>**  </div><div class="line">我理解成范围分区器</div><div class="line">使用一个范围，将范围内的键分配给相应的分区。这种方法适用于键中有自然排序，键不为负。本文主要介绍如何使用，原理以后再仔细研究,以下代码片段显示了<span class="type">RangePartitioner</span>的用法</div><div class="line"></div><div class="line">**<span class="type">RangePartitioner</span> 分区 scala **</div><div class="line">```scala</div><div class="line">    <span class="keyword">var</span> pairRdd = sc.parallelize(<span class="type">List</span>((<span class="number">1</span>,<span class="number">1</span>), (<span class="number">5</span>,<span class="number">10</span>), (<span class="number">5</span>,<span class="number">9</span>), (<span class="number">2</span>,<span class="number">4</span>), (<span class="number">3</span>,<span class="number">5</span>), (<span class="number">3</span>,<span class="number">6</span>),(<span class="number">4</span>,<span class="number">7</span>), (<span class="number">4</span>,<span class="number">8</span>),(<span class="number">2</span>,<span class="number">3</span>), (<span class="number">1</span>,<span class="number">2</span>)))</div><div class="line">    printRDDPart(pairRdd)</div><div class="line">    println(<span class="string">"========================="</span>)</div><div class="line">    <span class="keyword">val</span> partitioned = pairRdd.partitionBy(<span class="keyword">new</span> <span class="type">RangePartitioner</span>(<span class="number">3</span>,pairRdd))</div><div class="line">    printRDDPart(partitioned)</div><div class="line">  &#125;</div><div class="line">-------------------输出------------------</div><div class="line">(<span class="number">0</span>,(<span class="number">1</span>,<span class="number">2</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">2</span>,<span class="number">3</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">4</span>,<span class="number">8</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">4</span>,<span class="number">7</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">3</span>,<span class="number">6</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">3</span>,<span class="number">5</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">2</span>,<span class="number">4</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">5</span>,<span class="number">9</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">5</span>,<span class="number">10</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">1</span>,<span class="number">1</span>))</div><div class="line">=========================</div><div class="line">(<span class="number">0</span>,(<span class="number">1</span>,<span class="number">2</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">2</span>,<span class="number">3</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">2</span>,<span class="number">4</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">1</span>,<span class="number">1</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">4</span>,<span class="number">8</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">4</span>,<span class="number">7</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">3</span>,<span class="number">6</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">3</span>,<span class="number">5</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">5</span>,<span class="number">9</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">5</span>,<span class="number">10</span>))</div><div class="line"></div><div class="line">```  </div><div class="line">上面的<span class="type">RDD</span>生成的时候是乱的，但是我们让他分成三个范围，按照范围，key值为<span class="number">1</span>,<span class="number">2</span>的划分到第一个分区，key值为<span class="number">3</span>，<span class="number">4</span>的划分到第二个分区，key值为<span class="number">5</span>的划分到第三个分区  </div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># **自定义分区**  </div><div class="line">要实现自定义的分区器，你需要继承 org.apache.spark.<span class="type">Partitioner</span> 类并实现下面三个方法  </div><div class="line">- **numPartitions: <span class="type">Int</span>**：返回创建出来的分区数。  </div><div class="line">- **getPartition(key: <span class="type">Any</span>): <span class="type">Int</span>**：返回给定键的分区编号（ <span class="number">0</span> 到 numPartitions<span class="number">-1</span>）。</div><div class="line">下面我自定义一个分区，让key大于等于<span class="number">4</span>的落在第一个分区，key&gt;=<span class="number">2</span>并且key&lt;<span class="number">4</span>的落在第二个分区，其余的落在第一个分区。  </div><div class="line">**scala版本**</div><div class="line">自定义分区器</div><div class="line">```scala</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomPartitioner</span>(<span class="params">numParts: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Partitioner</span></span>&#123;</div><div class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">numPartitions</span></span>: <span class="type">Int</span> = numParts</div><div class="line"></div><div class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">getPartition</span></span>(key: <span class="type">Any</span>): <span class="type">Int</span> = &#123;</div><div class="line">    <span class="keyword">if</span>(key.toString.toInt&gt;=<span class="number">4</span>)&#123;</div><div class="line">       <span class="number">0</span></div><div class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(key.toString.toInt&gt;=<span class="number">2</span>&amp;&amp;key.toString.toInt&lt;<span class="number">4</span>)&#123;</div><div class="line">      <span class="number">1</span></div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">      <span class="number">2</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>分区, 然后调用前面我们写的printRDDPart方法把各个分区中的RDD打印出来<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">    <span class="keyword">var</span> pairRdd = sc.parallelize(<span class="type">List</span>((<span class="number">1</span>,<span class="number">1</span>), (<span class="number">5</span>,<span class="number">10</span>), (<span class="number">5</span>,<span class="number">9</span>), (<span class="number">2</span>,<span class="number">4</span>), (<span class="number">3</span>,<span class="number">5</span>), (<span class="number">3</span>,<span class="number">6</span>),(<span class="number">4</span>,<span class="number">7</span>), (<span class="number">4</span>,<span class="number">8</span>),(<span class="number">2</span>,<span class="number">3</span>), (<span class="number">1</span>,<span class="number">2</span>)))</div><div class="line">    <span class="keyword">val</span> partitionedRdd = pairRdd.partitionBy(<span class="keyword">new</span> <span class="type">CustomPartitioner</span>(<span class="number">3</span>))</div><div class="line">    printRDDPart(partitionedRdd)</div><div class="line">----------输出-----------------</div><div class="line">(<span class="number">0</span>,(<span class="number">4</span>,<span class="number">8</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">4</span>,<span class="number">7</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">5</span>,<span class="number">9</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">5</span>,<span class="number">10</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">2</span>,<span class="number">3</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">3</span>,<span class="number">6</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">3</span>,<span class="number">5</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">2</span>,<span class="number">4</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">1</span>,<span class="number">2</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">1</span>,<span class="number">1</span>))</div></pre></td></tr></table></figure></p>
+<h1 id="java-分区的用法"><a href="#java-分区的用法" class="headerlink" title="==java 分区的用法=="></a>==<strong>java 分区的用法</strong>==</h1><p>同样，写个方法，该方法能打印RDD下的每个分区下的各个元素</p>
+<p><strong>打印每个分区下的各个元素的printPartRDD函数</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printPartRDD</span><span class="params">(JavaPairRDD&lt;Integer, Integer&gt; pairRDD)</span> </span>&#123;</div><div class="line">        JavaRDD&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt; mapPartitionIndexRDD = pairRDD.mapPartitionsWithIndex(<span class="keyword">new</span> Function2&lt;Integer, Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt;, Iterator&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt;&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="keyword">public</span> Iterator&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt; call(Integer partIndex, Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2Iterator) &#123;</div><div class="line">                ArrayList&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt; tuple2s = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">                <span class="keyword">while</span> (tuple2Iterator.hasNext()) &#123;</div><div class="line">                    Tuple2&lt;Integer, Integer&gt; next = tuple2Iterator.next();</div><div class="line">                    tuple2s.add(<span class="keyword">new</span> Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;(partIndex, next));</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> tuple2s.iterator();</div><div class="line">            &#125;</div><div class="line">        &#125;, <span class="keyword">false</span>);</div><div class="line"></div><div class="line">        mapPartitionIndexRDD.foreach(<span class="keyword">new</span> VoidFunction&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt; integerTuple2Tuple2)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                System.out.println(integerTuple2Tuple2);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">```  </div><div class="line">**java HashPartitioner 分区**  </div><div class="line"></div><div class="line">```java</div><div class="line"></div><div class="line">		JavaRDD&lt;Tuple2&lt;Integer, Integer&gt;&gt; tupRdd = sc.parallelize(Arrays.asList(<span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">1</span>, <span class="number">1</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">1</span>, <span class="number">2</span>)</div><div class="line">                , <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">2</span>, <span class="number">3</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">2</span>, <span class="number">4</span>)</div><div class="line">                , <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">3</span>, <span class="number">5</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">3</span>, <span class="number">6</span>)</div><div class="line">                , <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">4</span>, <span class="number">7</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">4</span>, <span class="number">8</span>)</div><div class="line">                , <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">5</span>, <span class="number">9</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">5</span>, <span class="number">10</span>)</div><div class="line">        ), <span class="number">3</span>);</div><div class="line">        JavaPairRDD&lt;Integer, Integer&gt; pairRDD = JavaPairRDD.fromJavaRDD(tupRdd);</div><div class="line"></div><div class="line">        JavaPairRDD&lt;Integer, Integer&gt; partitioned = pairRDD.partitionBy(<span class="keyword">new</span> HashPartitioner(<span class="number">3</span>));</div><div class="line">        System.out.println(<span class="string">"============HashPartitioner=================="</span>);</div><div class="line">        printPartRDD(partitioned);</div><div class="line">--------------打印--------------------</div><div class="line">============HashPartitioner==================</div><div class="line">(<span class="number">0</span>,(<span class="number">3</span>,<span class="number">5</span>))</div><div class="line">(<span class="number">0</span>,(<span class="number">3</span>,<span class="number">6</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">1</span>,<span class="number">2</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">4</span>,<span class="number">8</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">4</span>,<span class="number">7</span>))</div><div class="line">(<span class="number">1</span>,(<span class="number">1</span>,<span class="number">1</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">5</span>,<span class="number">10</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">2</span>,<span class="number">4</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">2</span>,<span class="number">3</span>))</div><div class="line">(<span class="number">2</span>,(<span class="number">5</span>,<span class="number">9</span>))</div></pre></td></tr></table></figure></p>
+<p><strong>java 自定义分区</strong><br><strong>自定义分区器</strong> ，key大于4的落在第一个分区，[2,4)之间的落在第二个分区，其余的落在第三个分区<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public class JavaCustomPart  extends Partitioner &#123;</div><div class="line">    int i = 1;</div><div class="line">    public JavaCustomPart(int i)&#123;</div><div class="line">        this.i=i;</div><div class="line">    &#125;</div><div class="line">    public JavaCustomPart()&#123;&#125;</div><div class="line">    @Override</div><div class="line">    public int numPartitions() &#123;</div><div class="line">        return i;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int getPartition(Object key) &#123;</div><div class="line">        int keyCode = Integer.parseInt(key.toString());</div><div class="line">        if(keyCode&gt;=4)&#123;</div><div class="line">            return 0;</div><div class="line">        &#125;else if(keyCode&gt;=2&amp;&amp;keyCode&lt;4)&#123;</div><div class="line">            return 1;</div><div class="line">        &#125;else &#123;</div><div class="line">            return 2;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>分区并打印</strong>  </p>
+<pre><code class="java">        System.out.println(<span class="string">"============CustomPartition=================="</span>);
+        JavaPairRDD&lt;Integer, Integer&gt; customPart = pairRDD.partitionBy(<span class="keyword">new</span> JavaCustomPart(<span class="number">3</span>));
+        printPartRDD(customPart);
+--------------打印---------------
+============CustomPartition==================
+(<span class="number">0</span>,(<span class="number">5</span>,<span class="number">10</span>))
+(<span class="number">0</span>,(<span class="number">4</span>,<span class="number">8</span>))
+(<span class="number">0</span>,(<span class="number">4</span>,<span class="number">7</span>))
+(<span class="number">0</span>,(<span class="number">5</span>,<span class="number">9</span>))
+(<span class="number">1</span>,(<span class="number">2</span>,<span class="number">4</span>))
+(<span class="number">1</span>,(<span class="number">3</span>,<span class="number">5</span>))
+(<span class="number">1</span>,(<span class="number">3</span>,<span class="number">6</span>))
+(<span class="number">1</span>,(<span class="number">2</span>,<span class="number">3</span>))
+(<span class="number">2</span>,(<span class="number">1</span>,<span class="number">2</span>))
+(<span class="number">2</span>,(<span class="number">1</span>,<span class="number">1</span>))
+</code></pre>
+<p><strong>java RangePartitioner</strong><br>TODO</p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/hadoop/">大数据</a>|<a class="cat-link" href="/categories/hadoop/spark/">spark</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      <a href="javascript: window.open('http://service.weibo.com/share/share.php?url=' + encodeURIComponent(location.href) + '&title=' + document.title + '&language=zh_cn');" class="share-icon weibo"></a>
+      <a href="javascript: alert('请复制链接到微信并发送');" class="share-icon wechat"></a>
+      <a href="javascript: window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(location.href) + '&title=' + document.title);" class="share-icon qqzone"></a>
+      <a href="javascript: window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + encodeURIComponent(location.href) + '&desc=Jelon个人博客&title=' + document.title + '&callback=' + encodeURIComponent(location.href));" class="share-icon qq"></a>
+      <a href="javascript: window.open('http://shuo.douban.com/!service/share?href=' + encodeURIComponent(location.href) + '&name=' + document.title + '&text=' + document.title);" class="share-icon douban"></a>
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/hadoop/spark/spark-rdd-12.html">
+            
+                spark RDD算子（十二）之RDD 分区操作上mapPartitions, mapPartitionsWithIndex保存操作saveAsTextFile,saveAsSequenceFile,saveAsObjectFile,saveAsHadoopFile 等
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/随笔/mylife1.html">
+            
+                虚心竹有低头叶 傲骨梅无仰面花
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'spark-rdd-13' || 'hadoop/spark/spark-rdd-13.html',
+    owner: 'jangdelong',
+    repo: 'blog_comments',
+    clientId: 'b08ed25e52c57993e69c',
+    clientSecret: '1cb9545488f0380904b87350e7c5a270ae03bab7'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">(5)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/">大数据</a>
+        <span class="badge">(43)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hdfs/">hdfs</a>
+        <span class="badge">(8)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hadoop/">hadoop</a>
+        <span class="badge">(11)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/架构/">架构</a>
+        <span class="badge">(21)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/spark/">spark</a>
+        <span class="badge">(23)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/算法/">算法</a>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/">随笔</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 文章标签 -->
+<div class="widget-bd tag-wrap">
+  
+    <a class="tag-item" href="/tags/linux/" title="linux">linux (7)</a>
+  
+    <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
+  
+    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
+  
+    <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
+  
+    <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
+  
+    <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
+  
+    <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
+  
+    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
+  
+    <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
+  
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
+  
+    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
+  
+    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
+  
+    <a class="tag-item" href="/tags/曲线拟合/" title="曲线拟合">曲线拟合 (1)</a>
+  
+    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
+  
+    <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
+  
+    <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
+  
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
+  
+    <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
+  
+    <a class="tag-item" href="/tags/xml解析/" title="xml解析">xml解析 (1)</a>
+  
+    <a class="tag-item" href="/tags/资源/" title="资源">资源 (1)</a>
+  
+</div>
+    </section>
+    
+
+    
+
+    
+    <!-- 友情链接 -->
+    <section class="widget">
+        <h3 class="widget-hd"><strong>友情链接</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+        <li>
+            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+        </li>
+    
+        <li>
+            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+        </li>
+    
+        <li>
+            <a href="http://xuanzh.cc/" target="_blank" title="技术博客">朱旋个人博客</a>
+        </li>
+    
+</ul>
+    </section>
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Jelon Loves You</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <!-- 这里放网站js脚本 -->
+<script src="/js/main.js"></script>
+</body>
+</html>

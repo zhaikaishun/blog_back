@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>【多线程高并发】 同步容器和队列 | 挡路人</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
+    <meta name="description" content="Jelon个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?fd459238242776d173cdc64918fb32f2";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+    <section class="container header-main">
+        <div class="logo">
+            <a href="/">
+                <div class="cover">
+                    <span class="name">挡路人</span>
+                    <span class="description">学有所思，思有所感</span>
+                </div>
+            </a>
+        </div>
+        <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+        <ul class="menu hidden" id="JELON__menu">
+            
+            <li rel="/架构/thread4.html" class="item ">
+                <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+            </li>
+            
+            <li rel="/架构/thread4.html" class="item ">
+                <a href="/lab/" title="实验室" class="icon-lab">&nbsp;实验室</a>
+            </li>
+            
+            <li rel="/架构/thread4.html" class="item ">
+                <a href="/about/" title="关于" class="icon-about">&nbsp;关于</a>
+            </li>
+            
+            <li rel="/架构/thread4.html" class="item ">
+                <a href="/comment/" title="留言" class="icon-comment">&nbsp;留言</a>
+            </li>
+            
+        </ul>
+        <div class="profile clearfix">
+            <div class="feeds fl">
+                
+                
+                <p class="links">
+                    
+                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        |
+                    
+                        <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+                        
+                    
+                </p>
+                <p class="sns">
+                    
+                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                    
+                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                    
+                    <a href="javascript: void(0);" class="wechat">
+                        <b>■</b>
+                        公众号
+                        <span class="popover">
+                            <img src="/img/wechat_mp.jpg" width="120" height="120" alt="我的微信订阅号">
+                            <i class="arrow"></i>
+                        </span>
+                    </a>
+                </p>
+                
+            </div>
+            <div class="avatar fr">
+                <img src="/img/jelon.jpg" alt="avatar" title="Jelon" >
+            </div>
+        </div>
+    </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>【多线程高并发】 同步容器和队列</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        kaishun 发表于
+        <time datetime="2017-08-18T13:25:21.000Z">2017-08-18</time>
+    </p>
+    <div class="post-content">
+        <p><strong>关键字:</strong>  同步容器，队列，ConcurrentMap, Copy-On-Write容器,并发Queue,   ConcurrentLinkedQueue, BlockQueue接口, ArrayBlockingQueue , LinkedBlockingQueue, PriorityBlockingQueue, DelayQueue, SynchronousQueue<br>github地址： <a href="https://github.com/zhaikaishun/concurrent_programming" target="_blank" rel="external">https://github.com/zhaikaishun/concurrent_programming</a><br><a id="more"></a><br>代码主要在 Multi_003 ,  Multi_003\Multi_003\src\com\kaishun\base\coll013</p>
+<h2 id="1-1-同步容器"><a href="#1-1-同步容器" class="headerlink" title="1.1 同步容器"></a>1.1 同步容器</h2><p>同步容器都是线程安全的，但是在某些场景下可能需要加锁来保护复合操作，复合类操作如 迭代，跳转，条件运算等，这些复合操作在多线程并发执行的时候。可能会出现意外行为，最经典的便是ConcurrentModificationException，原因是当容器迭代的过程中，被并发的修改了内容。<br>同步类容器： 如古老的Vector，HashTable。这些容器的同步功能其实都是由JDK的Collections.synchronized等工厂方法去实现的，其底层的机制无非就是用传统的synchronized关键字对每个公用的方法都进行同步，使得每次只能有一个线程访问容器的状态。这很明显不符合今天互联网时代高并发的需求，在保证线程安全的同时，也必须要有足够好的性能。  </p>
+<p>JDK5.0以后提供了多种并发容器来替代同步容器从而改善性能。并发容器是专门针对并发设计的，使用ConcurrentHashMap来代替给予散列的HashTable，而且在ConcurrentHashMap中，添加了一些常见复合操作的支持，以及使用CopyOnWriteArrayList代替Voctor, 并发的CopyOnWriteArraySet, 以及并发的Queue， ConcurrentLinkedQueue和LinkedBlockingQueue, 前者是高性能的队列，后者是以阻塞形式的队列，具体实现Queue还有很多，例如ArrayBlockingQueue, PriorityBlockingQueue, SynchronousQueue等。  </p>
+<h2 id="1-2-ConcurrentMap"><a href="#1-2-ConcurrentMap" class="headerlink" title="1.2 ConcurrentMap"></a>1.2 ConcurrentMap</h2><p>ConcurrentMap接口有两个重要的实现  </p>
+<ul>
+<li>ConcurrentHashMap  </li>
+<li>ConcurrentSkipListMap(支持并发排序功能，弥补ConcurrnetHashMap)<br>ConcurrentHashMap主要是利用了Segment(段)的方式，来减小锁的粒度，从而实现提高并发性能的机制, 最大可以分成16段。并且代码中大多共享变量使用Volatile关键字声明，目的是第一时间获取修改的内容，性能非常好<br>如图，传统的HashTable，只有一段，对整个map进行加锁，锁的粒度比较大。而CorrentHashMap, 对这个map的某一个小Segment来进行加锁，在哪一段操作，只锁定哪一个段，其他段不影响，锁的粒度比较小，从而提高并发的性能<br><img src="http://or49tneld.bkt.clouddn.com/17-10-4/46638058.jpg" alt="correntHashMap">      </li>
+</ul>
+<p>具体如何使用，和之前的HashMap几乎是一模一样的，还是随便看个例子吧<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ConcurrentHashMap&lt;String, Object&gt; chm = <span class="keyword">new</span> ConcurrentHashMap&lt;String, Object&gt;();</div><div class="line">chm.put(<span class="string">"k1"</span>, <span class="string">"v1"</span>);</div><div class="line">chm.put(<span class="string">"k2"</span>, <span class="string">"v2"</span>);</div><div class="line">chm.put(<span class="string">"k3"</span>, <span class="string">"v3"</span>);</div><div class="line">chm.putIfAbsent(<span class="string">"k4"</span>, <span class="string">"vvvv"</span>); <span class="comment">// 如果key不存在，就加进去</span></div></pre></td></tr></table></figure></p>
+<h2 id="1-3-Copy-On-Write容器"><a href="#1-3-Copy-On-Write容器" class="headerlink" title="1.3 Copy-On-Write容器"></a>1.3 Copy-On-Write容器</h2><p>Copy-On-Write简称COW， 是一种用于程序设计中的优化策略。<br>Copy容器即写时复制的容器，先将当前容器进行Copy,复制出一个新的容器，然后想信的容器里面添加元素，添加完后，在讲原容器的引用指向新的容器。这样的好处是我们可以对CopyOnWrite容器进行并发的读而不用加锁，因为当前容器不会添加任何元素，所以CopyOnWrite也是一种读写分离的思想，读和写不同的容器，适用于读多写少的场景。<br>JDK里的COW容器有两种：CopyOnWriteArrayList和CopyOnWriteArraySet, COW容器非常有用，可以在非常多的并发容器场景中使用到。<br>使用方法也和原始的ArrayList, set一样<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">CopyOnWriteArrayList&lt;String&gt; cwal = <span class="keyword">new</span> CopyOnWriteArrayList&lt;String&gt;();</div><div class="line">CopyOnWriteArraySet&lt;String&gt; cwas = <span class="keyword">new</span> CopyOnWriteArraySet&lt;String&gt;();</div></pre></td></tr></table></figure></p>
+<h2 id="2-1-并发Queue"><a href="#2-1-并发Queue" class="headerlink" title="2.1 并发Queue"></a>2.1 并发Queue</h2><p>在并发队列上JDK提供了两套实现，一个是以ConcurrentLinkedQueue为代表的高性能队列，一个是以BlockingQueue接口为代表的阻塞队列，无论哪种都继承自Queue<br><img src="http://or49tneld.bkt.clouddn.com/17-10-4/72036961.jpg" alt="Queue的实现类"><br><img src="http://or49tneld.bkt.clouddn.com/17-10-4/51989061.jpg" alt="Queue的实现类1">  </p>
+<h2 id="2-2-ConcurrentLinkedQueue"><a href="#2-2-ConcurrentLinkedQueue" class="headerlink" title="2.2 ConcurrentLinkedQueue"></a>2.2 ConcurrentLinkedQueue</h2><p>ConcurrentLinkedQueue: 是一个适用于高并发场景下的队列，通过无锁的方式，实现了高并发状态下的高性能，通常ConcurrentLinkedQueue性能好于BlockingQueue,他是一个基于链接节点的无界线程安全队列，该队列的元素遵循先进先出的原则，头是最新加入，尾是最近加入。该队列不允许null元素。  </p>
+<p>ConcurrentLinkedQueue重要方法：<br>add()和offer都是加入元素的方法(在ConcurrentLinkedQueue中，这两个方法没有任何区别)<br>poll()和peek()都是取头元素节点，区别在于前者会删除元素，后者不会。<br>示例：<br>com.kaishun.base.coll013.UseQueue<br><strong>高性能无阻塞无界队列：ConcurrentLinkedQueue</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">//高性能无阻塞无界队列：ConcurrentLinkedQueue</div><div class="line"></div><div class="line">ConcurrentLinkedQueue&lt;String&gt; q = new ConcurrentLinkedQueue&lt;String&gt;();</div><div class="line">q.offer(&quot;a&quot;);</div><div class="line">q.offer(&quot;b&quot;);</div><div class="line">q.offer(&quot;c&quot;);</div><div class="line">q.offer(&quot;d&quot;);</div><div class="line">q.add(&quot;e&quot;);</div><div class="line"></div><div class="line">System.out.println(q.poll());	//a 从头部取出元素，并从队列里删除</div><div class="line">System.out.println(q.size());	//4</div><div class="line">System.out.println(q.peek());	//b</div><div class="line">System.out.println(q.size());	//4</div><div class="line"></div><div class="line">----输出-----</div><div class="line">a</div><div class="line">4</div><div class="line">b</div><div class="line">4</div><div class="line"></div><div class="line">```  </div><div class="line"></div><div class="line">## 2.3 BlockQueue接口  </div><div class="line">有5种queue的实现。  </div><div class="line">### ArrayBlockingQueue  </div><div class="line">基于数组的阻塞队列实现，在ArrayBlockingQueue内部，维护了一个定常数组，一边缓存队列中的数据对象，其内部没有实现读写分离，也就意味着生产和消费不能完全并行，长度是需要定义的，可以指定先进先出或者先进后出。也叫**有界队列**，在很多场合下非常适用。  </div><div class="line">```java</div><div class="line">		ArrayBlockingQueue&lt;String&gt; array = new ArrayBlockingQueue&lt;String&gt;(5);</div><div class="line">		array.put(&quot;a&quot;);</div><div class="line">		array.put(&quot;b&quot;);</div><div class="line">		array.add(&quot;c&quot;);</div><div class="line">		array.add(&quot;d&quot;);</div><div class="line">		array.add(&quot;e&quot;);</div><div class="line">//		array.add(&quot;f&quot;);</div><div class="line">		System.out.println(array.offer(&quot;a&quot;, 3, TimeUnit.SECONDS));</div><div class="line">```  </div><div class="line">由于指定的是5个长度，前面已经加了5个了，后面再次添加的时候，3秒内都加不进去，3秒后返回一个false，输出</div></pre></td></tr></table></figure></p>
+<p>false<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">若超过了还是用add方法，就会抛异常 IllegalStateException: Queue full ，例如  </div><div class="line">```java</div><div class="line">		ArrayBlockingQueue&lt;String&gt; array = new ArrayBlockingQueue&lt;String&gt;(5);</div><div class="line">		array.put(&quot;a&quot;);</div><div class="line">		array.put(&quot;b&quot;);</div><div class="line">		array.add(&quot;c&quot;);</div><div class="line">		array.add(&quot;d&quot;);</div><div class="line">		array.add(&quot;e&quot;);</div><div class="line">		array.add(&quot;f&quot;);  //这里接回抛异常</div><div class="line">		System.out.println(array.offer(&quot;a&quot;, 3, TimeUnit.SECONDS));</div><div class="line">```  </div><div class="line"></div><div class="line"></div><div class="line">### LinkedBlockingQueue:  </div><div class="line"></div><div class="line">基于链表的阻塞队列，同ArrayBlockingQueue类似，其内部也维护者一个数据缓冲队列（该队列是由一个链表构成），LinkBlockingQueue之所以能够搞笑的处理并发数据，是因为其内部实现了读写分离锁，从而实现了生产者和消费者的完全并行运行，他是一个**无界队列**。  </div><div class="line">```java</div><div class="line">		//阻塞队列</div><div class="line">		LinkedBlockingQueue&lt;String&gt; q = new LinkedBlockingQueue&lt;String&gt;();</div><div class="line">		q.offer(&quot;a&quot;);</div><div class="line">		q.offer(&quot;b&quot;);</div><div class="line">		q.offer(&quot;c&quot;);</div><div class="line">		q.offer(&quot;d&quot;);</div><div class="line">		q.offer(&quot;e&quot;);</div><div class="line">		q.add(&quot;f&quot;);</div><div class="line">		System.out.println(q.size());</div><div class="line">		</div><div class="line">		for (Iterator iterator = q.iterator(); iterator.hasNext();) &#123;</div><div class="line">			String string = (String) iterator.next();</div><div class="line">			System.out.println(string);</div><div class="line">		&#125;</div><div class="line">-----------输出-----------</div><div class="line">6</div><div class="line">a</div><div class="line">b</div><div class="line">c</div><div class="line">d</div><div class="line">e</div><div class="line">f</div></pre></td></tr></table></figure></p>
+<p>drainTo一次取多个元素<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">		<span class="comment">//阻塞队列</span></div><div class="line">		LinkedBlockingQueue&lt;String&gt; q = <span class="keyword">new</span> LinkedBlockingQueue&lt;String&gt;();</div><div class="line">		q.offer(<span class="string">"a"</span>);</div><div class="line">		q.offer(<span class="string">"b"</span>);</div><div class="line">		q.offer(<span class="string">"c"</span>);</div><div class="line">		q.offer(<span class="string">"d"</span>);</div><div class="line">		q.offer(<span class="string">"e"</span>);</div><div class="line">		q.add(<span class="string">"f"</span>);</div><div class="line">		System.out.println(q.size());</div><div class="line"></div><div class="line">		List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">		<span class="comment">//取3个元素，放入到 list 集合中去</span></div><div class="line">		System.out.println(q.drainTo(list, <span class="number">3</span>));</div><div class="line">		System.out.println(list.size());</div><div class="line">		<span class="keyword">for</span> (String string : list) &#123;</div><div class="line">			System.out.println(string);</div><div class="line">		&#125;</div><div class="line">-----------输出-----------</div><div class="line"><span class="number">6</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">3</span></div><div class="line">a</div><div class="line">b</div><div class="line">c</div></pre></td></tr></table></figure></p>
+<h3 id="PriorityBlockingQueue"><a href="#PriorityBlockingQueue" class="headerlink" title="PriorityBlockingQueue:"></a>PriorityBlockingQueue:</h3><p>基于优先级的阻塞队列（优先级的判断通过构造函数传入的Compator对象来决定，也就是说传入队列的对象必须实现Comparable接口），在实现PriorityBlockingQueue时，内部控制线程同步的锁采用的是公平锁，他也是一个无界的队列。<br>示例：<br>Task类，实现了Comparable的方法，重写compareTo方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">Task</span>&gt;</span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id ;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Task task)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.id &gt; task.id ? <span class="number">1</span> : (<span class="keyword">this</span>.id &lt; task.id ? -<span class="number">1</span> : <span class="number">0</span>);  </div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.id + <span class="string">","</span> + <span class="keyword">this</span>.name;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>UsePriorityBlockingQueue</strong>类<br>测试是否是有序队列<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">public class UsePriorityBlockingQueue &#123;</div><div class="line"></div><div class="line">	</div><div class="line">	public static void main(String[] args) throws Exception&#123;</div><div class="line">		</div><div class="line">		</div><div class="line">		PriorityBlockingQueue&lt;Task&gt; q = new PriorityBlockingQueue&lt;Task&gt;();</div><div class="line">		</div><div class="line">		Task t1 = new Task();</div><div class="line">		t1.setId(3);</div><div class="line">		t1.setName(&quot;id为3&quot;);</div><div class="line">		Task t2 = new Task();</div><div class="line">		t2.setId(4);</div><div class="line">		t2.setName(&quot;id为4&quot;);</div><div class="line">		Task t3 = new Task();</div><div class="line">		t3.setId(1);</div><div class="line">		t3.setName(&quot;id为1&quot;);</div><div class="line">		</div><div class="line">		//return this.id &gt; task.id ? 1 : 0;</div><div class="line">		q.add(t1);	//3</div><div class="line">		q.add(t2);	//4</div><div class="line">		q.add(t3);  //1</div><div class="line">		</div><div class="line">		// 1 3 4</div><div class="line">		System.out.println(&quot;容器：&quot; + q);</div><div class="line">		System.out.println(q.take().getId());</div><div class="line">		System.out.println(&quot;容器：&quot; + q);</div><div class="line">		System.out.println(q.take().getId());</div><div class="line">		System.out.println(q.take().getId());</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">```  </div><div class="line">输出  </div><div class="line">```java</div><div class="line">容器：[1,id为1, 4,id为4, 3,id为3]</div><div class="line">1</div><div class="line">容器：[3,id为3, 4,id为4]</div><div class="line">3</div><div class="line">4</div><div class="line">```  </div><div class="line">说明，这种队列在没有take的时候，还不是排序的，take()时，才利用了排序，比较的方法  </div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">### DelayQueue:   </div><div class="line">带有延迟时间的Queue, 其中的元素只有当其指定的延迟时间到了，才能够从队列中获取到该元素， **DelayQueue的元素必须实现Delayed 接口**， DelayQueue是一个没有大小限制的队列，应用场景很多，比如对缓存超时的数据进行一处，任务超时处理，空闲连接的关闭等等。   </div><div class="line">经典的网吧上机案例：  </div><div class="line">Wangmin 实现了Delayed接口</div></pre></td></tr></table></figure></p>
+<p>public class Wangmin implements Delayed {  </p>
+<pre><code>private String name;  
+//身份证  
+private String id;  
+//截止时间  
+private long endTime;  
+//定义时间工具类
+private TimeUnit timeUnit = TimeUnit.SECONDS;
+
+public Wangmin(String name,String id,long endTime){  
+    this.name=name;  
+    this.id=id;  
+    this.endTime = endTime;  
+}  
+
+public String getName(){  
+    return this.name;  
+}  
+
+public String getId(){  
+    return this.id;  
+}  
+
+/** 
+ * 用来判断是否到了截止时间 
+ */  
+@Override  
+public long getDelay(TimeUnit unit) { 
+    //return unit.convert(endTime, TimeUnit.MILLISECONDS) - unit.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+    return endTime - System.currentTimeMillis();
+}  
+
+/** 
+ * 相互批较排序用 
+ */  
+@Override  
+public int compareTo(Delayed delayed) {  
+    Wangmin w = (Wangmin)delayed;  
+    return this.getDelay(this.timeUnit) - w.getDelay(this.timeUnit) &gt; 0 ? 1:0;  
+} 
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">WangBa类  </div><div class="line">```java</div><div class="line">public class WangBa implements Runnable &#123;  </div><div class="line">    </div><div class="line">    private DelayQueue&lt;Wangmin&gt; queue = new DelayQueue&lt;Wangmin&gt;();  </div><div class="line">    </div><div class="line">    public boolean yinye =true;  </div><div class="line">      </div><div class="line">    public void shangji(String name,String id,int money)&#123;  </div><div class="line">        Wangmin man = new Wangmin(name, id, 1000 * money + System.currentTimeMillis());  </div><div class="line">        System.out.println(&quot;网名&quot;+man.getName()+&quot; 身份证&quot;+man.getId()+&quot;交钱&quot;+money+&quot;块,开始上机...&quot;);  </div><div class="line">        this.queue.add(man);  </div><div class="line">    &#125;  </div><div class="line">      </div><div class="line">    public void xiaji(Wangmin man)&#123;  </div><div class="line">        System.out.println(&quot;网名&quot;+man.getName()+&quot; 身份证&quot;+man.getId()+&quot;时间到下机...&quot;);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    @Override  </div><div class="line">    public void run() &#123;  </div><div class="line">        while(yinye)&#123;  </div><div class="line">            try &#123;  </div><div class="line">                Wangmin man = queue.take();  </div><div class="line">                xiaji(man);  </div><div class="line">            &#125; catch (InterruptedException e) &#123;  </div><div class="line">                e.printStackTrace();  </div><div class="line">            &#125;  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">      </div><div class="line">    public static void main(String args[])&#123;  </div><div class="line">        try&#123;  </div><div class="line">            System.out.println(&quot;网吧开始营业&quot;);  </div><div class="line">            WangBa siyu = new WangBa();  </div><div class="line">            Thread shangwang = new Thread(siyu);  </div><div class="line">            shangwang.start();  </div><div class="line">              </div><div class="line">            siyu.shangji(&quot;路人甲&quot;, &quot;123&quot;, 1);  </div><div class="line">            siyu.shangji(&quot;路人乙&quot;, &quot;234&quot;, 10);  </div><div class="line">            siyu.shangji(&quot;路人丙&quot;, &quot;345&quot;, 5);  </div><div class="line">        &#125;  </div><div class="line">        catch(Exception e)&#123;  </div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;  </div><div class="line">  </div><div class="line">    &#125;  </div><div class="line">&#125;  </div><div class="line"></div><div class="line">```  </div><div class="line">输出</div></pre></td></tr></table></figure>
+<p>网吧开始营业<br>网名路人甲 身份证123交钱1块,开始上机…<br>网名路人乙 身份证234交钱10块,开始上机…<br>网名路人丙 身份证345交钱5块,开始上机…<br>网名路人甲 身份证123时间到下机…<br>网名路人丙 身份证345时间到下机…<br>网名路人乙 身份证234时间到下机…<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">### SynchronousQueue: </div><div class="line">一种没有缓冲的队列，生产者产生的数据直接会被消费者获取并消费   </div><div class="line">个人理解为虚拟队列，这个队列不存元素，生产与消费相互扔而已</div><div class="line">```java</div><div class="line">		final SynchronousQueue&lt;String&gt; q = new SynchronousQueue&lt;String&gt;();</div><div class="line">		Thread t1 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				try &#123;</div><div class="line">					System.out.println(q.take());</div><div class="line">				&#125; catch (InterruptedException e) &#123;</div><div class="line">					e.printStackTrace();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		t1.start();</div><div class="line">		Thread t2 = new Thread(new Runnable() &#123;</div><div class="line"></div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				q.add(&quot;asdasd&quot;);</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		t2.start();</div><div class="line">---------输出-------</div><div class="line">asdasd</div></pre></td></tr></table></figure></p>
+<p>– 本文总结自前人经验，总结得挺累的，特别感谢互联网架构师白鹤翔老师</p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/架构/">架构</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/java/" title="java">java</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      <a href="javascript: window.open('http://service.weibo.com/share/share.php?url=' + encodeURIComponent(location.href) + '&title=' + document.title + '&language=zh_cn');" class="share-icon weibo"></a>
+      <a href="javascript: alert('请复制链接到微信并发送');" class="share-icon wechat"></a>
+      <a href="javascript: window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(location.href) + '&title=' + document.title);" class="share-icon qqzone"></a>
+      <a href="javascript: window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + encodeURIComponent(location.href) + '&desc=Jelon个人博客&title=' + document.title + '&callback=' + encodeURIComponent(location.href));" class="share-icon qq"></a>
+      <a href="javascript: window.open('http://shuo.douban.com/!service/share?href=' + encodeURIComponent(location.href) + '&name=' + document.title + '&text=' + document.title);" class="share-icon douban"></a>
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/架构/thread3.html">
+            
+                【多线程高并发】多线程的设计模式
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/架构/thread5.html">
+            
+                【多线程高并发】java线程池
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'thread4' || '架构/thread4.html',
+    owner: 'jangdelong',
+    repo: 'blog_comments',
+    clientId: 'b08ed25e52c57993e69c',
+    clientSecret: '1cb9545488f0380904b87350e7c5a270ae03bab7'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">(5)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/">大数据</a>
+        <span class="badge">(43)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hdfs/">hdfs</a>
+        <span class="badge">(8)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hadoop/">hadoop</a>
+        <span class="badge">(11)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/架构/">架构</a>
+        <span class="badge">(21)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/spark/">spark</a>
+        <span class="badge">(23)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/算法/">算法</a>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/">随笔</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 文章标签 -->
+<div class="widget-bd tag-wrap">
+  
+    <a class="tag-item" href="/tags/linux/" title="linux">linux (7)</a>
+  
+    <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
+  
+    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
+  
+    <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
+  
+    <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
+  
+    <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
+  
+    <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
+  
+    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
+  
+    <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
+  
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
+  
+    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
+  
+    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
+  
+    <a class="tag-item" href="/tags/曲线拟合/" title="曲线拟合">曲线拟合 (1)</a>
+  
+    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
+  
+    <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
+  
+    <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
+  
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
+  
+    <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
+  
+    <a class="tag-item" href="/tags/xml解析/" title="xml解析">xml解析 (1)</a>
+  
+    <a class="tag-item" href="/tags/资源/" title="资源">资源 (1)</a>
+  
+</div>
+    </section>
+    
+
+    
+
+    
+    <!-- 友情链接 -->
+    <section class="widget">
+        <h3 class="widget-hd"><strong>友情链接</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+        <li>
+            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+        </li>
+    
+        <li>
+            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+        </li>
+    
+        <li>
+            <a href="http://xuanzh.cc/" target="_blank" title="技术博客">朱旋个人博客</a>
+        </li>
+    
+</ul>
+    </section>
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Jelon Loves You</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <!-- 这里放网站js脚本 -->
+<script src="/js/main.js"></script>
+</body>
+</html>

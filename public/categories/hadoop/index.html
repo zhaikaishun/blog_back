@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>`大数据`分类下的文章 | 挡路人</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
+    <meta name="description" content="Jelon个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?fd459238242776d173cdc64918fb32f2";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+    <section class="container header-main">
+        <div class="logo">
+            <a href="/">
+                <div class="cover">
+                    <span class="name">挡路人</span>
+                    <span class="description">学有所思，思有所感</span>
+                </div>
+            </a>
+        </div>
+        <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+        <ul class="menu hidden" id="JELON__menu">
+            
+            <li rel="/categories/hadoop/index.html" class="item ">
+                <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+            </li>
+            
+            <li rel="/categories/hadoop/index.html" class="item ">
+                <a href="/lab/" title="实验室" class="icon-lab">&nbsp;实验室</a>
+            </li>
+            
+            <li rel="/categories/hadoop/index.html" class="item ">
+                <a href="/about/" title="关于" class="icon-about">&nbsp;关于</a>
+            </li>
+            
+            <li rel="/categories/hadoop/index.html" class="item ">
+                <a href="/comment/" title="留言" class="icon-comment">&nbsp;留言</a>
+            </li>
+            
+        </ul>
+        <div class="profile clearfix">
+            <div class="feeds fl">
+                
+                
+                <p class="links">
+                    
+                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        |
+                    
+                        <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+                        
+                    
+                </p>
+                <p class="sns">
+                    
+                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                    
+                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                    
+                    <a href="javascript: void(0);" class="wechat">
+                        <b>■</b>
+                        公众号
+                        <span class="popover">
+                            <img src="/img/wechat_mp.jpg" width="120" height="120" alt="我的微信订阅号">
+                            <i class="arrow"></i>
+                        </span>
+                    </a>
+                </p>
+                
+            </div>
+            <div class="avatar fr">
+                <img src="/img/jelon.jpg" alt="avatar" title="Jelon" >
+            </div>
+        </div>
+    </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章分类 -->
+
+    <h3 class="widget-hd">
+        <strong>
+            
+                `大数据`分类下的文章
+            
+        </strong>
+    </h3>
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/hadoop/yarn-vmemory-over.html">
+    		Container is running beyond virtual memory limits. Current usage- 611.1 MB of 1 GB physical memory u
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-10-25T13:25:21.000Z">2017-10-25</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/hadoop/" title="hadoop">hadoop</a> / 
+    
+        <a href="/tags/大数据/" title="大数据">大数据</a> / 
+    
+        <a href="/tags/yarn/" title="yarn">yarn</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>hadoop 在 yarn 上运行时报的虚拟内存错误，或者是物理内存不够错误</p>
+<h2 id="异常显示"><a href="#异常显示" class="headerlink" title="异常显示"></a>异常显示</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">Container [pid=100287,containerID=container_1513249052998_0007_01_000009] is </div><div class="line">running beyond virtual memory limits. Current usage: 611.1 MB of 1 GB physical</div><div class="line">memory used; 4.9 GB of 3 GB virtual memory used. Killing container.</div></pre></td></tr></table></figure>
+<p>但是后面任务可能还是可以正常的运行的<br>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/hadoop/yarn-vmemory-over.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/hadoop/yarn-vmemory-over.html" title="Container is running beyond virtual memory limits. Current usage- 611.1 MB of 1 GB physical memory u">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/5.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/hadoop/yarn-resource-best_practice.html">
+    		yarn资源管理最佳实践
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-10-11T13:25:21.000Z">2017-10-11</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/hadoop/" title="hadoop">hadoop</a> / 
+    
+        <a href="/tags/大数据/" title="大数据">大数据</a> / 
+    
+        <a href="/tags/yarn/" title="yarn">yarn</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>原文翻译自 <a href="https://mapr.com/blog/best-practices-yarn-resource-management/#.Ve5bLdOqoVU">https://mapr.com/blog/best-practices-yarn-resource-management/#.Ve5bLdOqoVU</a> 有改动  – 翻译以及记录的目的是对yarn进行合理的资源配置，以及yarn平台出错后的分析</p>
+<p>这篇文章主要是讨论YARN资源管理的最佳实践，YARN的基本理论是将资源管理和任务调度分离，<br>所以设计了一个全局的资源管理器 ResourceManager（RM）和每个应用程序的ApplicationMaster（AM）。  </p>
+<ul>
+<li><strong>ResourceManager（RM）</strong>：有两个主要组件：Scheduler和ApplicationsManager。调度程序负责将资源分配给各种正在运行的应用程序，这些应用程序受到容量，队列等熟悉的约束。==调度程序是纯调度程序，因为它不会监视或跟踪应用程序的状态==。此外，由于应用程序故障或硬件故障，它不提供有关重新启动失败任务的保证。调度器根据应用程序的资源需求执行调度功能; 它是基于资源容器的抽象概念来实现的，它包含了内存，CPU，磁盘，网络等元素。</li>
+</ul>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/hadoop/yarn-resource-best_practice.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/hadoop/yarn-resource-best_practice.html" title="yarn资源管理最佳实践">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/1.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/hive-1.2.2-install.html">
+    		hive 1.2.2安装 教程
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-07-01T13:25:21.000Z">2017-07-01</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/大数据/" title="大数据">大数据</a> / 
+    
+        <a href="/tags/hive/" title="hive">hive</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>关键字：hive 1.2.2 安装，hive配置</p>
+<h1 id="安装前提："><a href="#安装前提：" class="headerlink" title="安装前提："></a>安装前提：</h1><ol>
+<li>安装好了hadoop，hadoop的集群搭建：<a href="http://blog.csdn.net/t1dmzks/article/details/68958562">http://blog.csdn.net/t1dmzks/article/details/68958562</a>  </li>
+<li>安装好了mysql： mysql的编译安装（yum安装） <a href="http://blog.csdn.net/t1dmzks/article/details/71374740">http://blog.csdn.net/t1dmzks/article/details/71374740</a></li>
+</ol>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/hive-1.2.2-install.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/hive-1.2.2-install.html" title="hive 1.2.2安装 教程">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/1.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html">
+    		Spark Sql 编程式结构DataType转换 代码类小结
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-06-15T13:25:21.000Z">2017-06-15</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <h2 id="it行业加班是普遍现象，千万不要和程序猿抱怨工作累！"><a href="#it行业加班是普遍现象，千万不要和程序猿抱怨工作累！" class="headerlink" title="it行业加班是普遍现象，千万不要和程序猿抱怨工作累！"></a><strong>it行业加班是普遍现象，千万不要和程序猿抱怨工作累！</strong></h2><p>曾经的一个在国企朋友向我抱怨，内容是这样的：<strong>“8点30过一分钟打卡就算迟到，5点30打卡就算早退，觉得太不公平了，工作太累了”</strong>，据我所知，该同学工作很轻松，每天基本就是盖盖章，谢谢报告等，每天能8点半上班，5点30还没到，公司都人都准备好东西排队打卡回家了。！！！！！有没有搞错，what’s the fuck，你向谁抱怨不好，竟然向程序猿抱怨工作累！！！  </p>
+<p>还一次，上个月高中几个在深圳的同学聚会，一个做证券，一个做药物研发，一个做财务管理的，就我一个程序猿。我们四个人自然而然的讨论到了工作。<br>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html" title="Spark Sql 编程式结构DataType转换 代码类小结">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/5.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/spark/spark-rdd-tutorial.html">
+    		spark常用RDD算子 汇总（java和scala版本）
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-06-02T13:25:21.000Z">2017-06-02</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>github： <a href="https://github.com/zhaikaishun/spark_tutorial">https://github.com/zhaikaishun/spark_tutorial</a><br>spark RDD的算子挺多，有时候如何灵活的使用，该如何用一下子想不起来，这一段时间将spark的算子如何使用的例子给记录了下来，下面是spark RDD 的一些常用算子的使用<br>这些算子包括有java的，也有scala的语言，由于精力有限，暂时没有python的，以后有空再加上吧<br>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/spark/spark-rdd-tutorial.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/spark/spark-rdd-tutorial.html" title="spark常用RDD算子 汇总（java和scala版本）">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/2.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/spark/spark-sourcecode-install.html">
+    		spark-2.2.0源码阅读环境的搭建
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-05-28T13:25:21.000Z">2017-05-28</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <h2 id="下载源码"><a href="#下载源码" class="headerlink" title="下载源码"></a>下载源码</h2><p>去<a href="http://spark.apache.org/downloads.html">官网</a> 下载 <a href="https://d3kbcqa49mib13.cloudfront.net/spark-2.2.0.tgz">spark-2.2.0.tgz</a></p>
+<h2 id="解压后，用idea打开"><a href="#解压后，用idea打开" class="headerlink" title="解压后，用idea打开"></a>解压后，用idea打开</h2><p>pom maven需要下载很多包，并且加载，需要等待一下，最好建议改成阿里云的依赖仓库，这样比较快。不改也可以<br>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/spark/spark-sourcecode-install.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/spark/spark-sourcecode-install.html" title="spark-2.2.0源码阅读环境的搭建">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/8.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html">
+    		Spark Sql 编程式结构DataType转换 代码类小结
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-05-21T13:25:21.000Z">2017-05-21</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <h3 id="基本类型数据转DataType"><a href="#基本类型数据转DataType" class="headerlink" title="基本类型数据转DataType"></a>基本类型数据转DataType</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> DataType <span class="title">attrToDataType</span><span class="params">(String attrstr)</span></span>&#123;</div><div class="line">		DataType returnDataType = DataTypes.StringType;</div><div class="line">		</div><div class="line">		<span class="keyword">switch</span>(attrstr.toLowerCase())&#123;</div><div class="line">		<span class="keyword">case</span> <span class="string">"short"</span> :</div><div class="line">			returnDataType = DataTypes.StringType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"char"</span> :</div><div class="line">			returnDataType = DataTypes.StringType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"int"</span> :</div><div class="line">			returnDataType = DataTypes.IntegerType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"integer"</span> :</div><div class="line">			returnDataType = DataTypes.IntegerType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"float"</span> :</div><div class="line">			returnDataType = DataTypes.FloatType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"double"</span> :</div><div class="line">			returnDataType = DataTypes.DoubleType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"string"</span> :</div><div class="line">			returnDataType = DataTypes.StringType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"varchar"</span>:</div><div class="line">			returnDataType = DataTypes.StringType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"long"</span>:</div><div class="line">			returnDataType = DataTypes.LongType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"boolean"</span>:</div><div class="line">			returnDataType = DataTypes.BooleanType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"date"</span>:</div><div class="line">			returnDataType = DataTypes.DateType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> returnDataType;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html" title="Spark Sql 编程式结构DataType转换 代码类小结">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/1.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/spark/spark-fetchfailedException.html">
+    		Spark Shuffle FetchFailedException异常
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-05-09T13:25:21.000Z">2017-05-09</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>翻译<br><a href="http://stackoverflow.com/questions/34941410/fetchfailedexception-or-metadatafetchfailedexception-when-processing-big-data-se">http://stackoverflow.com/questions/34941410/fetchfailedexception-or-metadatafetchfailedexception-when-processing-big-data-se</a>  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">org.apache.spark.shuffle.MetadataFetchFailedException: Missing an output location for shuffle 0</div><div class="line"></div><div class="line">org.apache.spark.shuffle.FetchFailedException: Failed to connect to ip-xxxxxxxx</div><div class="line"></div><div class="line">org.apache.spark.shuffle.FetchFailedException: Error in opening FileSegmentManagedBuffer&#123;file=/mnt/yarn/nm/usercache/xxxx/appcache/application_1450751731124_8446/blockm</div><div class="line">gr-8a7b17b8-f4c3-45e7-aea8-8b0a7481be55/08/shuffle_0_224_0.data, offset=12329181, length=2104094&#125;</div></pre></td></tr></table></figure>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/spark/spark-fetchfailedException.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/spark/spark-fetchfailedException.html" title="Spark Shuffle FetchFailedException异常">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/9.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/spark/spark-fqa.html">
+    		spark碰到的问题
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-05-07T13:25:21.000Z">2017-05-07</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <h4 id="java-io-FileNotFoundException-File-does-not-exist"><a href="#java-io-FileNotFoundException-File-does-not-exist" class="headerlink" title="java.io.FileNotFoundException: File does not exist"></a>java.io.FileNotFoundException: File does not exist</h4><pre><code>java.io.FileNotFoundException: File does not exist: hdfs://master:9000/user/hmaster/.sparkStaging/application_1498791665418_0041/spark-assembly-1.4.0-hadoop2.6.0.jar
+        at org.apache.hadoop.hdfs.DistributedFileSystem$22.doCall(DistributedFileSystem.java:1309)
+        at org.apache.hadoop.hdfs.DistributedFileSystem$22.doCall(DistributedFileSystem.java:1301)
+        at org.apache.hadoop.fs.FileSystemLinkResolver.resolve(FileSystemLinkResolver.java:81)
+        at org.apache.hadoop.hdfs.DistributedFileSystem.getFileStatus(DistributedFileSystem.java:1301)
+        at org.apache.hadoop.yarn.util.FSDownload.copy(FSDownload.java:253)
+        at org.apache.hadoop.yarn.util.FSDownload.access$000(FSDownload.java:63)
+        at org.apache.hadoop.yarn.util.FSDownload$2.run(FSDownload.java:361)
+        at org.apache.hadoop.yarn.util.FSDownload$2.run(FSDownload.java:359)
+        at java.lang.Thread.run(Thread.java:745)
+        ...
+
+Failing this attempt. Failing the application.
+         ApplicationMaster host: N/A
+         ApplicationMaster RPC port: -1
+         queue: root.hmaster
+         start time: 1499311838058
+         final status: FAILED
+         tracking URL: http://master:8088/cluster/app/application_1498791665418_0041
+         user: hmaster
+Exception in thread &quot;main&quot; org.apache.spark.SparkException: Application application_1498791665418_0041 finished with failed status
+        at org.apache.spark.deploy.yarn.Client.run(Client.scala:841)
+        at org.apache.spark.deploy.yarn.Client$.main(Client.scala:867)
+        at org.apache.spark.deploy.yarn.Client.main(Client.scala)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.apache.spark.deploy.SparkSubmit$.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:664)
+...
+</code></pre>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/spark/spark-fqa.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/spark/spark-fqa.html" title="spark碰到的问题">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/7.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/hadoop/">大数据</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="http://dangluren.top/hadoop/spark/spark-rdd-13.html">
+    		spark RDD算子（十三）之RDD 分区 HashPartitioner，RangePartitioner，自定义分区
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-04-22T13:25:21.000Z">2017-04-22</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p><strong>关键字</strong>: spark分区方式，java HashPartitioner分区，scala HashPartitioner分区， java RangePartitioner 分区，scala RangePartitioner分区， java 自定义分区，scala自定义分区<br>
+            
+            <p class="more">
+                <a href="http://dangluren.top/hadoop/spark/spark-rdd-13.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/hadoop/spark/spark-rdd-13.html" title="spark RDD算子（十三）之RDD 分区 HashPartitioner，RangePartitioner，自定义分区">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/2.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+
+    
+    <nav class="page-navigator">
+        <span class="page-number current">1</span><a class="page-number" href="/categories/hadoop/page/2/">2</a><a class="page-number" href="/categories/hadoop/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/categories/hadoop/page/5/">5</a><a class="extend next" rel="next" href="/categories/hadoop/page/2/">后一页</a>
+    </nav>
+    
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">(5)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/">大数据</a>
+        <span class="badge">(43)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hdfs/">hdfs</a>
+        <span class="badge">(8)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hadoop/">hadoop</a>
+        <span class="badge">(11)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/架构/">架构</a>
+        <span class="badge">(21)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/spark/">spark</a>
+        <span class="badge">(23)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/算法/">算法</a>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/">随笔</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 文章标签 -->
+<div class="widget-bd tag-wrap">
+  
+    <a class="tag-item" href="/tags/linux/" title="linux">linux (7)</a>
+  
+    <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
+  
+    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
+  
+    <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
+  
+    <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
+  
+    <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
+  
+    <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
+  
+    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
+  
+    <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
+  
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
+  
+    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
+  
+    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
+  
+    <a class="tag-item" href="/tags/曲线拟合/" title="曲线拟合">曲线拟合 (1)</a>
+  
+    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
+  
+    <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
+  
+    <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
+  
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
+  
+    <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
+  
+    <a class="tag-item" href="/tags/xml解析/" title="xml解析">xml解析 (1)</a>
+  
+    <a class="tag-item" href="/tags/资源/" title="资源">资源 (1)</a>
+  
+</div>
+    </section>
+    
+
+    
+
+    
+    <!-- 友情链接 -->
+    <section class="widget">
+        <h3 class="widget-hd"><strong>友情链接</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+        <li>
+            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+        </li>
+    
+        <li>
+            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+        </li>
+    
+        <li>
+            <a href="http://xuanzh.cc/" target="_blank" title="技术博客">朱旋个人博客</a>
+        </li>
+    
+</ul>
+    </section>
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Jelon Loves You</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <!-- 这里放网站js脚本 -->
+<script src="/js/main.js"></script>
+</body>
+</html>

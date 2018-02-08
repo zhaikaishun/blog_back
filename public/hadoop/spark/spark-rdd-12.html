@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>spark RDD算子（十二）之RDD 分区操作上mapPartitions, mapPartitionsWithIndex保存操作saveAsTextFile,saveAsSequenceFile,saveAsObjectFile,saveAsHadoopFile 等 | 挡路人</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
+    <meta name="description" content="Jelon个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?fd459238242776d173cdc64918fb32f2";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+    <section class="container header-main">
+        <div class="logo">
+            <a href="/">
+                <div class="cover">
+                    <span class="name">挡路人</span>
+                    <span class="description">学有所思，思有所感</span>
+                </div>
+            </a>
+        </div>
+        <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+        <ul class="menu hidden" id="JELON__menu">
+            
+            <li rel="/hadoop/spark/spark-rdd-12.html" class="item ">
+                <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+            </li>
+            
+            <li rel="/hadoop/spark/spark-rdd-12.html" class="item ">
+                <a href="/lab/" title="实验室" class="icon-lab">&nbsp;实验室</a>
+            </li>
+            
+            <li rel="/hadoop/spark/spark-rdd-12.html" class="item ">
+                <a href="/about/" title="关于" class="icon-about">&nbsp;关于</a>
+            </li>
+            
+            <li rel="/hadoop/spark/spark-rdd-12.html" class="item ">
+                <a href="/comment/" title="留言" class="icon-comment">&nbsp;留言</a>
+            </li>
+            
+        </ul>
+        <div class="profile clearfix">
+            <div class="feeds fl">
+                
+                
+                <p class="links">
+                    
+                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        |
+                    
+                        <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+                        
+                    
+                </p>
+                <p class="sns">
+                    
+                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                    
+                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                    
+                    <a href="javascript: void(0);" class="wechat">
+                        <b>■</b>
+                        公众号
+                        <span class="popover">
+                            <img src="/img/wechat_mp.jpg" width="120" height="120" alt="我的微信订阅号">
+                            <i class="arrow"></i>
+                        </span>
+                    </a>
+                </p>
+                
+            </div>
+            <div class="avatar fr">
+                <img src="/img/jelon.jpg" alt="avatar" title="Jelon" >
+            </div>
+        </div>
+    </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>spark RDD算子（十二）之RDD 分区操作上mapPartitions, mapPartitionsWithIndex保存操作saveAsTextFile,saveAsSequenceFile,saveAsObjectFile,saveAsHadoopFile 等</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        kaishun 发表于
+        <time datetime="2017-04-18T13:25:21.000Z">2017-04-18</time>
+    </p>
+    <div class="post-content">
+        <h1 id="mapPartitions"><a href="#mapPartitions" class="headerlink" title="mapPartitions"></a><strong>mapPartitions</strong></h1><p>mapPartition可以倒过来理解，先partition，再把每个partition进行map函数，<br><strong>适用场景</strong><br>如果在映射的过程中需要频繁创建额外的对象，使用mapPartitions要比map高效的过。</p>
+<p>比如，将RDD中的所有数据通过JDBC连接写入数据库，如果使用map函数，可能要为每一个元素都创建一个connection，这样开销很大，如果使用mapPartitions，那么只需要针对每一个分区建立一个connection。<br>下面的例子，<strong>把每一个元素平方</strong><br><a id="more"></a><br><strong>java 每一个元素平方</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line">        JavaRDD&lt;Integer&gt; rdd = sc.parallelize(</div><div class="line">                Arrays.asList(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>));</div><div class="line">        JavaRDD&lt;Integer&gt; mapPartitionRDD = rdd.mapPartitions(<span class="keyword">new</span> FlatMapFunction&lt;Iterator&lt;Integer&gt;, Integer&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> Iterable&lt;Integer&gt; <span class="title">call</span><span class="params">(Iterator&lt;Integer&gt; it)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                ArrayList&lt;Integer&gt; results = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">                <span class="keyword">while</span> (it.hasNext()) &#123;</div><div class="line">                    <span class="keyword">int</span> i = it.next();</div><div class="line">                    results.add(i*i);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> results;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        mapPartitionRDD.foreach(<span class="keyword">new</span> VoidFunction&lt;Integer&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(Integer integer)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                System.out.println(integer);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">----------输出-------------</div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">4</span></div><div class="line"><span class="number">9</span></div><div class="line"><span class="number">16</span></div><div class="line"><span class="number">25</span></div><div class="line"><span class="number">36</span></div><div class="line"><span class="number">49</span></div><div class="line"><span class="number">64</span></div><div class="line"><span class="number">81</span></div><div class="line"><span class="number">100</span></div><div class="line">```  </div><div class="line">**把每一个数字i变成一个map(i,i*i)的形式**</div><div class="line"></div><div class="line">**java，把每一个元素变成map(i,i*i)**</div><div class="line">```java</div><div class="line">        JavaRDD&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2JavaRDD = rdd.mapPartitions(<span class="keyword">new</span> FlatMapFunction&lt;Iterator&lt;Integer&gt;, Tuple2&lt;Integer, Integer&gt;&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="keyword">public</span> Iterable&lt;Tuple2&lt;Integer, Integer&gt;&gt; call(Iterator&lt;Integer&gt; it) <span class="keyword">throws</span> Exception &#123;</div><div class="line">                ArrayList&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2s = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">                <span class="keyword">while</span> (it.hasNext()) &#123;</div><div class="line">                    Integer next = it.next();</div><div class="line">                    tuple2s.add(<span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(next, next * next));</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> tuple2s;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        tuple2JavaRDD.foreach(<span class="keyword">new</span> VoidFunction&lt;Tuple2&lt;Integer, Integer&gt;&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(Tuple2&lt;Integer, Integer&gt; tp2)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                System.out.println(tp2);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">---------输出---------------</div><div class="line">(<span class="number">1</span>,<span class="number">1</span>)</div><div class="line">(<span class="number">2</span>,<span class="number">4</span>)</div><div class="line">(<span class="number">3</span>,<span class="number">9</span>)</div><div class="line">(<span class="number">4</span>,<span class="number">16</span>)</div><div class="line">(<span class="number">5</span>,<span class="number">25</span>)</div><div class="line">(<span class="number">6</span>,<span class="number">36</span>)</div><div class="line">(<span class="number">7</span>,<span class="number">49</span>)</div><div class="line">(<span class="number">8</span>,<span class="number">64</span>)</div><div class="line">(<span class="number">9</span>,<span class="number">81</span>)</div><div class="line">(<span class="number">10</span>,<span class="number">100</span>)</div></pre></td></tr></table></figure></p>
+<p><strong>scala 把每一个元素变成map(i,i*i)</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div></pre></td><td class="code"><pre><div class="line">    val rdd = sc.parallelize(List(1,2,3,4,5,6,7,8,9,10),3)</div><div class="line">    def mapPartFunc(iter: Iterator[Int]):Iterator[(Int,Int)]=&#123;</div><div class="line">      var res = List[(Int,Int)]()</div><div class="line">      while (iter.hasNext)&#123;</div><div class="line">        val cur = iter.next</div><div class="line">        res=res.::(cur,cur*cur)</div><div class="line">      &#125;</div><div class="line">       res.iterator</div><div class="line">    &#125;</div><div class="line">    val mapPartRDD = rdd.mapPartitions(mapPartFunc)</div><div class="line">    mapPartRDD.foreach(maps=&gt;println(maps))</div><div class="line">----------输出-----------</div><div class="line">(3,9)</div><div class="line">(2,4)</div><div class="line">(1,1)</div><div class="line">(6,36)</div><div class="line">(5,25)</div><div class="line">(4,16)</div><div class="line">(10,100)</div><div class="line">(9,81)</div><div class="line">(8,64)</div><div class="line">(7,49)</div><div class="line">``` </div><div class="line">**mapPartitions操作键值对 把(i,j) 变成(i,j*j)**</div><div class="line">**scala版本**</div><div class="line">```scala</div><div class="line">    var rdd = sc.parallelize(List((1,1), (1,2), (1,3), (2,1), (2,2), (2,3)))</div><div class="line"></div><div class="line">    def mapPartFunc(iter: Iterator[(Int,Int)]):Iterator[(Int,Int)]=&#123;</div><div class="line">      var res = List[(Int,Int)]()</div><div class="line">      while (iter.hasNext)&#123;</div><div class="line">        val cur = iter.next</div><div class="line">        res=res.::(cur._1,cur._2*cur._2)</div><div class="line">      &#125;</div><div class="line">      res.iterator</div><div class="line">    &#125;</div><div class="line">    val mapPartionsRDD = rdd.mapPartitions(mapPartFunc)</div><div class="line">    mapPartionsRDD.foreach(println( _))</div><div class="line">```  </div><div class="line">**java版本**</div><div class="line">```java</div><div class="line">        JavaRDD&lt;Tuple2&lt;Integer, Integer&gt;&gt; rdd = sc.parallelize(Arrays.asList(new Tuple2&lt;Integer, Integer&gt;(1, 1), new Tuple2&lt;Integer, Integer&gt;(1, 2)</div><div class="line">                , new Tuple2&lt;Integer, Integer&gt;(1, 3), new Tuple2&lt;Integer, Integer&gt;(2, 1)</div><div class="line">                , new Tuple2&lt;Integer, Integer&gt;(2, 2), new Tuple2&lt;Integer, Integer&gt;(2, 3)), 3);</div><div class="line">        JavaPairRDD&lt;Integer, Integer&gt; pairRDD = JavaPairRDD.fromJavaRDD(rdd);</div><div class="line">        JavaRDD&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2JavaRDD = pairRDD.mapPartitions(new FlatMapFunction&lt;Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt;, Tuple2&lt;Integer, Integer&gt;&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            public Iterable&lt;Tuple2&lt;Integer, Integer&gt;&gt; call(Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt; tp2It) throws Exception &#123;</div><div class="line">                ArrayList&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2s = new ArrayList&lt;&gt;();</div><div class="line">                while (tp2It.hasNext())&#123;</div><div class="line">                    Tuple2&lt;Integer, Integer&gt; next = tp2It.next();</div><div class="line">                    tuple2s.add(new Tuple2&lt;Integer, Integer&gt;(next._1,next._2*next._2));</div><div class="line">                &#125;</div><div class="line">                return tuple2s;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        tuple2JavaRDD.foreach(new VoidFunction&lt;Tuple2&lt;Integer, Integer&gt;&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            public void call(Tuple2&lt;Integer, Integer&gt; tp2) throws Exception &#123;</div><div class="line">                System.out.println(tp2);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">-----------------输出---------------</div><div class="line">(1,1)</div><div class="line">(1,4)</div><div class="line">(1,9)</div><div class="line">(2,1)</div><div class="line">(2,4)</div><div class="line">(2,9)</div><div class="line">```  </div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># **mapPartitionsWithIndex**  </div><div class="line">与mapPartitionWithIndex类似，也是按照分区进行的map操作，不过mapPartitionsWithIndex传入的参数多了一个分区的值，下面举个例子,为统计各个分区中的元素 (稍加修改可以做统计各个分区的数量)</div><div class="line"></div><div class="line">**java**</div><div class="line">```java</div><div class="line">JavaRDD&lt;Integer&gt; rdd = sc.parallelize(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), 3);</div><div class="line">        JavaRDD&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2JavaRDD = rdd.mapPartitionsWithIndex(new Function2&lt;Integer, Iterator&lt;Integer&gt;, Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt;&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            public Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt; call(Integer partIndex, Iterator&lt;Integer&gt; it) throws Exception &#123;</div><div class="line">                ArrayList&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2s = new ArrayList&lt;&gt;();</div><div class="line">                while (it.hasNext()) &#123;</div><div class="line">                    int next = it.next();</div><div class="line">                    tuple2s.add(new Tuple2&lt;&gt;(partIndex, next));</div><div class="line">                &#125;</div><div class="line">                return tuple2s.iterator();</div><div class="line">            &#125;</div><div class="line">        &#125;, false);</div><div class="line"></div><div class="line">        tuple2JavaRDD.foreach(new VoidFunction&lt;Tuple2&lt;Integer, Integer&gt;&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            public void call(Tuple2&lt;Integer, Integer&gt; tp2) throws Exception &#123;</div><div class="line">                System.out.println(tp2);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">-------输出-------------</div><div class="line">(0,1)</div><div class="line">(0,2)</div><div class="line">(0,3)</div><div class="line">(1,4)</div><div class="line">(1,5)</div><div class="line">(1,6)</div><div class="line">(2,7)</div><div class="line">(2,8)</div><div class="line">(2,9)</div><div class="line">(2,10)</div><div class="line">``` </div><div class="line">**scala**</div></pre></td></tr></table></figure></p>
+<pre><code>val rdd = sc.parallelize(List(1,2,3,4,5,6,7,8,9,10),3)
+
+def mapPartIndexFunc(i1:Int,iter: Iterator[Int]):Iterator[(Int,Int)]={
+  var res = List[(Int,Int)]()
+  while(iter.hasNext){
+    var next = iter.next()
+    res=res.::(i1,next)
+  }
+  res.iterator
+}
+var mapPartIndexRDDs = rdd.mapPartitionsWithIndex(mapPartIndexFunc)
+
+mapPartIndexRDDs.foreach(println( _))
+</code></pre><p>————输出——-<br>(0,3)<br>(0,2)<br>(0,1)<br>(1,6)<br>(1,5)<br>(1,4)<br>(2,10)<br>(2,9)<br>(2,8)<br>(2,7)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">**mapPartitionsWithIndex 统计键值对中的各个分区的元素**  </div><div class="line">**scala版本**</div><div class="line">```scala</div><div class="line">var rdd = sc.parallelize(List((1,1), (1,2), (2,3), (2,4), (3,5), (3,6),(4,7), (4,8),(5,9), (5,10)),3)</div><div class="line"></div><div class="line">    def mapPartIndexFunc(i1:Int,iter: Iterator[(Int,Int)]):Iterator[(Int,(Int,Int))]=&#123;</div><div class="line">      var res = List[(Int,(Int,Int))]()</div><div class="line">      while(iter.hasNext)&#123;</div><div class="line">        var next = iter.next()</div><div class="line">        res=res.::(i1,next)</div><div class="line">      &#125;</div><div class="line">      res.iterator</div><div class="line">    &#125;</div><div class="line">    val mapPartIndexRDD = rdd.mapPartitionsWithIndex(mapPartIndexFunc)</div><div class="line"></div><div class="line">    mapPartIndexRDD.foreach(println( _))</div><div class="line">-----------输出---------</div><div class="line">(0,(1,1))</div><div class="line">(0,(1,2))</div><div class="line">(0,(2,3))</div><div class="line">(1,(2,4))</div><div class="line">(1,(3,5))</div><div class="line">(1,(3,6))</div><div class="line">(2,(4,7))</div><div class="line">(2,(4,8))</div><div class="line">(2,(5,9))</div><div class="line">(2,(5,10))</div></pre></td></tr></table></figure></p>
+<p><strong>java版本</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">        JavaRDD&lt;Tuple2&lt;Integer, Integer&gt;&gt; rdd = sc.parallelize(Arrays.asList(new Tuple2&lt;Integer, Integer&gt;(1, 1), new Tuple2&lt;Integer, Integer&gt;(1, 2)</div><div class="line">                , new Tuple2&lt;Integer, Integer&gt;(2, 3), new Tuple2&lt;Integer, Integer&gt;(2, 4)</div><div class="line">                , new Tuple2&lt;Integer, Integer&gt;(3, 5), new Tuple2&lt;Integer, Integer&gt;(3, 6)</div><div class="line">                , new Tuple2&lt;Integer, Integer&gt;(4, 7), new Tuple2&lt;Integer, Integer&gt;(4, 8)</div><div class="line">                , new Tuple2&lt;Integer, Integer&gt;(5, 9), new Tuple2&lt;Integer, Integer&gt;(5, 10)</div><div class="line">                ), 3);</div><div class="line">        JavaPairRDD&lt;Integer, Integer&gt; pairRDD = JavaPairRDD.fromJavaRDD(rdd);</div><div class="line"></div><div class="line">        JavaRDD&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt; mapPartitionIndexRDD = pairRDD.mapPartitionsWithIndex(new Function2&lt;Integer, Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt;, Iterator&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt;&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            public Iterator&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt; call(Integer partIndex, Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2Iterator) &#123;</div><div class="line">                ArrayList&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt; tuple2s = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">                while (tuple2Iterator.hasNext()) &#123;</div><div class="line">                    Tuple2&lt;Integer, Integer&gt; next = tuple2Iterator.next();</div><div class="line">                    tuple2s.add(new Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;(partIndex, next));</div><div class="line">                &#125;</div><div class="line">                return tuple2s.iterator();</div><div class="line">            &#125;</div><div class="line">        &#125;, false);</div><div class="line"></div><div class="line">        mapPartitionIndexRDD.foreach(new VoidFunction&lt;Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt;&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            public void call(Tuple2&lt;Integer, Tuple2&lt;Integer, Integer&gt;&gt; integerTuple2Tuple2) throws Exception &#123;</div><div class="line">                System.out.println(integerTuple2Tuple2);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">--------------输出---------</div><div class="line">(0,(1,1))</div><div class="line">(0,(1,2))</div><div class="line">(0,(2,3))</div><div class="line">(1,(2,4))</div><div class="line">(1,(3,5))</div><div class="line">(1,(3,6))</div><div class="line">(2,(4,7))</div><div class="line">(2,(4,8))</div><div class="line">(2,(5,9))</div><div class="line">(2,(5,10))</div></pre></td></tr></table></figure></p>
+<p>mapPartitionsWithIndex 中 第二个参数，true还是false<br>这篇文章有些探讨,<a href="http://stackoverflow.com/questions/38048904/how-to-use-function-mappartitionswithindex-in-spark/38049239，个人还未理解" target="_blank" rel="external">http://stackoverflow.com/questions/38048904/how-to-use-function-mappartitionswithindex-in-spark/38049239，个人还未理解</a> TODO  </p>
+<p>补充： 打印各个分区的操作，可以使用 glom 的方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">JavaRDD&lt;Tuple2&lt;Integer, Integer&gt;&gt; rdd1 = sc.parallelize(Arrays.asList(<span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">1</span>, <span class="number">1</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">1</span>, <span class="number">2</span>)</div><div class="line">                , <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">2</span>, <span class="number">3</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">2</span>, <span class="number">4</span>)</div><div class="line">                , <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">3</span>, <span class="number">5</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">3</span>, <span class="number">6</span>)</div><div class="line">                , <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">4</span>, <span class="number">7</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">4</span>, <span class="number">8</span>)</div><div class="line">                , <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">5</span>, <span class="number">9</span>), <span class="keyword">new</span> Tuple2&lt;Integer, Integer&gt;(<span class="number">5</span>, <span class="number">10</span>)</div><div class="line">        ), <span class="number">3</span>);</div><div class="line">        JavaPairRDD&lt;Integer, Integer&gt; pairRDD = JavaPairRDD.fromJavaRDD(rdd1);</div><div class="line">        <span class="comment">/*补充：打印各个分区的操作，可以使用 glom 的方法*/</span></div><div class="line">        System.out.println(<span class="string">"打印各个分区的操作，可以使用 glom 的方法"</span>);</div><div class="line">        JavaRDD&lt;List&lt;Tuple2&lt;Integer, Integer&gt;&gt;&gt; glom = pairRDD.glom();</div><div class="line">        glom.foreach(<span class="keyword">new</span> VoidFunction&lt;List&lt;Tuple2&lt;Integer, Integer&gt;&gt;&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(List&lt;Tuple2&lt;Integer, Integer&gt;&gt; tuple2s)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                System.out.println(tuple2s);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line"></div><div class="line"><span class="comment">//************************* 输出 </span></div><div class="line">打印各个分区的操作，可以使用 glom 的方法</div><div class="line">[(<span class="number">1</span>,<span class="number">1</span>), (<span class="number">1</span>,<span class="number">2</span>), (<span class="number">2</span>,<span class="number">3</span>)]</div><div class="line">[(<span class="number">2</span>,<span class="number">4</span>), (<span class="number">3</span>,<span class="number">5</span>), (<span class="number">3</span>,<span class="number">6</span>)]</div><div class="line">[(<span class="number">4</span>,<span class="number">7</span>), (<span class="number">4</span>,<span class="number">8</span>), (<span class="number">5</span>,<span class="number">9</span>), (<span class="number">5</span>,<span class="number">10</span>)]</div></pre></td></tr></table></figure></p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/hadoop/">大数据</a>|<a class="cat-link" href="/categories/hadoop/spark/">spark</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/spark/" title="spark">spark</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      <a href="javascript: window.open('http://service.weibo.com/share/share.php?url=' + encodeURIComponent(location.href) + '&title=' + document.title + '&language=zh_cn');" class="share-icon weibo"></a>
+      <a href="javascript: alert('请复制链接到微信并发送');" class="share-icon wechat"></a>
+      <a href="javascript: window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(location.href) + '&title=' + document.title);" class="share-icon qqzone"></a>
+      <a href="javascript: window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + encodeURIComponent(location.href) + '&desc=Jelon个人博客&title=' + document.title + '&callback=' + encodeURIComponent(location.href));" class="share-icon qq"></a>
+      <a href="javascript: window.open('http://shuo.douban.com/!service/share?href=' + encodeURIComponent(location.href) + '&name=' + document.title + '&text=' + document.title);" class="share-icon douban"></a>
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/hadoop/spark/spark-rdd-11.html">
+            
+                spark RDD算子（十一）之RDD Action 保存操作saveAsTextFile,saveAsSequenceFile,saveAsObjectFile,saveAsHadoopFile 等
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/hadoop/spark/spark-rdd-13.html">
+            
+                spark RDD算子（十三）之RDD 分区 HashPartitioner，RangePartitioner，自定义分区
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'spark-rdd-12' || 'hadoop/spark/spark-rdd-12.html',
+    owner: 'jangdelong',
+    repo: 'blog_comments',
+    clientId: 'b08ed25e52c57993e69c',
+    clientSecret: '1cb9545488f0380904b87350e7c5a270ae03bab7'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">(5)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/">大数据</a>
+        <span class="badge">(43)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hdfs/">hdfs</a>
+        <span class="badge">(8)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hadoop/">hadoop</a>
+        <span class="badge">(11)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/架构/">架构</a>
+        <span class="badge">(21)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/spark/">spark</a>
+        <span class="badge">(23)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/算法/">算法</a>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/">随笔</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 文章标签 -->
+<div class="widget-bd tag-wrap">
+  
+    <a class="tag-item" href="/tags/linux/" title="linux">linux (7)</a>
+  
+    <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
+  
+    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
+  
+    <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
+  
+    <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
+  
+    <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
+  
+    <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
+  
+    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
+  
+    <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
+  
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
+  
+    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
+  
+    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
+  
+    <a class="tag-item" href="/tags/曲线拟合/" title="曲线拟合">曲线拟合 (1)</a>
+  
+    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
+  
+    <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
+  
+    <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
+  
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
+  
+    <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
+  
+    <a class="tag-item" href="/tags/xml解析/" title="xml解析">xml解析 (1)</a>
+  
+    <a class="tag-item" href="/tags/资源/" title="资源">资源 (1)</a>
+  
+</div>
+    </section>
+    
+
+    
+
+    
+    <!-- 友情链接 -->
+    <section class="widget">
+        <h3 class="widget-hd"><strong>友情链接</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+        <li>
+            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+        </li>
+    
+        <li>
+            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+        </li>
+    
+        <li>
+            <a href="http://xuanzh.cc/" target="_blank" title="技术博客">朱旋个人博客</a>
+        </li>
+    
+</ul>
+    </section>
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Jelon Loves You</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <!-- 这里放网站js脚本 -->
+<script src="/js/main.js"></script>
+</body>
+</html>

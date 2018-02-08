@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>fluentd+mongodb构建分布式日志收集系统 | 挡路人</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
+    <meta name="description" content="Jelon个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?fd459238242776d173cdc64918fb32f2";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+    <section class="container header-main">
+        <div class="logo">
+            <a href="/">
+                <div class="cover">
+                    <span class="name">挡路人</span>
+                    <span class="description">学有所思，思有所感</span>
+                </div>
+            </a>
+        </div>
+        <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+        <ul class="menu hidden" id="JELON__menu">
+            
+            <li rel="/架构/fluentd_mongodb_1.html" class="item ">
+                <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+            </li>
+            
+            <li rel="/架构/fluentd_mongodb_1.html" class="item ">
+                <a href="/lab/" title="实验室" class="icon-lab">&nbsp;实验室</a>
+            </li>
+            
+            <li rel="/架构/fluentd_mongodb_1.html" class="item ">
+                <a href="/about/" title="关于" class="icon-about">&nbsp;关于</a>
+            </li>
+            
+            <li rel="/架构/fluentd_mongodb_1.html" class="item ">
+                <a href="/comment/" title="留言" class="icon-comment">&nbsp;留言</a>
+            </li>
+            
+        </ul>
+        <div class="profile clearfix">
+            <div class="feeds fl">
+                
+                
+                <p class="links">
+                    
+                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        |
+                    
+                        <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+                        
+                    
+                </p>
+                <p class="sns">
+                    
+                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                    
+                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                    
+                    <a href="javascript: void(0);" class="wechat">
+                        <b>■</b>
+                        公众号
+                        <span class="popover">
+                            <img src="/img/wechat_mp.jpg" width="120" height="120" alt="我的微信订阅号">
+                            <i class="arrow"></i>
+                        </span>
+                    </a>
+                </p>
+                
+            </div>
+            <div class="avatar fr">
+                <img src="/img/jelon.jpg" alt="avatar" title="Jelon" >
+            </div>
+        </div>
+    </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>fluentd+mongodb构建分布式日志收集系统</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        kaishun 发表于
+        <time datetime="2017-09-11T13:25:21.000Z">2017-09-11</time>
+    </p>
+    <div class="post-content">
+        <p>前言：<br>和同事合作安装过一次fluentd+mongodb，网上文档较少，走了好多弯路，幸亏同事比较给力，能成功应用，现将安装笔记记录一下<br>。（这里只安装了一台，分布式也是一样的，使用mongodb集群即可）<br><a id="more"></a></p>
+<h2 id="一、-mongodb单机安装"><a href="#一、-mongodb单机安装" class="headerlink" title="一、 mongodb单机安装"></a>一、 mongodb单机安装</h2><h3 id="1-1-下载解压并安装"><a href="#1-1-下载解压并安装" class="headerlink" title="1.1 下载解压并安装"></a>1.1 下载解压并安装</h3><p>下载mongodb-linux-x86_64-3.4.6.tgz ， 镜像地址<br><a href="https://www.mongodb.org/dl/linux/x86_64" target="_blank" rel="external">https://www.mongodb.org/dl/linux/x86_64</a>  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span>解压</div><div class="line">tar -xzvf mongodb-linux-x86_64-3.4.6.tgz -C /usr/local/</div><div class="line"><span class="meta">#</span>改名</div><div class="line">mv mongodb-linux-x86_64-3.4.6 mongodb</div></pre></td></tr></table></figure>
+<h3 id="1-2-配置环境变量"><a href="#1-2-配置环境变量" class="headerlink" title="1.2 配置环境变量"></a>1.2 配置环境变量</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vim /etc/profile</div><div class="line"><span class="meta">#</span> 内容</div><div class="line">export MONGODB_HOME=/usr/local/mongodb</div><div class="line">export PATH=$MONGODB_HOME/bin:$PATH</div><div class="line"><span class="meta">#</span> 使立即生效</div><div class="line">source /etc/profile</div></pre></td></tr></table></figure>
+<h2 id="二、-fluentd安装"><a href="#二、-fluentd安装" class="headerlink" title="二、 fluentd安装"></a>二、 fluentd安装</h2><h3 id="2-1-调整安装的Linux环境"><a href="#2-1-调整安装的Linux环境" class="headerlink" title="2.1 调整安装的Linux环境"></a>2.1 调整安装的Linux环境</h3><p>在安装Fluentd之前，您必须按照以下步骤设置您的环境(不是必要的，我家里电脑没有这样做)。<br><a href="https://docs.fluentd.org/v1.0/articles/before-install#increase-max-#-of-file-descriptors" target="_blank" rel="external">参考官网</a>   </p>
+<h3 id="2-2-在线或离线安装fluentd"><a href="#2-2-在线或离线安装fluentd" class="headerlink" title="2.2 在线或离线安装fluentd"></a>2.2 在线或离线安装fluentd</h3><p>两种安装方式，能联网的话，肯定优先使用在线安装了<br><strong>在线安装</strong>：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent3.sh | sh</div></pre></td></tr></table></figure></p>
+<p>然后运行即可, 如果提示报错，那么直接浏览器粘贴<a href="https://toolbelt.treasuredata.com/sh/install-redhat-td-agent3.sh" target="_blank" rel="external">https://toolbelt.treasuredata.com/sh/install-redhat-td-agent3.sh</a>, 把里面的内容拷贝到机器上的某个.sh文件， 然后执行， 注意： 如果是root用户，把里面的sudo去掉  </p>
+<p><strong>离线安装</strong>：先下载： td-agent-3.1.1-0.el6.x86_64.rpm<br><a href="https://td-agent-package-browser.herokuapp.com/3/redhat/6/x86_64" target="_blank" rel="external">centos6下载地址</a><br><a href="https://td-agent-package-browser.herokuapp.com/3/redhat/7/x86_64" target="_blank" rel="external">centos7下载地址</a><br>下载完后，运行<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rpm -ivh  td-agent-3.1.1-0.el6.x86_64.rpm</div></pre></td></tr></table></figure></p>
+<h3 id="2-3-运行fluentd服务"><a href="#2-3-运行fluentd服务" class="headerlink" title="2.3 运行fluentd服务"></a>2.3 运行fluentd服务</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span> /etc/init.d/td-agent start</div></pre></td></tr></table></figure>
+<p>查看状态，停止，重启等命令如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ /etc/init.d/td-agent start</div><div class="line">$ /etc/init.d/td-agent stop</div><div class="line">$ /etc/init.d/td-agent restart</div><div class="line">$ /etc/init.d/td-agent status</div></pre></td></tr></table></figure></p>
+<p>有问题去 vim /var/log/td-agent/td-agent.log 查看日志信息</p>
+<p>刚开始安装的时候，尝试使用官网的那个例子， 测试收集apache的日志  </p>
+<h3 id="2-4-配置fluentd文件"><a href="#2-4-配置fluentd文件" class="headerlink" title="2.4 配置fluentd文件"></a>2.4 配置fluentd文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Vim /etc/td-agent/td-agent.conf</div></pre></td></tr></table></figure>
+<p>在配置中添加  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">&lt;source&gt;</div><div class="line">  @type tail # 从文件的末尾的方式读取数据</div><div class="line">  path /var/log/httpd/access_log  #apache服务器产生的日志文件位置，注意了，这个貌似centos和ubuntu不一致，官网的那个日志目录在centos中不存在的</div><div class="line">  pos_file /var/log/td-agent/apache2.access_log.pos #一个镜像文件,默认是这个</div><div class="line"><span class="meta">  #</span> apache2：自带的解析器,apache服务器产生的日志，fluentd默认提供了一个解析方法（若不用这个方法，需要自己配置format等配置）</div><div class="line">  &lt;parse&gt;</div><div class="line">    @type apache2</div><div class="line">  &lt;/parse&gt;</div><div class="line">  tag mongo.apache.access # tag, 接收的tag</div><div class="line">&lt;/source&gt;</div><div class="line"></div><div class="line">&lt;match mongo.**&gt;</div><div class="line"><span class="meta">  #</span> plugin type</div><div class="line">  @type mongo # 引入插件为mongo，使用这个必须要安装fluentd-mongo的插件</div><div class="line"></div><div class="line"><span class="meta">  #</span> mongodb db + collection</div><div class="line">  database apache # mongodb的数据库</div><div class="line">  collection access # 放在哪个集合中</div><div class="line"></div><div class="line"><span class="meta">  #</span> mongodb host + port</div><div class="line">  host localhost #数据库host</div><div class="line">  port 27017 # 数据库端口</div><div class="line"></div><div class="line"><span class="meta">  #</span> interval</div><div class="line">  &lt;buffer&gt;</div><div class="line">    flush_interval 10s #10秒钟刷新读取一次</div><div class="line">  &lt;/buffer&gt;</div><div class="line"></div><div class="line"><span class="meta">  #</span> make sure to include the time key</div><div class="line">  &lt;inject&gt;</div><div class="line">    time_key time</div><div class="line">  &lt;/inject&gt;</div><div class="line">&lt;/match&gt;</div></pre></td></tr></table></figure>
+<h3 id="2-5-重启fluentd，然后查看fluentd的状态"><a href="#2-5-重启fluentd，然后查看fluentd的状态" class="headerlink" title="2.5 重启fluentd，然后查看fluentd的状态"></a>2.5 重启fluentd，然后查看fluentd的状态</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span> /etc/init.d/td-agent restart  </div><div class="line"><span class="meta">$</span> /etc/init.d/td-agent status</div></pre></td></tr></table></figure>
+<p>上面肯定报错，应该会报fluent-plugin-mongo插件找不到  </p>
+<h3 id="2-6-fluent-plugin-mongo-插件安装"><a href="#2-6-fluent-plugin-mongo-插件安装" class="headerlink" title="2.6 fluent-plugin-mongo 插件安装"></a>2.6 fluent-plugin-mongo 插件安装</h3><p>这个插件依赖于ruby2.0以上的版本, 所以先要安装fluent-plugin-mongo<br>下载一个ruby2.0以上的版本<br>编译安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">tar  -xzvf ruby-2.2.9.tar.gz</div><div class="line">cd /ruby-2.2.9/</div><div class="line">./configure</div><div class="line">make</div><div class="line">make install  (root)</div></pre></td></tr></table></figure></p>
+<p><strong>安装fluent-plugin-mongo 插件</strong><br>在线版：==<strong>因为我们用的是rpm安装的，所以一定要使用td-agent-gem来安装，不能直接使用gem！！！</strong>== 否则即使安装了插件，可能fluentd还是找不到这个插件。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/sbin/ td-agent-gem</div><div class="line">td-agent-gem install fluent-plugin-mongo</div></pre></td></tr></table></figure></p>
+<p>离线安装: 有的服务器集群不允许连接外网，就只能离线安装了<br>下载 fluent-plugin-mongo-1.0.0.gem  官网–&gt;plugin–&gt;下载fluentd-plugin-mongo-1.0.0.gem<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">cd /usr/sbin/ td-agent-gem</div><div class="line">td-agent-gem install fluent-plugin-mongo-1.0.0.gem</div><div class="line"></div><div class="line">```  </div><div class="line"></div><div class="line"><span class="meta">#</span>## 2.7 安装完后重启fluentd  </div><div class="line">```shell</div><div class="line"><span class="meta">$</span> /etc/init.d/td-agent restart  </div><div class="line"><span class="meta">$</span> /etc/init.d/td-agent status</div></pre></td></tr></table></figure></p>
+<h3 id="2-8-测试"><a href="#2-8-测试" class="headerlink" title="2.8 测试"></a>2.8 测试</h3><p>使用apache的日志来测试<br>开启一个apache server服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">开启服务的方法  service httpd start</div><div class="line">```  </div><div class="line">使用ab test来测试</div></pre></td></tr></table></figure></p>
+<p>ab -n 100 -c 10 <a href="http://localhost/" target="_blank" rel="external">http://localhost/</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">并发10，请求100此，我们用的是centos6.5， 所以此日志会保存在  </div><div class="line">/var/log/httpd/access_log 中，日志的格式如下</div></pre></td></tr></table></figure></p>
+<p>::1 - - [25/Dec/2017:15:58:03 +0800] “GET / HTTP/1.0” 403 5039 “-“ “ApacheBench/2.3”<br>::1 - - [25/Dec/2017:15:58:03 +0800] “GET / HTTP/1.0” 403 5039 “-“ “ApacheBench/2.3”<br>::1 - - [25/Dec/2017:15:58:03 +0800] “GET / HTTP/1.0” 403 5039 “-“ “ApacheBench/2.3”<br>::1 - - [25/Dec/2017:15:58:03 +0800] “GET / HTTP/1.0” 403 5039 “-“ “ApacheBench/2.3”<br>::1 - - [25/Dec/2017:15:58:03 +0800] “GET / HTTP/1.0” 403 5039 “-“ “ApacheBench/2.3”<br>::1 - - [25/Dec/2017:15:58:03 +0800] “GET / HTTP/1.0” 403 5039 “-“ “ApacheBench/2.3”<br>::1 - - [25/Dec/2017:15:58:03 +0800] “GET / HTTP/1.0” 403 5039 “-“ “ApacheBench/2.3”<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">**注意**： /var/log/httpd 目录的权限</div></pre></td></tr></table></figure></p>
+<p>chmod 777 /var/log/httpd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">如果第一次没改权限有问题了，建议把/var/log/httpd/access_log 文件删掉，重启apache的httpd  ,然后ab -test  </div><div class="line"></div><div class="line">**mongodb查看效果**  </div><div class="line">```shell</div><div class="line">&gt; use apache</div><div class="line"></div><div class="line">&gt; db[&quot;access&quot;].find()</div><div class="line">&#123; &quot;_id&quot; : ObjectId(&quot;5a3ce656e138230dc48c58a6&quot;), &quot;host&quot; : &quot;::1&quot;, &quot;user&quot; : null, &quot;method&quot; : &quot;GET&quot;, &quot;path&quot; : &quot;/&quot;, &quot;code&quot; : 403, &quot;size&quot; : 4961, &quot;referer&quot; : null, &quot;agent&quot; : &quot;ApacheBench/2.3&quot;, &quot;time&quot; : ISODate(&quot;2017-12-22T11:02:36Z&quot;) &#125;</div><div class="line">&#123; &quot;_id&quot; : ObjectId(&quot;5a3ce656e138230dc48c58a7&quot;), &quot;host&quot; : &quot;::1&quot;, &quot;user&quot; : null, &quot;method&quot; : &quot;GET&quot;, &quot;path&quot; : &quot;/&quot;, &quot;code&quot; : 403, &quot;size&quot; : 4961, &quot;referer&quot; : null, &quot;agent&quot; : &quot;ApacheBench/2.3&quot;, &quot;time&quot; : ISODate(&quot;2017-12-22T11:02:36Z&quot;) &#125;</div><div class="line">&#123; &quot;_id&quot; : ObjectId(&quot;5a3ce656e138230dc48c58a8&quot;), &quot;host&quot; : &quot;::1&quot;, &quot;user&quot; : null, &quot;method&quot; : &quot;GET&quot;, &quot;path&quot; : &quot;/&quot;, &quot;code&quot; : 403, &quot;size&quot; : 4961, &quot;referer&quot; : null, &quot;agent&quot; : &quot;ApacheBench/2.3&quot;, &quot;time&quot; : ISODate(&quot;2017-12-22T11:02:36Z&quot;) &#125;</div><div class="line">&#123; &quot;_id&quot; : ObjectId(&quot;5a3ce656e138230dc48c58a9&quot;), &quot;host&quot; : &quot;::1&quot;, &quot;user&quot; : null, &quot;method&quot; : &quot;GET&quot;, &quot;path&quot; : &quot;/&quot;, &quot;code&quot; : 403, &quot;size&quot; : 4961, &quot;referer&quot; : null, &quot;agent&quot; : &quot;ApacheBench/2.3&quot;, &quot;time&quot; : ISODate(&quot;2017-12-22T11:02:36Z&quot;) &#125;</div></pre></td></tr></table></figure></p>
+<p>apache日志收集完成<br>java程序log日志如何写入到fluentd中<br>本人思考有两种方式，一种是往本地写log日志，使用log4j或者其他方法向本地写日志后，fluentd使用in-tail的方式（类似于上面的方式）读取，保存到mongodb中, 这个格式就不再是apache了，需要自己写解析日志的规则  </p>
+<p>一种是通过forward端口的方式<br>这里介绍第二种方式<br>修改配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim /etc/td-agent/td-agent.conf</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;source&gt;</div><div class="line">  @type forward</div><div class="line">  port 24234</div><div class="line">&lt;/source&gt;</div><div class="line"></div><div class="line">&lt;match fluentd.test.*&gt;</div><div class="line">  @type mongo</div><div class="line">  host 127.0.0.1</div><div class="line">  port 27017</div><div class="line">  database fluentd</div><div class="line">  tag_mapped</div><div class="line">  remove_tag_prefix mongo.</div><div class="line">  collection misc</div><div class="line">&lt;/match&gt;</div></pre></td></tr></table></figure>
+<p>java代码，为了测试效果，一次发30万条数据<br>这个程序需要引入一系列jar包，什么log4j, slf4j啊，javassist,msgpack,fluentd-logger等jar包，去maven仓库下载即可<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestFluentdLog</span> </span>&#123;</div><div class="line">    <span class="comment">// fluentd.test 要和上面的配置文件的一致  </span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> FluentLogger LOG = FluentLogger.getLogger(<span class="string">"fluentd.test"</span>, <span class="string">"192.168.x.xxx"</span>, <span class="number">24234</span>);  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </div><div class="line">    	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">30000</span>; i++) &#123;</div><div class="line">            Map&lt;String, Object&gt; data = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();  </div><div class="line">            data.put(<span class="string">"log1"</span>, <span class="string">"aaa"</span>+i);  </div><div class="line">            data.put(<span class="string">"to"</span>, <span class="string">"bbb"</span>+i);  </div><div class="line">            LOG.log(<span class="string">"follow"</span>, data); <span class="comment">//...   </span></div><div class="line">		&#125;</div><div class="line">        LOG.close();</div><div class="line">    &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>进入到mongodb<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">show dbs  </div><div class="line">发现出现fluentd, 然后发现这个数据比空的数据库要大，说明有文件了</div><div class="line">fluentd  0.453GB</div></pre></td></tr></table></figure></p>
+<p>查看数据<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;</span> use fluentd</div><div class="line">switched to db fluentd</div><div class="line"><span class="meta">&gt;</span> db["fluentd.test.follow"].find()</div><div class="line">&#123; "_id" : ObjectId("5a41e2f08d8c9539b4391bc2"), "from" : "aaa", "to" : "bbb", "time" : ISODate("2017-12-26T05:54:49Z") &#125;</div><div class="line">&#123; "_id" : ObjectId("5a41e2f08d8c9539b4391bc3"), "from" : "aaa", "to" : "bbb", "time" : ISODate("2017-12-26T05:55:48Z") &#125;</div><div class="line">&#123; "_id" : ObjectId("5a41e3888d8c953a39227d87"), "from" : "aaa", "to" : "bbb", "time" : ISODate("2017-12-26T05:57:19Z") &#125;</div><div class="line">&#123; "_id" : ObjectId("5a41e3888d8c953a39227d88"), "from" : "aaa", "to" : "bbb", "time" : ISODate("2017-12-26T05:58:00Z") &#125;</div><div class="line">&#123; "_id" : ObjectId("5a41e3e48d8c953aa6fe1216"), "from" : "aaa", "to" : "bbb", "time" : ISODate("2017-12-26T05:58:53Z") &#125;</div><div class="line">&#123; "_id" : ObjectId("5a41e5588d8c953aa6fe1217"), "from" : "aaa0", "to" : "bbb0", "time" : ISODate("2017-12-26T06:05:46Z") &#125;</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<h2 id="三、扩展"><a href="#三、扩展" class="headerlink" title="三、扩展"></a>三、扩展</h2><h3 id="3-1-fluentd安装过程问题解决"><a href="#3-1-fluentd安装过程问题解决" class="headerlink" title="3.1 fluentd安装过程问题解决"></a>3.1 fluentd安装过程问题解决</h3><p>有问题都是去vim /var/log/td-agent/td-agent.log 查看，然后看根据问题进行解决，多google，多上github看issues，仔细耐心  </p>
+<h3 id="3-2-MongoDb-web-用户界面"><a href="#3-2-MongoDb-web-用户界面" class="headerlink" title="3.2 MongoDb web 用户界面"></a>3.2 MongoDb web 用户界面</h3><p>mongod –dbpath=/data/db –rest  </p>
+<p>MongoDB 的 Web 界面访问端口比服务的端口多1000。<br>首先得关闭防火墙<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span> 查询防火墙状态:  </div><div class="line">[root@localhost ~]# service   iptables status </div><div class="line"><span class="meta">#</span> 停止防火墙:</div><div class="line">[root@localhost ~]# service   iptables stop  </div><div class="line"><span class="meta">#</span> 永久关闭防火墙:</div><div class="line">[root@localhost ~]# chkconfig   iptables off</div></pre></td></tr></table></figure></p>
+<p>如果你的MongoDB运行端口使用默认的27017，你可以在端口号为28017访问web用户界面，即地址为：<a href="http://localhost:28017" target="_blank" rel="external">http://localhost:28017</a></p>
+<h3 id="3-3-mongodb-3-4-集群搭建：分片-副本集"><a href="#3-3-mongodb-3-4-集群搭建：分片-副本集" class="headerlink" title="3.3 mongodb 3.4 集群搭建：分片+副本集"></a>3.3 mongodb 3.4 集群搭建：分片+副本集</h3><p>参考文章： 亲测可用 <a href="https://www.cnblogs.com/ityouknow/p/7344005.html" target="_blank" rel="external">https://www.cnblogs.com/ityouknow/p/7344005.html</a>   </p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/架构/">架构</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/架构/" title="架构">架构</a> / 
+    
+        <a href="/tags/大数据/" title="大数据">大数据</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      <a href="javascript: window.open('http://service.weibo.com/share/share.php?url=' + encodeURIComponent(location.href) + '&title=' + document.title + '&language=zh_cn');" class="share-icon weibo"></a>
+      <a href="javascript: alert('请复制链接到微信并发送');" class="share-icon wechat"></a>
+      <a href="javascript: window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(location.href) + '&title=' + document.title);" class="share-icon qqzone"></a>
+      <a href="javascript: window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + encodeURIComponent(location.href) + '&desc=Jelon个人博客&title=' + document.title + '&callback=' + encodeURIComponent(location.href));" class="share-icon qq"></a>
+      <a href="javascript: window.open('http://shuo.douban.com/!service/share?href=' + encodeURIComponent(location.href) + '&name=' + document.title + '&text=' + document.title);" class="share-icon douban"></a>
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/programme/resource1.html">
+            
+                资源学习网站，不断更新
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/算法/geohash-think_by_myself.html">
+            
+                fluentd+mongodb构建分布式日志收集系统
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'fluentd_mongodb_1' || '架构/fluentd_mongodb_1.html',
+    owner: 'jangdelong',
+    repo: 'blog_comments',
+    clientId: 'b08ed25e52c57993e69c',
+    clientSecret: '1cb9545488f0380904b87350e7c5a270ae03bab7'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">(5)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/">大数据</a>
+        <span class="badge">(43)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hdfs/">hdfs</a>
+        <span class="badge">(8)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hadoop/">hadoop</a>
+        <span class="badge">(11)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/架构/">架构</a>
+        <span class="badge">(21)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/spark/">spark</a>
+        <span class="badge">(23)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/算法/">算法</a>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/">随笔</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 文章标签 -->
+<div class="widget-bd tag-wrap">
+  
+    <a class="tag-item" href="/tags/linux/" title="linux">linux (7)</a>
+  
+    <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
+  
+    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
+  
+    <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
+  
+    <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
+  
+    <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
+  
+    <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
+  
+    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
+  
+    <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
+  
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
+  
+    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
+  
+    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
+  
+    <a class="tag-item" href="/tags/曲线拟合/" title="曲线拟合">曲线拟合 (1)</a>
+  
+    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
+  
+    <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
+  
+    <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
+  
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
+  
+    <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
+  
+    <a class="tag-item" href="/tags/xml解析/" title="xml解析">xml解析 (1)</a>
+  
+    <a class="tag-item" href="/tags/资源/" title="资源">资源 (1)</a>
+  
+</div>
+    </section>
+    
+
+    
+
+    
+    <!-- 友情链接 -->
+    <section class="widget">
+        <h3 class="widget-hd"><strong>友情链接</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+        <li>
+            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+        </li>
+    
+        <li>
+            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+        </li>
+    
+        <li>
+            <a href="http://xuanzh.cc/" target="_blank" title="技术博客">朱旋个人博客</a>
+        </li>
+    
+</ul>
+    </section>
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Jelon Loves You</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <!-- 这里放网站js脚本 -->
+<script src="/js/main.js"></script>
+</body>
+</html>
