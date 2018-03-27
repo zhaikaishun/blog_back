@@ -6,6 +6,7 @@ categories: [架构]
 author: kaishun
 id: 124
 permalink: zookeeper5
+blogexcerpt: Zookeeper的watcher事件,zookeeper有watch事件，是一次性触发的，当watch监视的数据发生变化时，通知设置了该watch的client，即watcher,同样，其watcher是监听数据发生了某些变化，那就一定会有对应的事件类型，和状态类型, 简单的说，一个节点上的某个程序监控某个节点，那么这个节点上的这个程序就是一个watcher，而监听的这个事件（动作），就是一个watch。watch事件，是**一次性触发**的，只能监听一次，第二次对此节点的修改就监听不到了，如果想一直监听，大概有两种方案，一种是在出发事件后执行方法的时候有个watch的参数再设置为true...
 ---
 
 

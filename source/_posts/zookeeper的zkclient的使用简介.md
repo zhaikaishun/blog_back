@@ -6,6 +6,7 @@ categories: [架构]
 author: kaishun
 id: 128
 permalink: zookeeper8
+blogexcerpt: Zookeeper的原生API，就之前的那一些，用起来还是比较麻烦的，所以，有些工程师对原生的API接口进行了封装，简化了ZK的复杂性。1. 创建客户端的方法： ZKClient(Arguments) 参数1：zkServer zookeeper服务器的地址，用","分割.参数2：sessionTimeout超时回话，为毫秒，默认是30000ms....
 ---
 
 

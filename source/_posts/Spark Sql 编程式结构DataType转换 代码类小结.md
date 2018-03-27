@@ -6,6 +6,7 @@ categories: [大数据,spark]
 author: kaishun
 id: 63
 permalink: spark-sql-dataType-transform
+blogexcerpt: 标题，基本类型数据转DataType, 基本类型转封装类，当字段列表和属性列表都生成后，用for循环去createStructField，字段和属性要对应上，生成rowRDD的时候，字段和属性也要对应上。。。
 ---
 
 ### 基本类型数据转DataType

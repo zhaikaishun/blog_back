@@ -5,7 +5,8 @@ tags: [java,xml解析]
 categories: [programme]
 author: kaishun
 id: 75
-permalink: xml-parse1
+permalink: xml-parse1  
+blogexcerpt: 前言,虽然更喜欢用json,但是xml更灵活，在配置文件的时候更方便 要用SAXRead需要的jar包,dom4j-1.6.1.jar, jaxen-1.1-beta-10.jar,  XML文件格式如下.读取所有的表名称, 根据表名称，获取所有的字段以及属性, 另外介绍一下XMLConfiguration, 将所有的字段以及属性放入到map中, 使用XMLConfiguration 需要引入的jar包commons-configuration-1.0.jar
 ---
 
 ## 前言

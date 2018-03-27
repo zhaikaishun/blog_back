@@ -6,6 +6,7 @@ categories: [架构]
 author: kaishun
 id: 129
 permalink: zookeeper9
+blogexcerpt: 官网首页介绍是 Guava is to Java what Curator is to Xookeeper ，为了更好的实现java操作zookeeper服务器，后来出现了Curator框架，非常的强大，目前已经是Apache的顶级项目，里面提供了更多丰富的操作，例如session超时重连、主从选举、分布式计算器、分布式锁等等适用于各种复杂zookeeper场景的API封装。Maven依赖，jar包下载都去官网下载...
 ---
 
 
@@ -20,7 +21,7 @@ github： https://github.com/zhaikaishun/zookeeper_tutorial
 Maven依赖  
 jar包下载  
 都去官网下载，http://curator.apache.org/  
-<!-- more -->
+
 ## Curatot框架使用(一)  
 Curatir框架使用链式编程风格，易读性更强，使用工程方法创建连接对象。  
 1 使用CuratorFrameworkFactory的两个静态工厂方法（参数不同）来实现：  

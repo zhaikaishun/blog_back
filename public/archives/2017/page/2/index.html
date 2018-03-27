@@ -7,8 +7,8 @@
     
     <title>文章归档: 2017 | 挡路人</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
-    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
-    <meta name="description" content="Jelon个人前端小站" >
+    <meta name="keywords" content="挡路人, 大数据, 分布式, 中间件, java" >
+    <meta name="description" content="挡路人个人小站" >
 
     
     <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
@@ -79,7 +79,7 @@
                 
                 <p class="links">
                     
-                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        <a href="https://github.com/zhaikaishun" target="_blank">Github</a>
                         |
                     
                         <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
@@ -88,9 +88,9 @@
                 </p>
                 <p class="sns">
                     
-                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                        <a href="http://blog.csdn.net/t1dmzks" class="sinaweibo" target="_blank"><b>■</b> csdn博客</a>
                     
-                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                        <a href="zhaikaishun@126.com" class="qqweibo" target="_blank"><b>■</b> Email</a>
                     
                     <a href="javascript: void(0);" class="wechat">
                         <b>■</b>
@@ -236,7 +236,7 @@
         
     <h3 class="post-title">
     	<a href="http://dangluren.top/算法/geohash-think_by_myself.html">
-    		fluentd+mongodb构建分布式日志收集系统
+    		geohash的特点，局限性和思考
     	</a>
     </h3>
 
@@ -258,19 +258,14 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="geohash原理"><a href="#geohash原理" class="headerlink" title="geohash原理"></a>geohash原理</h2><p>原理参考： <a href="http://blog.jobbole.com/80633/，其实就是有限二分法而已">http://blog.jobbole.com/80633/，其实就是有限二分法而已</a></p>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p>一般用于查找周边,具体可以网上百度</p>
-<h2 id="为什么不直接使用经纬度"><a href="#为什么不直接使用经纬度" class="headerlink" title="为什么不直接使用经纬度"></a>为什么不直接使用经纬度</h2><ol>
-<li>如果查找周边，使用经纬度，需要用到经度&gt;多少,经度&lt;多少，纬度&gt;多少，纬度&lt;多少,在数据库中就用不到索引</li>
-<li>有的人认为如果确定了多少米的范围，那么直接使用经纬度的某个经度，合在一起，也可以作为一维，例如纬经度分别为22.21315,41.59874 作为一个字段，只需要控制纬度多少位，经度多少位即可。但是这也意味着固定死了某个经纬度，geohash的优势还在于，根据不同的位数，可以得到不同的范围  </li>
-</ol>
+                原理参考http://blog.jobbole.com/80633/，其实就是有限二分法而已.使用场景,一般用于查找周边,具体可以网上百度 为什么不直接使用经纬度,1. 如果查找周边，使用经纬度，需要用到经度>多少,经度<多少，纬度>多少，纬度<多少,在数据库中就用不到索引, 2. 有的人认为如果确定了多少米的范围，那么直接使用经纬度的某个经度，合在一起，也可以作为一维，例如纬经度分别为22.21315,41.59874 作为一个字段，只需要控制纬度多少位，经度多少位即可。但是这也意味着固定死了某个经纬度，geohash的优势还在于，根据不同的位数，可以得到不同的范围...
             
             <p class="more">
                 <a href="http://dangluren.top/算法/geohash-think_by_myself.html">阅读剩下更多</a>
             </p>
         </div>
         <div class="post-thumbnail" data-img="">
-            <a href="http://dangluren.top/算法/geohash-think_by_myself.html" title="fluentd+mongodb构建分布式日志收集系统">
+            <a href="http://dangluren.top/算法/geohash-think_by_myself.html" title="geohash的特点，局限性和思考">
                 
                     <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/1.jpg" alt="默认配图" >
                 
@@ -304,9 +299,9 @@
             标签：
             
     
-        <a href="/tags/架构/" title="架构">架构</a> / 
+        <a href="/tags/大数据/" title="大数据">大数据</a> / 
     
-        <a href="/tags/大数据/" title="大数据">大数据</a>
+        <a href="/tags/架构/" title="架构">架构</a>
     
 
         </span>
@@ -315,7 +310,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <p>前言：<br>和同事合作安装过一次fluentd+mongodb，网上文档较少，走了好多弯路，幸亏同事比较给力，能成功应用，现将安装笔记记录一下<br>。（这里只安装了一台，分布式也是一样的，使用mongodb集群即可）<br>
+                前言,和同事合作安装过一次fluentd+mongodb，网上文档较少，走了好多弯路，幸亏同事比较给力，能成功应用，现将安装笔记记录一下 这里只安装了一台, 分布式也是一样的使用mongodb集群即可,一 mongodb单机安装...
             
             <p class="more">
                 <a href="http://dangluren.top/架构/fluentd_mongodb_1.html">阅读剩下更多</a>
@@ -365,8 +360,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="大数据"><a href="#大数据" class="headerlink" title="大数据"></a>大数据</h2><p>Laurence的技术博客 <a href="http://blog.csdn.net/bluishglc?viewmode=contents">http://blog.csdn.net/bluishglc?viewmode=contents</a><br>过往记忆 <a href="https://www.iteblog.com/">https://www.iteblog.com/</a><br>spark性能调优  <a href="http://blog.csdn.net/u012102306/article/details/51322209">http://blog.csdn.net/u012102306/article/details/51322209</a>  </p>
-<h2 id="一些比较好的文章"><a href="#一些比较好的文章" class="headerlink" title="一些比较好的文章"></a>一些比较好的文章</h2><p>美团点评技术团队  <a href="http://tech.meituan.com/archives">http://tech.meituan.com/archives</a>  </p>
+                大数据Laurence的技术博客 http://blog.csdn.net/bluishglc?viewmode=contents,过往记忆 https://www.iteblog.com/,spark性能调优  http://blog.csdn.net/u012102306/article/details/51322209, 一些比较好的文章, 美团点评技术团队  http://tech.meituan.com/archives
             
             <p class="more">
                 <a href="http://dangluren.top/programme/resource1.html">阅读剩下更多</a>
@@ -516,8 +510,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="yun安装："><a href="#yun安装：" class="headerlink" title="yun安装："></a>yun安装：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install screen</div></pre></td></tr></table></figure>
-<h2 id="ubuntu-的-apt-get安装"><a href="#ubuntu-的-apt-get安装" class="headerlink" title="ubuntu 的 apt-get安装"></a>ubuntu 的 apt-get安装</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-get update</div><div class="line">sudo apt-get install screen</div></pre></td></tr></table></figure>
+                yun安装yum install screen   ,ubuntu 的 apt-get安装 sudo apt-get update sudo apt-get install screen , 编译安装, 为什么我需要编译安装，因为我所操作的集群不能连外网, ...
             
             <p class="more">
                 <a href="http://dangluren.top/linux/linux-screen-install.html">阅读剩下更多</a>
@@ -567,7 +560,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="2-3-ThreadLocal"><a href="#2-3-ThreadLocal" class="headerlink" title="2.3 ThreadLocal"></a>2.3 ThreadLocal</h2><p>ThreadLocal概念: 线程局部变量，是一种多线程间并发访问变量的解决方案。与其synchronized等加锁方式不同，THreadLocal完全不提供锁，而使用空间换时间的手段，为每个线程提供变量的独立副本，以保障线程安全。<br>在高并发量或者竞争激烈的场景，使用ThreadLocal可以在一定程度上减少锁竞争。<br>当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本。<br>案例：<br>每个线程一个独立的变量副本，所以t2线程执行为null<br>
+                ThreadLocal概念, 线程局部变量，是一种多线程间并发访问变量的解决方案。与其synchronized等加锁方式不同，THreadLocal完全不提供锁，而使用空间换时间的手段，为每个线程提供变量的独立副本，以保障线程安全。在高并发量或者竞争激烈的场景，使用ThreadLocal可以在一定程度上减少锁竞争。当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本...
             
             <p class="more">
                 <a href="http://dangluren.top/架构/thread7.html">阅读剩下更多</a>
@@ -675,13 +668,13 @@
     </li>
     
     <li>
-        <a href="/categories/programme/">programme</a>
-        <span class="badge">(12)</span>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
     </li>
     
     <li>
-        <a href="/categories/Linux/">Linux</a>
-        <span class="badge">(2)</span>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
     </li>
     
     <li>
@@ -717,15 +710,19 @@
   
     <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
   
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
     <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
   
     <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
   
     <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
   
     <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
-  
-    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
   
     <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
   
@@ -734,8 +731,6 @@
     <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
   
     <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
-  
-    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
   
     <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
   
@@ -749,9 +744,9 @@
   
     <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
   
-    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
-  
     <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
   
     <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
   
@@ -760,8 +755,6 @@
     <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
   
     <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
-  
-    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
   
     <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
   
@@ -783,11 +776,11 @@
 <ul class="widget-bd">
     
         <li>
-            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+            <a href="http://blog.csdn.net/t1dmzks" target="_blank" title="翟开顺个人博客">翟开顺博客</a>
         </li>
     
         <li>
-            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+            <a href="https://github.com/zhaikaishun" target="_blank" title="翟开顺github">github</a>
         </li>
     
         <li>

@@ -6,6 +6,7 @@ categories: [大数据]
 author: kaishun
 id: 76
 permalink: hive-1.2.2-install
+blogexcerpt: 关键字hive 1.2.2 安装，hive配置.安装好了hadoop，hadoop的集群搭建, http://blog.csdn.net/t1dmzks/article/details/68958562 , 安装好了mysql,mysql的编译安装（yum安装） http://blog.csdn.net/t1dmzks/article/details/71374740 .下载并且配置环境
 ---
 
 关键字：hive 1.2.2 安装，hive配置

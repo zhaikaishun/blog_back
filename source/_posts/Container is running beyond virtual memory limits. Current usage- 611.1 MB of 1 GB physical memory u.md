@@ -6,6 +6,7 @@ categories: [大数据,hadoop]
 author: kaishun
 id: 118
 permalink: yarn-vmemory-over
+blogexcerpt: hadoop在yarn上运行时报的虚拟内存错误或者是物理内存不够错误,Container is running beyond virtual memory limits Current usage 611.1 MB of 1 GB physical memory used; 4.9 GB of 3 GB virtual memory used. Killing container 但是后面任务可能还是可以正常的运行的 异常分析...
 ---
 
 hadoop 在 yarn 上运行时报的虚拟内存错误，或者是物理内存不够错误

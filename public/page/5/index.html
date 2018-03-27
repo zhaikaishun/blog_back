@@ -7,8 +7,8 @@
     
     <title>挡路人</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
-    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
-    <meta name="description" content="Jelon个人前端小站" >
+    <meta name="keywords" content="挡路人, 大数据, 分布式, 中间件, java" >
+    <meta name="description" content="挡路人个人小站" >
 
     
     <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
@@ -79,7 +79,7 @@
                 
                 <p class="links">
                     
-                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        <a href="https://github.com/zhaikaishun" target="_blank">Github</a>
                         |
                     
                         <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
@@ -88,9 +88,9 @@
                 </p>
                 <p class="sns">
                     
-                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                        <a href="http://blog.csdn.net/t1dmzks" class="sinaweibo" target="_blank"><b>■</b> csdn博客</a>
                     
-                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                        <a href="zhaikaishun@126.com" class="qqweibo" target="_blank"><b>■</b> Email</a>
                     
                     <a href="javascript: void(0);" class="wechat">
                         <b>■</b>
@@ -159,8 +159,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="下载源码"><a href="#下载源码" class="headerlink" title="下载源码"></a>下载源码</h2><p>去<a href="http://spark.apache.org/downloads.html">官网</a> 下载 <a href="https://d3kbcqa49mib13.cloudfront.net/spark-2.2.0.tgz">spark-2.2.0.tgz</a></p>
-<h2 id="解压后，用idea打开"><a href="#解压后，用idea打开" class="headerlink" title="解压后，用idea打开"></a>解压后，用idea打开</h2><p>pom maven需要下载很多包，并且加载，需要等待一下，最好建议改成阿里云的依赖仓库，这样比较快。不改也可以<br>
+                下载源码 去[官网](http://spark.apache.org/downloads.html). 解压后，用idea打开, pom maven需要下载很多包，并且加载，需要等待一下，最好建议改成阿里云的依赖仓库，这样比较快。不改也可以,找到example包中的SparkPi类，setMaster后运行这个类.运行的时候肯定会报错，很多情况下就是找不到类。spark源码放在idea中还是比较坑的啊，真是麻烦，但是一般也就下面两种情况，安装下面的方法就可以解决了
             
             <p class="more">
                 <a href="http://dangluren.top/hadoop/spark/spark-sourcecode-install.html">阅读剩下更多</a>
@@ -210,7 +209,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h3 id="基本类型数据转DataType"><a href="#基本类型数据转DataType" class="headerlink" title="基本类型数据转DataType"></a>基本类型数据转DataType</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> DataType <span class="title">attrToDataType</span><span class="params">(String attrstr)</span></span>&#123;</div><div class="line">		DataType returnDataType = DataTypes.StringType;</div><div class="line">		</div><div class="line">		<span class="keyword">switch</span>(attrstr.toLowerCase())&#123;</div><div class="line">		<span class="keyword">case</span> <span class="string">"short"</span> :</div><div class="line">			returnDataType = DataTypes.StringType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"char"</span> :</div><div class="line">			returnDataType = DataTypes.StringType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"int"</span> :</div><div class="line">			returnDataType = DataTypes.IntegerType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"integer"</span> :</div><div class="line">			returnDataType = DataTypes.IntegerType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"float"</span> :</div><div class="line">			returnDataType = DataTypes.FloatType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"double"</span> :</div><div class="line">			returnDataType = DataTypes.DoubleType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"string"</span> :</div><div class="line">			returnDataType = DataTypes.StringType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"varchar"</span>:</div><div class="line">			returnDataType = DataTypes.StringType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"long"</span>:</div><div class="line">			returnDataType = DataTypes.LongType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"boolean"</span>:</div><div class="line">			returnDataType = DataTypes.BooleanType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">"date"</span>:</div><div class="line">			returnDataType = DataTypes.DateType;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> returnDataType;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+                标题，基本类型数据转DataType, 基本类型转封装类，当字段列表和属性列表都生成后，用for循环去createStructField，字段和属性要对应上，生成rowRDD的时候，字段和属性也要对应上。。。
             
             <p class="more">
                 <a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html">阅读剩下更多</a>
@@ -603,10 +602,7 @@ Exception in thread &quot;main&quot; org.apache.spark.SparkException: Applicatio
     <div class="post-content">
         <div class="post-excerpt">
             
-                <p>参考文章<br><a href="http://www.cnblogs.com/wzm-xu/p/4063814.html">http://www.cnblogs.com/wzm-xu/p/4063814.html</a><br><a href="http://www.cnblogs.com/wzm-xu/p/4064389.html">http://www.cnblogs.com/wzm-xu/p/4064389.html</a>  </p>
-<h1 id="scala高阶函数上"><a href="#scala高阶函数上" class="headerlink" title="scala高阶函数上"></a>scala高阶函数上</h1><p>高阶函数是函数式编程里面一个非常重要的特色，所谓的高阶函数，就是以其它函数作为参数的函数。</p>
-<p>下面以一个小例子演示Scala的高阶函数特性，非常有意思，也非常强大。</p>
-<p>首先看这么一个程序：<br>
+                参考文章http://www.cnblogs.com/wzm-xu/p/4063814.html， http://www.cnblogs.com/wzm-xu/p/4064389.html，高阶函数是函数式编程里面一个非常重要的特色，所谓的高阶函数，就是以其它函数作为参数的函数，面以一个小例子演示Scala的高阶函数特性，非常有意思，也非常强大
             
             <p class="more">
                 <a href="http://dangluren.top/programme/scala-higher-order-functions.html">阅读剩下更多</a>
@@ -714,13 +710,13 @@ Exception in thread &quot;main&quot; org.apache.spark.SparkException: Applicatio
     </li>
     
     <li>
-        <a href="/categories/programme/">programme</a>
-        <span class="badge">(12)</span>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
     </li>
     
     <li>
-        <a href="/categories/Linux/">Linux</a>
-        <span class="badge">(2)</span>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
     </li>
     
     <li>
@@ -756,15 +752,19 @@ Exception in thread &quot;main&quot; org.apache.spark.SparkException: Applicatio
   
     <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
   
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
     <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
   
     <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
   
     <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
   
     <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
-  
-    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
   
     <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
   
@@ -773,8 +773,6 @@ Exception in thread &quot;main&quot; org.apache.spark.SparkException: Applicatio
     <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
   
     <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
-  
-    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
   
     <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
   
@@ -788,9 +786,9 @@ Exception in thread &quot;main&quot; org.apache.spark.SparkException: Applicatio
   
     <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
   
-    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
-  
     <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
   
     <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
   
@@ -799,8 +797,6 @@ Exception in thread &quot;main&quot; org.apache.spark.SparkException: Applicatio
     <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
   
     <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
-  
-    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
   
     <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
   
@@ -822,11 +818,11 @@ Exception in thread &quot;main&quot; org.apache.spark.SparkException: Applicatio
 <ul class="widget-bd">
     
         <li>
-            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+            <a href="http://blog.csdn.net/t1dmzks" target="_blank" title="翟开顺个人博客">翟开顺博客</a>
         </li>
     
         <li>
-            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+            <a href="https://github.com/zhaikaishun" target="_blank" title="翟开顺github">github</a>
         </li>
     
         <li>

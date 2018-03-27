@@ -6,9 +6,10 @@ categories: [programme]
 author: kaishun
 id: 79
 permalink: xml-io-util
+blogexcerpt: BufferWriter,有乱码TODO
 ---
 
-## BufferWriter
+## BufferWriter 
 <!-- more -->
 ```
 package cn.mastercom.filterSpark;
@@ -91,7 +92,7 @@ public class GenerateConfXml {
 }
 ```
 
-ÁíÍâÒ»ÖÖÐ´µÄ·½Ê½,FileOutStrem+StringBufferµÄ·½Ê½£¬¿ÉÒÔ¶à´ÎÐ´Èë
+,FileOutStrem+StringBuffer
 ```java
 public class TestFileIo {
     public static void main(String[] args) {
@@ -125,10 +126,10 @@ public class TestFileIo {
     }
 ```
 
-°´ÕÕÐÐ¶ÁÈ¡ÎÄ¼þÄÚÈÝ
+
 ```
 /**
-     * ÒÔÐÐÎªµ¥Î»¶ÁÈ¡ÎÄ¼þ£¬³£ÓÃÓÚ¶ÁÃæÏòÐÐµÄ¸ñÊ½»¯ÎÄ¼þ
+     * 
      */
     public static void readFileByLines(String fileName) {
         File file = new File(fileName);
@@ -158,10 +159,10 @@ public class TestFileIo {
     }
 ```
 ```
-°´×Ö½Ú¶ÁÈ¡ÎÄ¼þÄÚÈÝ
+
 
 /**
-     * ÒÔ×Ö½ÚÎªµ¥Î»¶ÁÈ¡ÎÄ¼þ£¬³£ÓÃÓÚ¶Á¶þ½øÖÆÎÄ¼þ£¬ÈçÍ¼Æ¬¡¢ÉùÒô¡¢Ó°ÏñµÈÎÄ¼þ¡£
+     * 
      */
     public static void readFileByBytes(String fileName) {
         File file = new File(fileName);

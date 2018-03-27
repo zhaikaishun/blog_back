@@ -6,6 +6,7 @@ categories: [programme]
 author: kaishun
 id: 80
 permalink: java-rmi
+blogexcerpt: 有时候经常会碰到需要远程调用Linux或者本地调用Linux或者本地调用cmd的一些命令，最近小结了一下这几种用法,本地调用cmd命令,远程调用Linux执行命令,jar包下载 http://central.maven.org/maven2/com/jcraft/jsch/0.1.54/jsch-0.1.54.jar 参考代码如下
 ---
 
 有时候经常会碰到需要远程调用Linux或者本地调用Linux或者本地调用cmd的一些命令，最近小结了一下这几种用法

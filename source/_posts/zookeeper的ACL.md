@@ -6,6 +6,7 @@ categories: [架构]
 author: kaishun
 id: 126
 permalink: zookeeper7
+blogexcerpt: ACL  叫做Access Control List，ACL（访问控制列表）,例如linux中的文件系统中就有ACL，传统的文件系统中，ACL分为两个维度，一个是属组，一个是权限。 子目录/文件默认继承父目录的ACL。而在Zookeeper中，node的ACL是没有继承关系的，是独立控制的。Zookeeper的ACL，可以从三个维度来理解：一是scheme; 二是user; 三是permission.为什么zookeeper也要有ACL。zookeeper作为一个分布式协调框架，其内部存储的都是一些关乎分布式系统运行时状态的元数据...
 ---
 
 ## 什么是ACL  

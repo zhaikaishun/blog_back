@@ -6,6 +6,7 @@ categories: [programme]
 author: kaishun
 id: 53
 permalink: scala-higher-order-functions
+blogexcerpt: 参考文章http://www.cnblogs.com/wzm-xu/p/4063814.html， http://www.cnblogs.com/wzm-xu/p/4064389.html，高阶函数是函数式编程里面一个非常重要的特色，所谓的高阶函数，就是以其它函数作为参数的函数，面以一个小例子演示Scala的高阶函数特性，非常有意思，也非常强大
 ---
 
 参考文章   

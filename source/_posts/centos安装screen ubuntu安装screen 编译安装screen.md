@@ -6,6 +6,7 @@ categories: [linux]
 author: kaishun
 id: 100
 permalink: linux-screen-install
+blogexcerpt: yun安装yum install screen   ,ubuntu 的 apt-get安装 sudo apt-get update sudo apt-get install screen , 编译安装, 为什么我需要编译安装，因为我所操作的集群不能连外网, ...
 ---
 
 ## yun安装：  

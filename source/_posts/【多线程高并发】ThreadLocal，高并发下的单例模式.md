@@ -6,6 +6,7 @@ categories: [架构]
 author: kaishun
 id: 82
 permalink: thread7
+blogexcerpt: ThreadLocal概念, 线程局部变量，是一种多线程间并发访问变量的解决方案。与其synchronized等加锁方式不同，THreadLocal完全不提供锁，而使用空间换时间的手段，为每个线程提供变量的独立副本，以保障线程安全。在高并发量或者竞争激烈的场景，使用ThreadLocal可以在一定程度上减少锁竞争。当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本...
 ---
 
 ## 2.3 ThreadLocal  

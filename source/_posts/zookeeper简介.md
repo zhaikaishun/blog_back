@@ -6,6 +6,7 @@ categories: [架构]
 author: kaishun
 id: 121
 permalink: zookeeper2
+blogexcerpt: zookeeper主要是一个分布式服务协调框架，实现同步服务，配置维护和命名服务等分布式应用。是一个高性能的分布式数据一致性解决方案.zookeeper是一个高可用的分布式管理与协调框架，给予ZAB算法（原子消息广播协议）的实现。该框架能很好的保证分布式环境中数据的一致性。也正是由于这样的特性，使得zookeeper成为了解决分布式一致性问题的利器...
 ---
 
 ## zookeeper简介

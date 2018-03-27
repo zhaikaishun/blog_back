@@ -6,6 +6,7 @@ categories: [架构]
 author: kaishun
 id: 108
 permalink: fluentd_mongodb_1
+blogexcerpt: 前言,和同事合作安装过一次fluentd+mongodb，网上文档较少，走了好多弯路，幸亏同事比较给力，能成功应用，现将安装笔记记录一下 这里只安装了一台, 分布式也是一样的使用mongodb集群即可,一 mongodb单机安装...
 ---
 
 

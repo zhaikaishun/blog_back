@@ -6,6 +6,7 @@ categories: [大数据,spark]
 author: kaishun
 id: 64
 permalink: spark-sourcecode-install
+blogexcerpt: 下载源码 去[官网](http://spark.apache.org/downloads.html). 解压后，用idea打开, pom maven需要下载很多包，并且加载，需要等待一下，最好建议改成阿里云的依赖仓库，这样比较快。不改也可以,找到example包中的SparkPi类，setMaster后运行这个类.运行的时候肯定会报错，很多情况下就是找不到类。spark源码放在idea中还是比较坑的啊，真是麻烦，但是一般也就下面两种情况，安装下面的方法就可以解决了
 ---
 
 

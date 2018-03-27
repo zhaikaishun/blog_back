@@ -1,11 +1,12 @@
 ﻿---
-title: fluentd+mongodb构建分布式日志收集系统
+title: geohash的特点，局限性和思考
 date: 2017-09-11 21:25:21
 tags: [算法]
 categories: [算法]
 author: kaishun
 id: 109
-permalink: geohash-think_by_myself
+permalink: geohash-think_by_myself  
+blogexcerpt: 原理参考http://blog.jobbole.com/80633/，其实就是有限二分法而已.使用场景,一般用于查找周边,具体可以网上百度 为什么不直接使用经纬度,1. 如果查找周边，使用经纬度，需要用到经度>多少,经度<多少，纬度>多少，纬度<多少,在数据库中就用不到索引, 2. 有的人认为如果确定了多少米的范围，那么直接使用经纬度的某个经度，合在一起，也可以作为一维，例如纬经度分别为22.21315,41.59874 作为一个字段，只需要控制纬度多少位，经度多少位即可。但是这也意味着固定死了某个经纬度，geohash的优势还在于，根据不同的位数，可以得到不同的范围...
 ---
 
 ##  geohash原理

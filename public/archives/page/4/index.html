@@ -7,8 +7,8 @@
     
     <title>文章归档 | 挡路人</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
-    <meta name="keywords" content="Jelon, 前端, Web, 张德龙, 前端开发" >
-    <meta name="description" content="Jelon个人前端小站" >
+    <meta name="keywords" content="挡路人, 大数据, 分布式, 中间件, java" >
+    <meta name="description" content="挡路人个人小站" >
 
     
     <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
@@ -79,7 +79,7 @@
                 
                 <p class="links">
                     
-                        <a href="https://github.com/jangdelong" target="_blank">Github</a>
+                        <a href="https://github.com/zhaikaishun" target="_blank">Github</a>
                         |
                     
                         <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
@@ -88,9 +88,9 @@
                 </p>
                 <p class="sns">
                     
-                        <a href="http://weibo.com/jangdelong" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+                        <a href="http://blog.csdn.net/t1dmzks" class="sinaweibo" target="_blank"><b>■</b> csdn博客</a>
                     
-                        <a href="https://www.facebook.com/profile.php?id=100011855760219&amp;ref=bookmarks" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+                        <a href="zhaikaishun@126.com" class="qqweibo" target="_blank"><b>■</b> Email</a>
                     
                     <a href="javascript: void(0);" class="wechat">
                         <b>■</b>
@@ -158,7 +158,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <p>有时候经常会碰到需要远程调用Linux或者本地调用Linux或者本地调用cmd的一些命令，最近小结了一下这几种用法<br>
+                有时候经常会碰到需要远程调用Linux或者本地调用Linux或者本地调用cmd的一些命令，最近小结了一下这几种用法,本地调用cmd命令,远程调用Linux执行命令,jar包下载 http://central.maven.org/maven2/com/jcraft/jsch/0.1.54/jsch-0.1.54.jar 参考代码如下
             
             <p class="more">
                 <a href="http://dangluren.top/programme/java-rmi.html">阅读剩下更多</a>
@@ -210,7 +210,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="BufferWriter"><a href="#BufferWriter" class="headerlink" title="BufferWriter"></a>BufferWriter</h2>
+                BufferWriter,有乱码TODO
             
             <p class="more">
                 <a href="http://dangluren.top/programme/xml-io-util.html">阅读剩下更多</a>
@@ -312,11 +312,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <p>关键字：hive 1.2.2 安装，hive配置</p>
-<h1 id="安装前提："><a href="#安装前提：" class="headerlink" title="安装前提："></a>安装前提：</h1><ol>
-<li>安装好了hadoop，hadoop的集群搭建：<a href="http://blog.csdn.net/t1dmzks/article/details/68958562">http://blog.csdn.net/t1dmzks/article/details/68958562</a>  </li>
-<li>安装好了mysql： mysql的编译安装（yum安装） <a href="http://blog.csdn.net/t1dmzks/article/details/71374740">http://blog.csdn.net/t1dmzks/article/details/71374740</a></li>
-</ol>
+                关键字hive 1.2.2 安装，hive配置.安装好了hadoop，hadoop的集群搭建, http://blog.csdn.net/t1dmzks/article/details/68958562 , 安装好了mysql,mysql的编译安装（yum安装） http://blog.csdn.net/t1dmzks/article/details/71374740 .下载并且配置环境
             
             <p class="more">
                 <a href="http://dangluren.top/hadoop/hive-1.2.2-install.html">阅读剩下更多</a>
@@ -368,63 +364,7 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>虽然更喜欢用json,但是xml更灵活，在配置文件的时候更方便</p>
-<h2 id="要用SAXRead需要的jar包"><a href="#要用SAXRead需要的jar包" class="headerlink" title="要用SAXRead需要的jar包"></a>要用SAXRead需要的jar包</h2><p>dom4j-1.6.1.jar, jaxen-1.1-beta-10.jar</p>
-<h2 id="XML文件格式如下"><a href="#XML文件格式如下" class="headerlink" title="XML文件格式如下"></a>XML文件格式如下</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;  </div><div class="line">  <span class="comment">&lt;!-- </span></div><div class="line"><span class="comment">  tablename保存数据表的名称</span></div><div class="line"><span class="comment">  fieldname保存字段名称， type对应的是字段的属性，都必须得有</span></div><div class="line"><span class="comment">    --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">tables</span>&gt;</span>  </div><div class="line">	<span class="tag">&lt;<span class="name">table</span> <span class="attr">tablename</span>=<span class="string">"people"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"name"</span> <span class="attr">type</span>=<span class="string">"string"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"age"</span> <span class="attr">type</span>=<span class="string">"int"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">splitsign</span> <span class="attr">rule</span>=<span class="string">","</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">table</span>&gt;</span></div><div class="line">	</div><div class="line">	<span class="tag">&lt;<span class="name">table</span> <span class="attr">tablename</span>=<span class="string">"book"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"name"</span> <span class="attr">type</span>=<span class="string">"string"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"price"</span> <span class="attr">type</span>=<span class="string">"int"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">splitsign</span> <span class="attr">rule</span>=<span class="string">"."</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">table</span>&gt;</span></div><div class="line">	</div><div class="line">	<span class="tag">&lt;<span class="name">table</span> <span class="attr">tablename</span>=<span class="string">"cat"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"color"</span> <span class="attr">type</span>=<span class="string">"string"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"category"</span> <span class="attr">type</span>=<span class="string">"string"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">splitsign</span> <span class="attr">rule</span>=<span class="string">" "</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">table</span>&gt;</span></div><div class="line">	</div><div class="line">	<span class="tag">&lt;<span class="name">table</span> <span class="attr">tablename</span>=<span class="string">"people1"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"name"</span> <span class="attr">type</span>=<span class="string">"string"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"age"</span> <span class="attr">type</span>=<span class="string">"int"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">fieldname</span> <span class="attr">fieldname</span>=<span class="string">"sex"</span> <span class="attr">type</span>=<span class="string">"string"</span>/&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">splitsign</span> <span class="attr">rule</span>=<span class="string">","</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">table</span>&gt;</span></div><div class="line">	</div><div class="line"><span class="tag">&lt;/<span class="name">tables</span>&gt;</span></div></pre></td></tr></table></figure>
-<h2 id="读取所有的表名称"><a href="#读取所有的表名称" class="headerlink" title="读取所有的表名称"></a>读取所有的表名称</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> String configPath=<span class="string">"conf/config_table.xml"</span>;</div><div class="line">		<span class="comment">/**</span></div><div class="line"><span class="comment">		 * </span></div><div class="line"><span class="comment">		 * <span class="doctag">@return</span> an arrayList tableList</span></div><div class="line"><span class="comment">		 * <span class="doctag">@throws</span> DocumentException</span></div><div class="line"><span class="comment">		 */</span></div><div class="line">	    <span class="function"><span class="keyword">public</span> ArrayList <span class="title">getTableName</span><span class="params">()</span> <span class="keyword">throws</span> DocumentException</span>&#123;</div><div class="line">	    	ArrayList&lt;String&gt; tableNameArray = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">	        </div><div class="line">	        SAXReader reader = <span class="keyword">new</span> SAXReader();  </div><div class="line">	          </div><div class="line">	        Document document = reader.read(<span class="keyword">new</span> File(configPath));  </div><div class="line">	        </div><div class="line">	        String xpathtable = <span class="string">"//tables//table"</span>;</div><div class="line">	        List&lt;String&gt; list = document.selectNodes(xpathtable);</div><div class="line">	        Iterator iter = list.iterator();</div><div class="line">	        <span class="keyword">while</span>(iter.hasNext())&#123;</div><div class="line">	        	Element element = (Element) iter.next();</div><div class="line">	        	tableNameArray.add(element.attribute(<span class="number">0</span>).getValue());</div><div class="line">	        	      	</div><div class="line">	        &#125;</div><div class="line">	        <span class="keyword">return</span> tableNameArray;</div><div class="line">	    &#125;</div><div class="line">	    </div><div class="line">``` </div><div class="line"></div><div class="line">##  根据表名称，获取所有的字段以及属性</div><div class="line">```java</div><div class="line"> <span class="comment">/**</span></div><div class="line"><span class="comment">	     * <span class="doctag">@param</span> table name</span></div><div class="line"><span class="comment">	     * <span class="doctag">@return</span>	an String[] String[0] is field, String[1] is sttribute</span></div><div class="line"><span class="comment">	     * <span class="doctag">@throws</span> DocumentException</span></div><div class="line"><span class="comment">	     */</span></div><div class="line">	    <span class="keyword">public</span> String[] getFieldAndAttr(String tablename) <span class="keyword">throws</span> DocumentException&#123;</div><div class="line">	        <span class="comment">// Initialize table field</span></div><div class="line">	    	String fieldString = <span class="string">""</span>;</div><div class="line">	    	<span class="comment">// Initialize table attribute</span></div><div class="line">	        String attrString=<span class="string">""</span>;</div><div class="line">	        <span class="comment">// Initialize the split sign</span></div><div class="line">	        String splitsignString = <span class="string">""</span>;</div><div class="line">	        </div><div class="line">	        String[] tableFieldAndAttr=<span class="keyword">null</span>;</div><div class="line">	    	</div><div class="line">	        SAXReader reader = <span class="keyword">new</span> SAXReader();  </div><div class="line">	        Document document = reader.read(<span class="keyword">new</span> File(configPath));  </div><div class="line">	        </div><div class="line">	        String xpath = <span class="string">"//tables//table[@tablename='"</span>+tablename+<span class="string">"']//fieldname"</span>;</div><div class="line">	        List&lt;String&gt; list = document.selectNodes(xpath);</div><div class="line">	        Iterator iter = list.iterator();</div><div class="line">	        <span class="keyword">while</span>(iter.hasNext())&#123;</div><div class="line">	        	Element element = (Element) iter.next();</div><div class="line">	        	<span class="comment">// connect the field</span></div><div class="line">	        	fieldString = fieldString+element.attribute(<span class="number">0</span>).getValue()+ <span class="string">" "</span>;</div><div class="line">	        	<span class="comment">// connect the attribute</span></div><div class="line">	        	attrString = attrString+element.attribute(<span class="number">1</span>).getValue()+ <span class="string">" "</span>;</div><div class="line">	        &#125;</div><div class="line">	        <span class="comment">// remove the last character</span></div><div class="line">	        fieldString = fieldString.substring(<span class="number">0</span>,fieldString.length()-<span class="number">1</span>);</div><div class="line">	        attrString = attrString.substring(<span class="number">0</span>,attrString.length()-<span class="number">1</span>);</div><div class="line">	        </div><div class="line">	        String xpathSplit = <span class="string">"//tables//table[@tablename='"</span>+tablename+<span class="string">"']//splitsign"</span>;</div><div class="line">	        List&lt;String&gt; signlist = document.selectNodes(xpathSplit);</div><div class="line">	        Iterator splititer = signlist.iterator();</div><div class="line">	        <span class="keyword">while</span>(splititer.hasNext())&#123;</div><div class="line">	        	Element splitElement = (Element) splititer.next();</div><div class="line">	        	splitsignString = splitsignString+splitElement.attribute(<span class="number">0</span>).getValue();</div><div class="line">	        &#125;</div><div class="line">	 </div><div class="line">	        tableFieldAndAttr = <span class="keyword">new</span> String[]&#123;fieldString,attrString,splitsignString&#125;;</div><div class="line">	        <span class="keyword">return</span> tableFieldAndAttr;</div><div class="line">	    </div><div class="line">	    &#125;  </div><div class="line">```  </div><div class="line"></div><div class="line">## 另外介绍一下XMLConfiguration, 将所有的字段以及属性放入到map中, 使用XMLConfiguration</div><div class="line">需要引入的jar包commons-configuration-<span class="number">1.0</span>.jar,</div></pre></td></tr></table></figure>
-<p>package teststring;</p>
-<p>import org.apache.commons.configuration.ConfigurationException;<br>import org.apache.commons.configuration.XMLConfiguration;</p>
-<p>import java.util.HashMap;<br>import java.util.Iterator;<br>import java.util.Map;</p>
-<p>/**</p>
-<ul>
-<li><p>Created by Administrator on 2017/3/21.<br>*/<br>public class TestConf {</p>
-<p> public static void main(String[] args) {</p>
-<pre><code>Map&lt;String,Object&gt; dataMap=new HashMap&lt;String,Object&gt;();
-try {
-    XMLConfiguration config = new XMLConfiguration(&quot;conf/datawatch_config.xml&quot;);
-    config.setEncoding(&quot;UTF-8&quot;);
-    config.setDelimiterParsingDisabled(true);
-    Iterator&lt;String&gt; iter = config.getKeys();
-    while (iter.hasNext())
-    {
-        String key = iter.next().toString();
-        dataMap.put(key, config.getProperty(key));
-    }
-
-} catch (ConfigurationException e) {
-    e.printStackTrace();
-}
-</code></pre><p> }<br>}</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## XMLconfig的XPATH的使用, 使用XPATH解析， xpath是我比较喜欢的一种解析方式</div><div class="line">```xml</div><div class="line">&lt;comm&gt;</div><div class="line">  &lt;data&gt;</div><div class="line">    &lt;name&gt;zks&lt;/name&gt;</div><div class="line">   &lt;age&gt;24&lt;/age&gt;</div><div class="line">  &lt;/data&gt;</div><div class="line">  &lt;data&gt;</div><div class="line">    &lt;name&gt;skz&lt;/name&gt;</div><div class="line">    &lt;age&gt;23&lt;/age&gt;</div><div class="line">  &lt;/data&gt;</div><div class="line">&lt;/comm&gt;</div></pre></td></tr></table></figure>
-<p>需要引入的jar包 commons-jxpath-1.3.jar,<br>commons-configuration-1.0.jar<br>其中 <a href="http://commons.apache.org/proper/commons-jxpath/download_jxpath.cgi" target="_blank" rel="external">commos-jaxpath-1.3下载地址</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"> XMLConfiguration config = new XMLConfiguration(&quot;conf/datawatch_config.xml&quot;);</div><div class="line"> //注意下面的两句话，必须这样才能使用xpath去解析</div><div class="line">XPathExpressionEngine xPathExpressionEngine = new XPathExpressionEngine();</div><div class="line">config.setExpressionEngine(xPathExpressionEngine);</div><div class="line">System.out.println(config.getString(&quot;data[1]/name&quot;));</div><div class="line">System.out.println(config.getString(&quot;data[2]/name&quot;));</div><div class="line">System.out.println(config.getString(&quot;data[name=&apos;skz&apos;]/age&quot;));</div></pre></td></tr></table></figure></p>
-<p>将会输出<br>zks<br>skz<br>23  </p>
-<p>更多XPATH解析方法参考 菜鸟教程  </p>
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>xml如下</p>
-<pre><code class="xml"><span class="tag">&lt;<span class="name">comm</span>&gt;</span>
-  <span class="tag">&lt;<span class="name">data</span>&gt;</span>
-    <span class="tag">&lt;<span class="name">name</span>&gt;</span>zks<span class="tag">&lt;/<span class="name">name</span>&gt;</span>
-   <span class="tag">&lt;<span class="name">age</span>&gt;</span>24<span class="tag">&lt;/<span class="name">age</span>&gt;</span>
-   <span class="tag">&lt;<span class="name">sex</span>&gt;</span>man<span class="tag">&lt;/<span class="name">sex</span>&gt;</span>
-  <span class="tag">&lt;/<span class="name">data</span>&gt;</span>
-  <span class="tag">&lt;<span class="name">data</span>&gt;</span>
-    <span class="tag">&lt;<span class="name">name</span>&gt;</span>skz<span class="tag">&lt;/<span class="name">name</span>&gt;</span>
-    <span class="tag">&lt;<span class="name">age</span>&gt;</span>23<span class="tag">&lt;/<span class="name">age</span>&gt;</span>
-  <span class="tag">&lt;/<span class="name">data</span>&gt;</span>
-<span class="tag">&lt;/<span class="name">comm</span>&gt;</span>
-</code></pre>
-<p>如果我想得到第一个data下的所有的， 然后按照上面的，存入map中，怎么做呢， 我们可以得到data下的这个config，可以使用SubnodeConfiguration subnodeConfiguration = config.configurationAt(key),代码如下</p>
-<pre><code class="java"> SubnodeConfiguration subnodeConfiguration = config.configurationAt(<span class="string">"data[1]"</span>);
-<span class="comment">// 下面就可以用了</span>
- Iterator itea1 = subnodeConfiguration.getKeys();
-                <span class="keyword">while</span> (itea1.hasNext()){
-                    System.out.println(<span class="string">"iter.next().toString(): "</span>+itea1.next().toString());
-                     System.out.println(<span class="string">"conf.getProperty"</span>+subnodeConfiguration.getProperty(key));
-                }
-</code></pre>
-<p>参考自<a href="http://stackoverflow.com/questions/14388418/apache-commons-xmlconfiguration-how-to-fetch-a-list-of-objects-at-a-given-node" target="_blank" rel="external">stackoverflow</a> 和 <a href="http://commons.apache.org/proper/commons-configuration/userguide/howto_xml.html" target="_blank" rel="external">http://commons.apache.org/proper/commons-configuration/userguide/howto_xml.html</a>  </p>
-
+                前言,虽然更喜欢用json,但是xml更灵活，在配置文件的时候更方便 要用SAXRead需要的jar包,dom4j-1.6.1.jar, jaxen-1.1-beta-10.jar,  XML文件格式如下.读取所有的表名称, 根据表名称，获取所有的字段以及属性, 另外介绍一下XMLConfiguration, 将所有的字段以及属性放入到map中, 使用XMLConfiguration 需要引入的jar包commons-configuration-1.0.jar
             
             <p class="more">
                 <a href="http://dangluren.top/programme/xml-parse1.html">阅读剩下更多</a>
@@ -478,7 +418,7 @@ try {
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="怀念曾经"><a href="#怀念曾经" class="headerlink" title="怀念曾经"></a><strong>怀念曾经</strong></h2><p> 曾经大学学过的数学当中，最喜欢的就是高等数学和运筹学，不仅仅和自己兴趣有关，也和老师的敬业、以及负责性有关。运筹学，本就以实际例子为例讲解，模型设计极为巧妙，优化方法非常有趣，并且叫我们运筹学的老师年轻漂亮，教学效果还很好。所以虽然这么久了。我依然还记得很多里面的内容。由于最近工作碰到几个算法，属于道路优化相关，设计到了运筹学的一些知识，于是又花时间将将运筹学给看了一遍，突然发现运筹学博大精深，不仅仅在计算机中，在控制论，经济学，以及整个人生都存在，多年后再看运筹学，已经不是以前的只为考试了，慢慢体会到运筹学中动态规划的意义了，本文大多属于书上的内容，这里算是做做笔记把。 </p>
+                曾经大学学过的数学当中，最喜欢的就是高等数学和运筹学，不仅仅和自己兴趣有关，也和老师的敬业、以及负责性有关。运筹学，本就以实际例子为例讲解，模型设计极为巧妙，优化方法非常有趣，并且叫我们运筹学的老师年轻漂亮，教学效果还很好。所以虽然这么久了。我依然还记得很多里面的内容。由于最近工作碰到几个算法，属于道路优化相关，设计到了运筹学的一些知识，于是又花时间将将运筹学给看了一遍，突然发现运筹学博大精深，不仅仅在计算机中，在控制论，经济学，以及整个人生都存在，多年后再看运筹学，已经不是以前的只为考试了，慢慢体会到运筹学中动态规划的意义了，本文大多属于书上的内容，这里算是做做笔记把
             
             <p class="more">
                 <a href="http://dangluren.top/算法/dynamic-programming-1.html">阅读剩下更多</a>
@@ -528,7 +468,7 @@ try {
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="引入点"><a href="#引入点" class="headerlink" title="引入点"></a><strong>引入点</strong></h2><p>由于前几天天行vpn被封，都不知道如何访问google了，突然感觉没有google的世界是多么的恐怖，很是怀恋之前的vps，突然想到，曾经的大学舍友很喜欢捣鼓这个，就问了问还有没有代理的方法，哇，不问不知道，一问吓一跳，一年多不见，今天才知道肥羊竟然是这方面的高手，然后完美解决了我这里的问题：<br>肥羊的博客:    <a href="https://91vps.club/">https://91vps.club/</a> – 怕是被封了<br>
+                由于前几天天行vpn被封，都不知道如何访问google了，突然感觉没有google的世界是多么的恐怖，很是怀恋之前的vps，突然想到，曾经的大学舍友很喜欢捣鼓这个，就问了问还有没有代理的方法，哇，不问不知道，一问吓一跳，一年多不见，今天才知道肥羊竟然是这方面的高手，然后完美解决了我这里的问题
             
             <p class="more">
                 <a href="http://dangluren.top/随笔/mylife2.html">阅读剩下更多</a>
@@ -582,7 +522,7 @@ try {
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="二维数组中的查找"><a href="#二维数组中的查找" class="headerlink" title="二维数组中的查找"></a>二维数组中的查找</h2><p>问题:<br>在一个二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数<br>
+                在一个二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数.请实现一个函数，将一个字符串中的空格替换成“%20”。例如，当字符串为We Are Happy.则经过替换之后的字符串为We%20Are%20Happy
             
             <p class="more">
                 <a href="http://dangluren.top/算法/offer-harvester.html">阅读剩下更多</a>
@@ -610,7 +550,7 @@ try {
         
     <h3 class="post-title">
     	<a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html">
-    		Spark Sql 编程式结构DataType转换 代码类小结
+    		论加班
     	</a>
     </h3>
 
@@ -632,15 +572,14 @@ try {
     <div class="post-content">
         <div class="post-excerpt">
             
-                <h2 id="it行业加班是普遍现象，千万不要和程序猿抱怨工作累！"><a href="#it行业加班是普遍现象，千万不要和程序猿抱怨工作累！" class="headerlink" title="it行业加班是普遍现象，千万不要和程序猿抱怨工作累！"></a><strong>it行业加班是普遍现象，千万不要和程序猿抱怨工作累！</strong></h2><p>曾经的一个在国企朋友向我抱怨，内容是这样的：<strong>“8点30过一分钟打卡就算迟到，5点30打卡就算早退，觉得太不公平了，工作太累了”</strong>，据我所知，该同学工作很轻松，每天基本就是盖盖章，谢谢报告等，每天能8点半上班，5点30还没到，公司都人都准备好东西排队打卡回家了。！！！！！有没有搞错，what’s the fuck，你向谁抱怨不好，竟然向程序猿抱怨工作累！！！  </p>
-<p>还一次，上个月高中几个在深圳的同学聚会，一个做证券，一个做药物研发，一个做财务管理的，就我一个程序猿。我们四个人自然而然的讨论到了工作。<br>
+                it行业加班是普遍现象，千万不要和程序猿抱怨工作累,曾经的一个在国企朋友向我抱怨，内容是这样的,8点30过一分钟打卡就算迟到，5点30打卡就算早退，觉得太不公平了，工作太累了”**，据我所知，该同学工作很轻松，每天基本就是盖盖章，谢谢报告等，每天能8点半上班，5点30还没到，公司都人都准备好东西排队打卡回家了。！！！！！有没有搞错，what's the fuck，你向谁抱怨不好，竟然向程序猿抱怨工作累！！！
             
             <p class="more">
                 <a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html">阅读剩下更多</a>
             </p>
         </div>
         <div class="post-thumbnail" data-img="">
-            <a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html" title="Spark Sql 编程式结构DataType转换 代码类小结">
+            <a href="http://dangluren.top/hadoop/spark/spark-sql-dataType-transform.html" title="论加班">
                 
                     <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/5.jpg" alt="默认配图" >
                 
@@ -739,13 +678,13 @@ try {
     </li>
     
     <li>
-        <a href="/categories/programme/">programme</a>
-        <span class="badge">(12)</span>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
     </li>
     
     <li>
-        <a href="/categories/Linux/">Linux</a>
-        <span class="badge">(2)</span>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
     </li>
     
     <li>
@@ -781,15 +720,19 @@ try {
   
     <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
   
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
     <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
   
     <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
   
     <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
   
     <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
-  
-    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
   
     <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
   
@@ -798,8 +741,6 @@ try {
     <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
   
     <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
-  
-    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
   
     <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
   
@@ -813,9 +754,9 @@ try {
   
     <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
   
-    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
-  
     <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
   
     <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
   
@@ -824,8 +765,6 @@ try {
     <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
   
     <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
-  
-    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
   
     <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
   
@@ -847,11 +786,11 @@ try {
 <ul class="widget-bd">
     
         <li>
-            <a href="http://blog.sina.com.cn/u/1825875765" target="_blank" title="网络安全博客">Haoren博客</a>
+            <a href="http://blog.csdn.net/t1dmzks" target="_blank" title="翟开顺个人博客">翟开顺博客</a>
         </li>
     
         <li>
-            <a href="http://blog.csdn.net/yeweiouyang" target="_blank" title="技术博客">Maxwell博客</a>
+            <a href="https://github.com/zhaikaishun" target="_blank" title="翟开顺github">github</a>
         </li>
     
         <li>
