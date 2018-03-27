@@ -85,6 +85,6 @@ theme: hexo-theme-xups
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/zhaikaishun/zhaikaishun.github.io
+  repo: https://github.com/zhaikaishun/zhaikaishun.github.io.git
   branch: master
   
