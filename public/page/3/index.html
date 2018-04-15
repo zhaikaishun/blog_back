@@ -136,6 +136,56 @@
         <!-- 文章标题 -->
         
     <h3 class="post-title">
+    	<a href="http://dangluren.top/架构/thread7.html">
+    		【多线程高并发】ThreadLocal，高并发下的单例模式
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        kaishun 发表于
+        <time datetime="2017-08-27T13:25:21.000Z">2017-08-27</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/java/" title="java">java</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                ThreadLocal概念, 线程局部变量，是一种多线程间并发访问变量的解决方案。与其synchronized等加锁方式不同，THreadLocal完全不提供锁，而使用空间换时间的手段，为每个线程提供变量的独立副本，以保障线程安全。在高并发量或者竞争激烈的场景，使用ThreadLocal可以在一定程度上减少锁竞争。当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本...
+            
+            <p class="more">
+                <a href="http://dangluren.top/架构/thread7.html">阅读剩下更多</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="http://dangluren.top/架构/thread7.html" title="【多线程高并发】ThreadLocal，高并发下的单例模式">
+                
+                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/7.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+        <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 标签这有且只能显示一个 -->
+        
+        <a class="cat-link" href="/categories/架构/">架构</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
     	<a href="http://dangluren.top/架构/thread6.html">
     		【多线程高并发】java锁的高级
     	</a>
@@ -585,57 +635,6 @@
 </article>
 
     
-        <!-- 文章 -->
-<article class="post">
-    <header>
-        <!-- 标签这有且只能显示一个 -->
-        
-        <a class="cat-link" href="/categories/架构/">架构</a>
-        
-        <!-- 文章标题 -->
-        
-    <h3 class="post-title">
-    	<a href="http://dangluren.top/架构/BIO-NIO-AIO.html">
-    		传统的socket之BIO到伪异步IO到NIO最后到AIO简介
-    	</a>
-    </h3>
-
-    </header>
-    <p class="post-meta">
-        kaishun 发表于
-        <time datetime="2017-07-30T13:25:21.000Z">2017-07-30</time>
-        &nbsp;&nbsp;
-        <span class="post-tags">
-            标签：
-            
-    
-        <a href="/tags/Netty/" title="Netty">Netty</a>
-    
-
-        </span>
-    </p>
-
-    <div class="post-content">
-        <div class="post-excerpt">
-            
-                <p>关键字：NIO， IO,BIO,AIO的简介以及演变原因</p>
-<p>本人对nio确实也了解的不深，此文只是简介<br>代码在 <a href="https://github.com/zhaikaishun/NettyTutorial">https://github.com/zhaikaishun/NettyTutorial</a>  下的socket01<br>
-            
-            <p class="more">
-                <a href="http://dangluren.top/架构/BIO-NIO-AIO.html">阅读剩下更多</a>
-            </p>
-        </div>
-        <div class="post-thumbnail" data-img="">
-            <a href="http://dangluren.top/架构/BIO-NIO-AIO.html" title="传统的socket之BIO到伪异步IO到NIO最后到AIO简介">
-                
-                    <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/0.jpg" alt="默认配图" >
-                
-            </a>
-        </div>
-    </div>
-</article>
-
-    
 
     
     <nav class="page-navigator">
@@ -703,7 +702,12 @@
     
     <li>
         <a href="/categories/随笔/">随笔</a>
-        <span class="badge">(2)</span>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/算法/">算法</a>
+        <span class="badge">(1)</span>
     </li>
     
 </ul>
@@ -735,13 +739,13 @@
   
     <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
   
-    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
-  
     <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
+  
+    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
   
     <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
   
-    <a class="tag-item" href="/tags/算法/" title="算法">算法 (3)</a>
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (4)</a>
   
     <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
   
@@ -755,15 +759,15 @@
   
     <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
   
-    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (2)</a>
-  
-    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
-  
-    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (3)</a>
   
     <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
   
     <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
+  
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
   
     <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
   

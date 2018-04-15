@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>兔子递归想到的一些道理 | 挡路人</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="挡路人, 大数据, 分布式, 中间件, java" >
+    <meta name="description" content="挡路人个人小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="挡路人" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?fd459238242776d173cdc64918fb32f2";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+    <section class="container header-main">
+        <div class="logo">
+            <a href="/">
+                <div class="cover">
+                    <span class="name">挡路人</span>
+                    <span class="description">学有所思，思有所感</span>
+                </div>
+            </a>
+        </div>
+        <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+        <ul class="menu hidden" id="JELON__menu">
+            
+            <li rel="/随笔/算法/rabbit-recursive-life.html" class="item ">
+                <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+            </li>
+            
+            <li rel="/随笔/算法/rabbit-recursive-life.html" class="item ">
+                <a href="/lab/" title="实验室" class="icon-lab">&nbsp;实验室</a>
+            </li>
+            
+            <li rel="/随笔/算法/rabbit-recursive-life.html" class="item ">
+                <a href="/about/" title="关于" class="icon-about">&nbsp;关于</a>
+            </li>
+            
+            <li rel="/随笔/算法/rabbit-recursive-life.html" class="item ">
+                <a href="/comment/" title="留言" class="icon-comment">&nbsp;留言</a>
+            </li>
+            
+        </ul>
+        <div class="profile clearfix">
+            <div class="feeds fl">
+                
+                
+                <p class="links">
+                    
+                        <a href="https://github.com/zhaikaishun" target="_blank">Github</a>
+                        |
+                    
+                        <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+                        
+                    
+                </p>
+                <p class="sns">
+                    
+                        <a href="http://blog.csdn.net/t1dmzks" class="sinaweibo" target="_blank"><b>■</b> csdn博客</a>
+                    
+                        <a href="zhaikaishun@126.com" class="qqweibo" target="_blank"><b>■</b> Email</a>
+                    
+                    <a href="javascript: void(0);" class="wechat">
+                        <b>■</b>
+                        公众号
+                        <span class="popover">
+                            <img src="/img/wechat_mp.jpg" width="120" height="120" alt="我的微信订阅号">
+                            <i class="arrow"></i>
+                        </span>
+                    </a>
+                </p>
+                
+            </div>
+            <div class="avatar fr">
+                <img src="/img/jelon.jpg" alt="avatar" title="Jelon" >
+            </div>
+        </div>
+    </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>兔子递归想到的一些道理</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        kaishun 发表于
+        <time datetime="2018-03-10T13:25:21.000Z">2018-03-10</time>
+    </p>
+    <div class="post-content">
+        <h2 id="兔子递归问题"><a href="#兔子递归问题" class="headerlink" title="兔子递归问题"></a>兔子递归问题</h2><p>前几天有个同事考我一个有关兔子递归的题目：题目如下   </p>
+<p>有一对兔子，生长到第3个月时。开始生第一对兔子，并且以后每月生一对兔子，小兔子生长三个月后，也开始生兔子，问N个月后兔子的总数量.<br>刚开始我一想，这不就是大一就做过的吗，这个就是经典的斐波拉契啊。于是在草稿纸上画着  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">月份	1	2	3	4	5	6	7</div><div class="line">对数	1	1	2	3	5	8	13</div></pre></td></tr></table></figure>
+<p>哦，然后觉得，可以使用递推法。也可以使用递归法。不过看我那同事，估计是说要用递归了。 然后就用递归写程序了。<br>其实都知道<br>不就是f(n)=f(n-1)+f(n-2) 吗(n&gt;2时)， 边界就是f1=1, f2=1  </p>
+<p>但是我并没有写，这貌似和我所理解的递归思维不一样。我所理解的，不是说通过规律找到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">f(n)=f(n-1)+f(n-2)。</div></pre></td></tr></table></figure></p>
+<p>大家都知道，递归就是自己调用自己，但是一个抽象的方法，如何自己调用自己呢。我所理解的是<strong>将一种重复问题，分别为同类子问题的方法</strong>，这个子问题也是一种重复问题。而我们应该是要有这种思想。  </p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>回到这个问题， f(n)=f(n-1)+f(n-2),如果从一般的情况来说，这三个函数分别代表什么意思呢。    </p>
+<ul>
+<li>f(n)代表第n月时兔子总数  </li>
+<li>f(n-1)代表第n-1个月时的兔子总数  </li>
+<li>f(n-2)代表第n-2个月时的兔子总数.</li>
+</ul>
+<p>可这个公式到底是怎么来的呢。<br>后来想了想，才想清楚<br>这里先给这个题目说清晰一点，第三个月开始生兔子，要说明是第三个月初。然后问第n个月后有多少只兔子，其实问的是第n个月底<br>题目清晰后，分析如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">第n个月的兔子总数 = 第n-<span class="number">1</span>个月的兔子总数+第n月初新生的兔子总数  </div><div class="line">而第n月初新生的兔子总数，其实就是第n-<span class="number">2</span>个月时的兔子的总数，这是因为n-<span class="number">2</span>个月时的兔子总数，在第n月初都将会生兔子。</div></pre></td></tr></table></figure></p>
+<p>所以得出<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">第n个月的兔子总数 = 第n-<span class="number">1</span>个月的兔子总数 + 第n-<span class="number">2</span>个月时的兔子的总数.</div></pre></td></tr></table></figure></p>
+<p>也就是<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">f(n)=f(n-<span class="number">1</span>)+f(n-<span class="number">2</span>).</div></pre></td></tr></table></figure></p>
+<p>这里我们可以看出，我们并不是想要通过找规律得到这个递归的过程，而是应该根据一种划分子问题的思维，去寻找这个规律。<br>如果有这种思维，这道题可以将这个生长到<strong>第3个月改为第k个月</strong><br>还是一样的分析方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">第n个月的兔子总数 = 第n-1个月的兔子总数+第n月初新生的兔子总数  </div><div class="line">第n月初新生的兔子总数 = 第n-k+1时兔子的总数.因为第n-k+1时的兔子总数，在第n个月时，肯定都会生兔子。</div></pre></td></tr></table></figure></p>
+<p>所以<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">f(n)=f(n-<span class="number">1</span>)+f(n-k+<span class="number">1</span>)。</div></pre></td></tr></table></figure></p>
+<h2 id="补充几个类似思想的问题"><a href="#补充几个类似思想的问题" class="headerlink" title="补充几个类似思想的问题"></a>补充几个类似思想的问题</h2><p>然后再补充几个可以用划分子问题的方式，这是一种递归问题  </p>
+<ol>
+<li><p>跳台阶问题<br>一只青蛙一次可以跳上1级台阶，也可以跳上2级。求该青蛙跳上一个n级的台阶总共有多少种跳法。  </p>
+</li>
+<li><p>矩形覆盖问题<br>我们可以用2<em>1的小矩形横着或者竖着去覆盖更大的矩形, 请问用n个2</em>1的小矩形无重叠地覆盖一个2*n的大矩形，总共有多少种方法？  </p>
+</li>
+<li><p>二叉树的前序遍历，中序遍历，后续遍历等问题  </p>
+</li>
+</ol>
+<p>其实这几种问题，都不是说找规律来的，都是划分为同类子问题的方式  </p>
+<h2 id="要有自己的思考"><a href="#要有自己的思考" class="headerlink" title="要有自己的思考"></a>要有自己的思考</h2><p>所以，网上的挺多内容，都需要有自己的思考，多想想为什么，有时候即使自己想错了也可以，但毕竟还是自己思考过，而不是一味的参考网上的方法。<br>其实从小到大，我思考都不会直接看答案，天生就对答案有一种怀疑的态度。之前刷数学题， 物理题，基本都是自己去做，如果和答案不一样，我一般都是先怀疑答案有问题，然后一个一个对比，如果是自己的问题，那OK。自己也会对比为什么要这样做，正是由于有这种思维，如果一个你理解了的问题，无论这个问题再怎么变化，你也是会做的。做算法也是一样，如果去刷leetcode，或者编程中，一有问题就百度google，然后网上说什么，就认同什么，其实这对自己提升是非常小的，甚至，大多时候先看完答案，总有一种先入为主的思维，让你不得不往答案的这个思路去想，但是有时候这并不是最好的，也有时也没有涉及到问题的本质，只有多思考，多怀疑，这样，才能对事物理解的更加深刻。（不过这样就只有一个不好的，也是大多理工科的一个通病，容易钻牛角尖，其实怀疑也需要合理，该相信的还是要相信，只不过更多要有自己的想法，并且尽量去客观，辩证的看待）<br><strong>最后再补充一句，看新闻别看腾讯今日头条百度等新闻，更不要看在腾讯百度今日头条等看大家的评论。</strong>  </p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/随笔/">随笔</a>|<a class="cat-link" href="/categories/随笔/算法/">算法</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/算法/" title="算法">算法</a> / 
+    
+        <a href="/tags/随笔/" title="随笔">随笔</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      <a href="javascript: window.open('http://service.weibo.com/share/share.php?url=' + encodeURIComponent(location.href) + '&title=' + document.title + '&language=zh_cn');" class="share-icon weibo"></a>
+      <a href="javascript: alert('请复制链接到微信并发送');" class="share-icon wechat"></a>
+      <a href="javascript: window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(location.href) + '&title=' + document.title);" class="share-icon qqzone"></a>
+      <a href="javascript: window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + encodeURIComponent(location.href) + '&desc=Jelon个人博客&title=' + document.title + '&callback=' + encodeURIComponent(location.href));" class="share-icon qq"></a>
+      <a href="javascript: window.open('http://shuo.douban.com/!service/share?href=' + encodeURIComponent(location.href) + '&name=' + document.title + '&text=' + document.title);" class="share-icon douban"></a>
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/架构/zookeeper9.html">
+            
+                zookeeper Curator框架简单使用
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="javascript: void(0);">没有下一篇了</a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'rabbit-recursive-life' || '随笔/算法/rabbit-recursive-life.html',
+    owner: 'jangdelong',
+    repo: 'blog_comments',
+    clientId: 'b08ed25e52c57993e69c',
+    clientSecret: '1cb9545488f0380904b87350e7c5a270ae03bab7'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">(5)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/">大数据</a>
+        <span class="badge">(43)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hdfs/">hdfs</a>
+        <span class="badge">(8)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/hadoop/">hadoop</a>
+        <span class="badge">(11)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/programme/">programme</a>
+        <span class="badge">(12)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/架构/">架构</a>
+        <span class="badge">(21)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/hadoop/spark/">spark</a>
+        <span class="badge">(23)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/算法/">算法</a>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/">随笔</a>
+        <span class="badge">(3)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/随笔/算法/">算法</a>
+        <span class="badge">(1)</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 文章标签 -->
+<div class="widget-bd tag-wrap">
+  
+    <a class="tag-item" href="/tags/linux/" title="linux">linux (7)</a>
+  
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+  
+    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+  
+    <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
+  
+    <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
+  
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
+  
+    <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
+  
+    <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
+  
+    <a class="tag-item" href="/tags/工具类/" title="工具类">工具类 (1)</a>
+  
+    <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
+  
+    <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
+  
+    <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
+  
+    <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
+  
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (4)</a>
+  
+    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
+  
+    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
+  
+    <a class="tag-item" href="/tags/曲线拟合/" title="曲线拟合">曲线拟合 (1)</a>
+  
+    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
+  
+    <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
+  
+    <a class="tag-item" href="/tags/zookeeper/" title="zookeeper">zookeeper (9)</a>
+  
+    <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (3)</a>
+  
+    <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
+  
+    <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
+  
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+  
+    <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
+  
+    <a class="tag-item" href="/tags/xml解析/" title="xml解析">xml解析 (1)</a>
+  
+    <a class="tag-item" href="/tags/资源/" title="资源">资源 (1)</a>
+  
+</div>
+    </section>
+    
+
+    
+
+    
+    <!-- 友情链接 -->
+    <section class="widget">
+        <h3 class="widget-hd"><strong>友情链接</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+        <li>
+            <a href="http://blog.csdn.net/t1dmzks" target="_blank" title="翟开顺个人博客">翟开顺博客</a>
+        </li>
+    
+        <li>
+            <a href="https://github.com/zhaikaishun" target="_blank" title="翟开顺github">github</a>
+        </li>
+    
+        <li>
+            <a href="http://xuanzh.cc/" target="_blank" title="技术博客">朱旋个人博客</a>
+        </li>
+    
+</ul>
+    </section>
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Jelon Loves You</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <!-- 这里放网站js脚本 -->
+<script src="/js/main.js"></script>
+</body>
+</html>
