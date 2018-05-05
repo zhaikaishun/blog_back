@@ -135,8 +135,8 @@
         <!-- 文章标题 -->
         
     <h3 class="post-title">
-    	<a href="http://dangluren.top/hadoop/spark/spark-v1-v2.html">
-    		spark 从1.x 转到2.x，编写程序的的一些区别
+    	<a href="http://dangluren.top/hadoop/spark/spark-exception.html">
+    		spark lost task 异常笔记
     	</a>
     </h3>
 
@@ -158,15 +158,14 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <p>spark 2.x 版本相对于1.x版本，有挺多地方的修改，一是类似于flatMapRDD 中 iteator iteatable之类的区别<br>2是类似于dataset的一些问题</p>
-<p>下面是2.x版本的iteatable和iteartor之类的区别，只举例了两个，其实只要和iteartor有关的都有了修改<br>
+                <h1 id="Lost-task-java-lang-NullPointerException"><a href="#Lost-task-java-lang-NullPointerException" class="headerlink" title="Lost task java.lang.NullPointerException"></a>Lost task java.lang.NullPointerException</h1><p>Exception in thread “main” org.apache.spark.SparkException: Job aborted due to stage failure: Task 0 in stage 0.0 failed 1 times, most recent failure: Lost task 0.0 in stage 0.0 (TID 0, localhost): java.lang.NullPointerException<br>
             
             <p class="more">
-                <a href="http://dangluren.top/hadoop/spark/spark-v1-v2.html">阅读剩下更多</a>
+                <a href="http://dangluren.top/hadoop/spark/spark-exception.html">阅读剩下更多</a>
             </p>
         </div>
         <div class="post-thumbnail" data-img="">
-            <a href="http://dangluren.top/hadoop/spark/spark-v1-v2.html" title="spark 从1.x 转到2.x，编写程序的的一些区别">
+            <a href="http://dangluren.top/hadoop/spark/spark-exception.html" title="spark lost task 异常笔记">
                 
                     <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/5.jpg" alt="默认配图" >
                 
@@ -303,7 +302,7 @@
     
     <li>
         <a href="/categories/hadoop/">大数据</a>
-        <span class="badge">(43)</span>
+        <span class="badge">(44)</span>
     </li>
     
     <li>
@@ -313,7 +312,7 @@
     
     <li>
         <a href="/categories/hadoop/hadoop/">hadoop</a>
-        <span class="badge">(11)</span>
+        <span class="badge">(12)</span>
     </li>
     
     <li>
@@ -362,9 +361,9 @@
   
     <a class="tag-item" href="/tags/linux/" title="linux">linux (7)</a>
   
-    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (4)</a>
+    <a class="tag-item" href="/tags/大数据/" title="大数据">大数据 (5)</a>
   
-    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (11)</a>
+    <a class="tag-item" href="/tags/hadoop/" title="hadoop">hadoop (12)</a>
   
     <a class="tag-item" href="/tags/yarn/" title="yarn">yarn (2)</a>
   
@@ -386,9 +385,9 @@
   
     <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
   
-    <a class="tag-item" href="/tags/算法/" title="算法">算法 (4)</a>
-  
     <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
+  
+    <a class="tag-item" href="/tags/算法/" title="算法">算法 (4)</a>
   
     <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
   
