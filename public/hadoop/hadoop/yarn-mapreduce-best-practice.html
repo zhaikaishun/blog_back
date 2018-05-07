@@ -133,7 +133,7 @@
 <li>mapreduce.input.fileinputformat.split.minsize.per.node  </li>
 <li>mapreduce.input.fileinputformat.split.minsize.per.rack  </li>
 </ul>
-<p>mapreduce中map的个数和两个有关，一个是文件的个数，一个是大小，默认split是128M， 如果一个文件大于128M，例如129M，那么会有两个map，一个是128M，一个是1M。<br>又例如有10个文件，每个都是1M，那么map是会有10个的。<br>对于这种小文件太多，或者是我们想讲每一个map处理的数据量大一些，就应该设置上面的几个参数，上面几个参数是byte的单位。<br>例如我们想设置一次处理1G，那么就设置成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mapreduce.input.fileinputformat.split.minsize = 1024*1024*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.maxsize = 2048*1024*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.minsize.per.node = 512*1024*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.minsize.per.rack = 512*1024*1024*1024</div></pre></td></tr></table></figure></p>
+<p>mapreduce中map的个数和两个有关，一个是文件的个数，一个是大小，默认split是128M， 如果一个文件大于128M，例如129M，那么会有两个map，一个是128M，一个是1M。<br>又例如有10个文件，每个都是1M，那么map是会有10个的。<br>对于这种小文件太多，或者是我们想讲每一个map处理的数据量大一些，就应该设置上面的几个参数，上面几个参数是byte的单位。<br>例如我们想设置一次处理1G，那么就设置成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mapreduce.input.fileinputformat.split.minsize = 1024*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.maxsize = 2048*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.minsize.per.node = 512*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.minsize.per.rack = 512*1024*1024</div></pre></td></tr></table></figure></p>
 <h2 id="推测功能"><a href="#推测功能" class="headerlink" title="推测功能"></a>推测功能</h2><p>mapreduce.reduce.speculative<br>默认是true，有时候需要设置成false。<br>参考： <a href="http://itfish.net/article/60389.html或者搜索" target="_blank" rel="external">http://itfish.net/article/60389.html或者搜索</a></p>
 <h2 id="container大小设置最佳实践"><a href="#container大小设置最佳实践" class="headerlink" title="container大小设置最佳实践"></a>container大小设置最佳实践</h2><p><strong>mapreduce.map.memory.mb</strong> 和 <strong>mapreduce.reduce.memory.mb</strong>  和<strong>mapreduce.map.cpu.vcores</strong>和 <strong>mapreduce.reduce.cpu.vcores</strong></p>
 <p>mapreduce.map.memory.mb 默认1024M，一个map启动的container是1024M<br>mapreduce.reduce.memory.mb 默认3072M，一个map启动的container是3072<br>mapreduce.map.cpu.vcores默认1个vcore，一个map任务默认使用一个虚拟核运行<br>mapreduce.reduce.cpu.vcores默认1个vcore，一个reduce任务默认使用一个虚拟核运行。   </p>
@@ -348,11 +348,6 @@
     </li>
     
     <li>
-        <a href="/categories/Linux/">Linux</a>
-        <span class="badge">(2)</span>
-    </li>
-    
-    <li>
         <a href="/categories/programme/">programme</a>
         <span class="badge">(12)</span>
     </li>
@@ -360,6 +355,11 @@
     <li>
         <a href="/categories/架构/">架构</a>
         <span class="badge">(21)</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Linux/">Linux</a>
+        <span class="badge">(2)</span>
     </li>
     
     <li>
@@ -401,8 +401,6 @@
   
     <a class="tag-item" href="/tags/hdfs/" title="hdfs">hdfs (8)</a>
   
-    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
-  
     <a class="tag-item" href="/tags/java/" title="java">java (15)</a>
   
     <a class="tag-item" href="/tags/JDBC/" title="JDBC">JDBC (1)</a>
@@ -411,21 +409,21 @@
   
     <a class="tag-item" href="/tags/Netty/" title="Netty">Netty (2)</a>
   
+    <a class="tag-item" href="/tags/crontab/" title="crontab">crontab (1)</a>
+  
     <a class="tag-item" href="/tags/netty/" title="netty">netty (1)</a>
   
     <a class="tag-item" href="/tags/spark/" title="spark">spark (23)</a>
   
     <a class="tag-item" href="/tags/架构/" title="架构">架构 (1)</a>
   
-    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
-  
     <a class="tag-item" href="/tags/算法/" title="算法">算法 (4)</a>
   
-    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
+    <a class="tag-item" href="/tags/Hexo/" title="Hexo">Hexo (1)</a>
   
     <a class="tag-item" href="/tags/曲线拟合/" title="曲线拟合">曲线拟合 (1)</a>
   
-    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
+    <a class="tag-item" href="/tags/hive/" title="hive">hive (1)</a>
   
     <a class="tag-item" href="/tags/scala/" title="scala">scala (3)</a>
   
@@ -433,13 +431,15 @@
   
     <a class="tag-item" href="/tags/随笔/" title="随笔">随笔 (3)</a>
   
+    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
+  
+    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+  
     <a class="tag-item" href="/tags/剑指向offer/" title="剑指向offer">剑指向offer (1)</a>
   
     <a class="tag-item" href="/tags/笔试题/" title="笔试题">笔试题 (1)</a>
   
-    <a class="tag-item" href="/tags/动态规划/" title="动态规划">动态规划 (1)</a>
-  
-    <a class="tag-item" href="/tags/数学/" title="数学">数学 (1)</a>
+    <a class="tag-item" href="/tags/io/" title="io">io (1)</a>
   
     <a class="tag-item" href="/tags/Exception/" title="Exception">Exception (1)</a>
   
