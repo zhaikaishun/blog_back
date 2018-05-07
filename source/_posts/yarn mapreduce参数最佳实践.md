@@ -22,10 +22,10 @@ mapreduce中map的个数和两个有关，一个是文件的个数，一个是�
 对于这种小文件太多，或者是我们想讲每一个map处理的数据量大一些，就应该设置上面的几个参数，上面几个参数是byte的单位。  
 例如我们想设置一次处理1G，那么就设置成
 ```
-mapreduce.input.fileinputformat.split.minsize = 1024*1024*1024*1024
-mapreduce.input.fileinputformat.split.maxsize = 2048*1024*1024*1024
-mapreduce.input.fileinputformat.split.minsize.per.node = 512*1024*1024*1024
-mapreduce.input.fileinputformat.split.minsize.per.rack = 512*1024*1024*1024
+mapreduce.input.fileinputformat.split.minsize = 1024*1024*1024
+mapreduce.input.fileinputformat.split.maxsize = 2048*1024*1024
+mapreduce.input.fileinputformat.split.minsize.per.node = 512*1024*1024
+mapreduce.input.fileinputformat.split.minsize.per.rack = 512*1024*1024
 ```
 ## 推测功能  
 mapreduce.reduce.speculative  
