@@ -1,0 +1,17 @@
+## TeamView简介  
+teamview是一款用于远程的工具，相比于QQ等，速度和流畅度简直不能再好，teamView比较良心，普通使用一般是免费的，但是如果比较频繁，会被检测为商业用途，这时候就不能用了，然而作为个人，几千块一年也算太贵，曾经破解TV一般采用卸载，删除注册表，修改mac地址等方法，修改mac地址，但是最近是不行了。  
+
+## 现版本TV破解方法  
+[网盘下载地址](https://pan.baidu.com/s/1-2qO-ojy4-TVWec8uvM12g)  密码：10i6  
+![teamview破解工具下载](https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/team_crash/teamviewcrash.png)
+## 使用方法：  
+原有的TV卸载掉，并且最好将有tv的目录删除（可不做） 
+
+
+**以管理员运行**set_up软件,进行安装
+
+运行后，解压AutoResetID，然后**管理员运行**解压后的程序。等待（其中360的允许运行），过一段时间，原来开着的TV就会重新启动，这时候TV的ID就已经变了，可以使用了
+
+
+**其中的一些坑，就是一定两个程序都以管理员运行才有效果。以后每次运行TeamView都以管理员运行，如果又被检测为商业用途，可以再将上边的resetID破解工具再用**
+
