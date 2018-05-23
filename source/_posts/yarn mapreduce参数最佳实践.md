@@ -105,3 +105,14 @@ mapreduce任务默认超时时间，有时候抢队列的时候，这个会用�
 ## mapreduce.job.reduce.slowstart.completedmaps  
 map不用跑完就可以开始reduce了的比例，默认是0.95（网上说的0.05感觉不对啊），也就是map完成到百分之95时就可以开始reduce了，这样的好处是到了map最后几个，其实大多数资源都空闲了，这时候就先进行reduce吧，不然等全部跑完map有点浪费资源了。  
 但是我之前碰到过一次资源死锁饿死的情况，就是map还有几个没跑完，reduce已经起来了，然而reduce需要等待map跑完的数据，reduce端拉不到，然后map端也没完成，并且整个集群的资源都被利用完了，这样map跑不完，reduce也跑不完，就这样相互等待卡着
+
+## HADOOP_CLIENT_OPTS  
+hadoop jar启动的时候，client端的jvm内存大小。太小的话，如果跑的文件个数比较多,JOB还未起来就会报OOM错误  
+
+![hadoop-oom](https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/mapreduce-conf-best-practice/mapreduce-best-practice.jpg)  
+
+
+此配置在hadoop-env.sh中  
+```
+export HADOOP_CLIENT_OPTS="-Xmx1024m"  
+```
