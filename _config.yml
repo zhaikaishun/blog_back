@@ -4,7 +4,7 @@
 
 # Site
 title: 挡路人
-subtitle: 学有所思，思有所感
+subtitle: 阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。
 description: the blog of dangluren
 author: zhaikaishun
 language: zh-Hans
@@ -79,7 +79,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: hexo-theme-xups
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
