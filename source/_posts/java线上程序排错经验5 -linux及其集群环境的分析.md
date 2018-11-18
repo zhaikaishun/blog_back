@@ -1,6 +1,6 @@
 
 ---
-title: [java线上程序排错经验5 -linux及其集群环境的分析] java线上程序排错经验5 -linux及其集群环境的分析
+title: java线上程序排错经验5 -linux及其集群环境的分析
 date: 2018-10-04 21:25:21
 tags: [jvm,java]
 categories: [java]

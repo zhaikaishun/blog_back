@@ -1,5 +1,5 @@
 ---
-title: [maven-install] maven-打包的几种方式笔记
+title: maven-打包的几种方式笔记
 date: 2018-7-10 21:25:21
 tags: [工具]
 categories: [工具]

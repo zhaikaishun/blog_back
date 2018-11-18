@@ -1,6 +1,6 @@
 ---
-title: [java程序线上排错经验1- 了解JVM相关知识] java程序线上排错经验1- 了解JVM相关知识
-date: 2018-08-03 21:25:21
+title: java程序线上排错经验1之了解JVM相关知识
+date: 2018-08-09 21:25:21
 tags: [jvm,java]
 categories: [java]
 author: kaishun

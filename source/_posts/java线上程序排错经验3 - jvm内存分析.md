@@ -1,6 +1,6 @@
 
 ---
-title: [java线上程序排错经验3 - jvm内存分析] java线上程序排错经验3 - jvm内存分析
+title: java线上程序排错经验3 - jvm内存分析
 date: 2018-09-04 21:25:21
 tags: [jvm,java]
 categories: [java]

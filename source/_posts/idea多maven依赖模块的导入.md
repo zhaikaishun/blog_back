@@ -1,3 +1,15 @@
+---
+title: idea多maven依赖模块的导入
+date: 2018-02-21 21:25:21
+tags: [工具]
+categories: [工具]
+author: kaishun
+id: 144
+permalink: idea-multi-import
+---
+---
+idea多maven依赖模块的导入
+
 先任意导入一个项目  
 File -> New ->module from exitited source ->选择maven  
 

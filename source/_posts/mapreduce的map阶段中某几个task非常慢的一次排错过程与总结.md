@@ -1,5 +1,5 @@
 ---
-title: [mapreduce-trouble-shotting] mapreduce的map阶段中某几个task非常慢的一次排错过程与总结
+title: mapreduce的map阶段中某几个task非常慢的一次排错过程与总结
 date: 2018-08-03 21:25:21
 tags: [hadoop]
 categories: [大数据]
