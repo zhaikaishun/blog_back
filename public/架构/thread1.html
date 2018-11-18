@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="关键字：线程安全，synchronized，多个线程多个锁，对象锁的同步和异步，脏读，synchronized锁重入，synchronized代码块，volatile关键字 github 地址： https://github.com/zhaikaishun/concurrent_programming本篇文章代码在Multi_001 中">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【多线程高并发】线程安全">
+<meta property="og:url" content="http://dangluren.top/架构/thread1.html">
+<meta property="og:site_name" content="挡路人">
+<meta property="og:description" content="关键字：线程安全，synchronized，多个线程多个锁，对象锁的同步和异步，脏读，synchronized锁重入，synchronized代码块，volatile关键字 github 地址： https://github.com/zhaikaishun/concurrent_programming本篇文章代码在Multi_001 中">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-10-4/15410243.jpg">
+<meta property="og:updated_time" content="2018-11-18T15:34:10.231Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【多线程高并发】线程安全">
+<meta name="twitter:description" content="关键字：线程安全，synchronized，多个线程多个锁，对象锁的同步和异步，脏读，synchronized锁重入，synchronized代码块，volatile关键字 github 地址： https://github.com/zhaikaishun/concurrent_programming本篇文章代码在Multi_001 中">
+<meta name="twitter:image" content="http://or49tneld.bkt.clouddn.com/17-10-4/15410243.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dangluren.top/架构/thread1.html"/>
+
+
+
+
+
+  <title>【多线程高并发】线程安全 | 挡路人</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">挡路人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dangluren.top/架构/thread1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaikaishun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/1_t1dmzks.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="挡路人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【多线程高并发】线程安全</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-08T21:25:21+08:00">
+                2017-08-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/架构/" itemprop="url" rel="index">
+                    <span itemprop="name">架构</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>关键字</strong>：线程安全，synchronized，多个线程多个锁，对象锁的同步和异步，脏读，synchronized锁重入，synchronized代码块，volatile关键字</p>
+<p>github 地址： <a href="https://github.com/zhaikaishun/concurrent_programming" target="_blank" rel="external">https://github.com/zhaikaishun/concurrent_programming</a><br>本篇文章代码在Multi_001 中</p>
+<a id="more"></a>
+<h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2><p>当多个线程访问某一个类（对象或者方法）时，这个累始终都能表现出正确的行为，那么这个类（对象或方法）就是线程安全的</p>
+<h2 id="1-1-synchronized"><a href="#1-1-synchronized" class="headerlink" title="1.1 synchronized"></a>1.1 synchronized</h2><p>synchronized可以在任意的对象以及方法上加锁，加锁的这段代码称为”互斥区”。当多个线程访问某一个方法时，会以排队的方式进行处理（这里按照cpu分配的先后顺序而定），一个线程想要执行synchronized修饰的方法里面的代码。首先要尝试获得锁，如果拿到锁，执行synchronized代码体内容，拿不到锁，这个线程就会不断的尝试得到这把锁，知道拿到为止。而且是多个线程同时竞争这把锁</p>
+<p>例子 sync001 ：<br>run方法不加锁<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> count = <span class="number">5</span> ;</div><div class="line">	</div><div class="line">	<span class="comment">//synchronized加锁</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</div><div class="line">		count--;</div><div class="line">		System.out.println(<span class="keyword">this</span>.currentThread().getName() + <span class="string">" count = "</span>+ count);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="comment">/**</span></div><div class="line"><span class="comment">		 * 分析：当多个线程访问myThread的run方法时，以排队的方式进行处理（这里排对是按照CPU分配的先后顺序而定的），</span></div><div class="line"><span class="comment">		 * 		一个线程想要执行synchronized修饰的方法里的代码：</span></div><div class="line"><span class="comment">		 * 		1 尝试获得锁</span></div><div class="line"><span class="comment">		 * 		2 如果拿到锁，执行synchronized代码体内容；拿不到锁，这个线程就会不断的尝试获得这把锁，直到拿到为止，</span></div><div class="line"><span class="comment">		 * 		   而且是多个线程同时去竞争这把锁。（也就是会有锁竞争的问题）</span></div><div class="line"><span class="comment">		 */</span></div><div class="line">		MyThread myThread = <span class="keyword">new</span> MyThread();</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(myThread,<span class="string">"t1"</span>);</div><div class="line">		Thread t2 = <span class="keyword">new</span> Thread(myThread,<span class="string">"t2"</span>);</div><div class="line">		Thread t3 = <span class="keyword">new</span> Thread(myThread,<span class="string">"t3"</span>);</div><div class="line">		Thread t4 = <span class="keyword">new</span> Thread(myThread,<span class="string">"t4"</span>);</div><div class="line">		Thread t5 = <span class="keyword">new</span> Thread(myThread,<span class="string">"t5"</span>);</div><div class="line">		t1.start();</div><div class="line">		t2.start();</div><div class="line">		t3.start();</div><div class="line">		t4.start();</div><div class="line">		t5.start();</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">--- 运行后结果一般不是 <span class="number">4</span> <span class="number">3</span> <span class="number">2</span> <span class="number">1</span> <span class="number">0</span>, 我的某次运行结果如下-----</div><div class="line">t1 count = <span class="number">3</span></div><div class="line">t4 count = <span class="number">2</span></div><div class="line">t2 count = <span class="number">3</span></div><div class="line">t3 count = <span class="number">1</span></div><div class="line">t5 count = <span class="number">0</span></div><div class="line">``` </div><div class="line">如果给run方法加一把锁，其他代码不变，上面的run方法修改如下</div><div class="line">```java</div><div class="line">	<span class="comment">//synchronized加锁</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</div><div class="line">		count--;</div><div class="line">		System.out.println(<span class="keyword">this</span>.currentThread().getName() + <span class="string">" count = "</span>+ count);</div><div class="line">	&#125;</div><div class="line">--------无论运行多少次，结果都为----</div><div class="line">t3 count = <span class="number">4</span></div><div class="line">t2 count = <span class="number">3</span></div><div class="line">t1 count = <span class="number">2</span></div><div class="line">t5 count = <span class="number">1</span></div><div class="line">t4 count = <span class="number">0</span></div></pre></td></tr></table></figure></p>
+<h2 id="1-2-多个线程多个锁"><a href="#1-2-多个线程多个锁" class="headerlink" title="1.2 多个线程多个锁"></a>1.2 多个线程多个锁</h2><p>关键字synchronized取得的锁都是对象锁，而不是把一段代码（方法）当做锁，所以代码中哪个线程先执行synchronized关键字的方法，哪个线程就持有该方法所属对象的锁（Lock），两个对象，线程获得的就是两个不同的锁，他们互不影响<br>有一种情况则是相同的锁，即在静态方法上加synchronized 关键字，表示锁定.class类。类一级别的锁<br>例子 sync002：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiThread</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> num = <span class="number">0</span>;</div><div class="line">	<span class="comment">/** static */</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">printNum</span><span class="params">(String tag)</span></span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="keyword">if</span>(tag.equals(<span class="string">"a"</span>))&#123;</div><div class="line">				num = <span class="number">100</span>;</div><div class="line">				System.out.println(<span class="string">"tag a, set num over!"</span>);</div><div class="line">				Thread.sleep(<span class="number">1000</span>);</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				num = <span class="number">200</span>;</div><div class="line">				System.out.println(<span class="string">"tag b, set num over!"</span>);</div><div class="line">			&#125;</div><div class="line">			System.out.println(<span class="string">"tag "</span> + tag + <span class="string">", num = "</span> + num);</div><div class="line">			</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">//注意观察run方法输出顺序</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="comment">//俩个不同的对象</span></div><div class="line">		<span class="keyword">final</span> MultiThread m1 = <span class="keyword">new</span> MultiThread();</div><div class="line">		<span class="keyword">final</span> MultiThread m2 = <span class="keyword">new</span> MultiThread();</div><div class="line">		</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				m1.printNum(<span class="string">"a"</span>);</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		</div><div class="line">		Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span> </div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				m2.printNum(<span class="string">"b"</span>);</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		t1.start();</div><div class="line">		t2.start();</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">```  </div><div class="line">按照我们的希望，由于printNum方法加锁了, 我们希望t1线程执行完后，再执行t2线程, 实际上我们看到的结果如下, t1并没有执行完，就执行了t2线程</div></pre></td></tr></table></figure></p>
+<p>tag a, set num over!<br>tag b, set num over!<br>tag b, num = 200<br>tag a, num = 100<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">原因是虽然在printNum方法中加锁了，但是由于这里是两个对象， m1和m2，这里就对应着两把锁，两把锁各自肯定互不影响.</div><div class="line"></div><div class="line">类锁: 在上面的这个例子当中，如果给synchronized方法加上static进行修饰，那么就相当于给这个类加锁。这两把锁就会变成同一把锁了.</div><div class="line">上面的例子修改代码如下，其他不变</div><div class="line">```java</div><div class="line">	private static int num = 0;</div><div class="line">	/** static */</div><div class="line">	public static synchronized void printNum(String tag)&#123;</div><div class="line">		try &#123;</div><div class="line">			if(tag.equals(&quot;a&quot;))&#123;</div><div class="line">				num = 100;</div><div class="line">				System.out.println(&quot;tag a, set num over!&quot;);</div><div class="line">				Thread.sleep(1000);</div><div class="line">			&#125; else &#123;</div><div class="line">				num = 200;</div><div class="line">				System.out.println(&quot;tag b, set num over!&quot;);</div><div class="line">			&#125;</div><div class="line">			System.out.println(&quot;tag &quot; + tag + &quot;, num = &quot; + num);</div><div class="line">			</div><div class="line">		&#125; catch (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>输出为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">tag a, set num over!</div><div class="line">tag a, num = 100</div><div class="line">tag b, set num over!</div><div class="line">tag b, num = 200</div></pre></td></tr></table></figure></p>
+<h2 id="1-3-对象锁的同步和异步"><a href="#1-3-对象锁的同步和异步" class="headerlink" title="1.3 对象锁的同步和异步"></a>1.3 对象锁的同步和异步</h2><p>同步: synchronized<br>同步的概念就是共享，如果不是共享的资源，就没有必要进行同步<br>异步: asynchronized<br>异步的概念就是独立，相互之间不受任何制约，类似于页面Ajax请求，我们还可以继续浏览或操作页面的内容，而这之间没有任何关系<br>同步的目的就是为了线程安全，对于线程安全来说，需要满足两个特性  </p>
+<ul>
+<li>原子性</li>
+<li>可见性</li>
+</ul>
+<p>例子sync003<br> t1线程调用mo.method1()方法，该方法加有锁，这个方法需要等待，也就是同步<br> t2线程调用mo.method2()方法，该方法没有加锁，这个方法是异步的<br> <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyObject</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			System.out.println(Thread.currentThread().getName());</div><div class="line">			Thread.sleep(<span class="number">4000</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/** synchronized */</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;</div><div class="line">			System.out.println(Thread.currentThread().getName());</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		</div><div class="line">		<span class="keyword">final</span> MyObject mo = <span class="keyword">new</span> MyObject();</div><div class="line">		<span class="comment">/**</span></div><div class="line"><span class="comment">		 * 分析：</span></div><div class="line"><span class="comment">		 * t1线程先持有object对象的Lock锁，t2线程可以以异步的方式调用对象中的非synchronized修饰的方法</span></div><div class="line"><span class="comment">		 * t1线程先持有object对象的Lock锁，t2线程如果在这个时候调用对象中的同步（synchronized）方法则需等待，也就是同步</span></div><div class="line"><span class="comment">		 */</span></div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				mo.method1();</div><div class="line">			&#125;</div><div class="line">		&#125;,<span class="string">"t1"</span>);</div><div class="line">		</div><div class="line">		Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				mo.method2();</div><div class="line">			&#125;</div><div class="line">		&#125;,<span class="string">"t2"</span>);</div><div class="line">		</div><div class="line">		t1.start();</div><div class="line">		t2.start();</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="1-4-脏读"><a href="#1-4-脏读" class="headerlink" title="1.4 脏读"></a>1.4 脏读</h2><p> 对于对象的同步和异步方法，我们在设计自己的程序的时候，一定要考虑问题的整体性，不然就会出现数据不一致的错误，很经典的错误就是脏读(dirtyread )<br>例子： sync004<br>   我们在对一个对象的方法加锁的时候，需要考虑业务的整体性，即为setValue/getValue 方法同时加锁synchronized同步关键字, 保证业务的原子性，不然会出现业务错误<br>   下面的例子中，我希望先set完之后，再get内容，但是我在set的时候让t1线程休眠2秒钟，而主方法只休息一秒，这样，会导致名字设置完了，但是密码还没有设置，但是主线程调用了getValue()方法，产生了密码的脏读</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DirtyRead</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> String username = <span class="string">"kaishun"</span>;</div><div class="line">	<span class="keyword">private</span> String password = <span class="string">"123"</span>;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(String username, String password)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.username = username;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			Thread.sleep(<span class="number">2000</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">this</span>.password = password;</div><div class="line">		System.out.println(<span class="string">"setValue最终结果：username = "</span> + username + <span class="string">" , password = "</span> + password);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getValue</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"getValue方法得到：username = "</span> + <span class="keyword">this</span>.username + <span class="string">" , password = "</span> + <span class="keyword">this</span>.password);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		</div><div class="line">		<span class="keyword">final</span> DirtyRead dr = <span class="keyword">new</span> DirtyRead();</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				dr.setValue(<span class="string">"z3"</span>, <span class="string">"456"</span>);		</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		t1.start();</div><div class="line">		Thread.sleep(<span class="number">1000</span>);</div><div class="line">		dr.getValue();</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">```  </div><div class="line">输出</div></pre></td></tr></table></figure>
+<p>getValue方法得到：username = z3 , password = 123<br>setValue最终结果：username = z3 , password = 456<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">若想要达到先set完才能get，只需要在get的时候也加上同步synchronized  </div><div class="line"></div><div class="line"> ## 1.5 synchronized的其他概念</div><div class="line"></div><div class="line"> ### synchronized锁重入:  </div><div class="line"> 关键字synchronized拥有锁重入的功能，也就是在使用synchronized事，当一个线程得到了一个对象的锁喉，再次请求此对象时是可以再次得到该对象的锁。</div><div class="line"> 示例 SyncException  </div><div class="line"> 这个案例是通过一个抛出一个异常，来释放锁，但是，需要注意的是：很多异常释放锁的情况，如果不及时处理，很可能导致程序业务出错。比如你在执行一个队列任务，很多对象都去在等待对一个对象正确执行完毕后再去释放锁，但是第一个对象由于异常的出现，导致业务逻辑没有正常执行完毕，就释放了锁，那么可想而知后续的对象执行的都是错位的逻辑。所以这一点需要引起注意，在编写代码的时候，一定要考虑周全.</div><div class="line"></div><div class="line">```java</div><div class="line">public class SyncException &#123;</div><div class="line"></div><div class="line">	private int i = 0;</div><div class="line">	public synchronized void operation()&#123;</div><div class="line">		while(true)&#123;</div><div class="line">			try &#123;</div><div class="line">				i++;</div><div class="line">				Thread.sleep(100);</div><div class="line">				System.out.println(Thread.currentThread().getName() + &quot; , i = &quot; + i);</div><div class="line">				if(i == 20)&#123;</div><div class="line">					//Integer.parseInt(&quot;a&quot;);</div><div class="line">					throw new RuntimeException();</div><div class="line">				&#125;</div><div class="line">			&#125; catch (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		</div><div class="line">		final SyncException se = new SyncException();</div><div class="line">		Thread t1 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				se.operation();</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t1&quot;);</div><div class="line">		t1.start();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>Java内置锁synchronized的可重入性</strong><br>当线程请求一个由其它线程持有的对象锁时，该线程会阻塞，而当线程请求由自己持有的对象锁时，如果该锁是重入锁,请求就会成功,否则阻塞.<br>例子 com.kaishun.base.sync005 SyncDubbo1 类 :<br>由于synchronized是重入锁，当调用method1时，在method1的内部，由于是一个线程，会在method1内再次请求一次sd这个对象锁，所以能在method1()方法中执行method2()方法，而不会造成死锁<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SyncDubbo1</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"method1.."</span>);</div><div class="line">		method2();</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"method2.."</span>);</div><div class="line">		method3();</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method3</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"method3.."</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">final</span> SyncDubbo1 sd = <span class="keyword">new</span> SyncDubbo1();</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				sd.method1();</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		t1.start();</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">``` </div><div class="line">输出</div></pre></td></tr></table></figure></p>
+<p>method1..<br>method2..<br>method3..<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">再举一个例子 com.kaishun.base.sync005.SyncDubbo2 ：  </div><div class="line">子类也可以重入父类  </div><div class="line">```java</div><div class="line">public class SyncDubbo2 &#123;</div><div class="line">	</div><div class="line">	static class A &#123;</div><div class="line">		public int i = 10;</div><div class="line">		public synchronized void methodA()&#123;</div><div class="line">			try &#123;</div><div class="line">				i--;</div><div class="line">				System.out.println(&quot;A print i = &quot; + i);</div><div class="line">				Thread.sleep(100);</div><div class="line">			&#125; catch (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	static class B extends A &#123;</div><div class="line">		public synchronized void methodB()&#123;</div><div class="line">			try &#123;</div><div class="line">				while(i &gt; 0) &#123;</div><div class="line">					i--;</div><div class="line">					System.out.println(&quot;B print i = &quot; + i);</div><div class="line">					Thread.sleep(100);		</div><div class="line">					this.methodA();</div><div class="line">				&#125;</div><div class="line">			&#125; catch (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		Thread t1 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				B sub = new B();</div><div class="line">				sub.methodB();</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		t1.start();</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line">------------------输出-----------------</div><div class="line">B print i = 9</div><div class="line">A print i = 8</div><div class="line">B print i = 7</div><div class="line">A print i = 6</div><div class="line">B print i = 5</div><div class="line">A print i = 4</div><div class="line">B print i = 3</div><div class="line">A print i = 2</div><div class="line">B print i = 1</div><div class="line">A print i = 0</div></pre></td></tr></table></figure></p>
+<h2 id="1-6-synchronized代码块"><a href="#1-6-synchronized代码块" class="headerlink" title="1.6 synchronized代码块"></a>1.6 synchronized代码块</h2><p>synchronized可以使用任意的Object进行加锁，用法比较灵活<br>举例 com.kaishun.base.sync006.ObjectLock：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 使用synchronized代码块加锁,比较灵活</span></div><div class="line"><span class="comment"> * <span class="doctag">@author</span> alienware</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectLock</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;	<span class="comment">//对象锁</span></div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				System.out.println(<span class="string">"do method1.."</span>);</div><div class="line">				Thread.sleep(<span class="number">2000</span>);</div><div class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;		<span class="comment">//类锁</span></div><div class="line">		<span class="keyword">synchronized</span> (ObjectLock.class) &#123;</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				System.out.println(<span class="string">"do method2.."</span>);</div><div class="line">				Thread.sleep(<span class="number">2000</span>);</div><div class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> Object lock = <span class="keyword">new</span> Object();</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method3</span><span class="params">()</span></span>&#123;		<span class="comment">//任何对象锁</span></div><div class="line">		<span class="keyword">synchronized</span> (lock) &#123;</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				System.out.println(<span class="string">"do method3.."</span>);</div><div class="line">				Thread.sleep(<span class="number">2000</span>);</div><div class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		</div><div class="line">		<span class="keyword">final</span> ObjectLock objLock = <span class="keyword">new</span> ObjectLock();</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				objLock.method1();</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				objLock.method2();</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		Thread t3 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				objLock.method3();</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		</div><div class="line">		t1.start();</div><div class="line">		t2.start();</div><div class="line">		t3.start();</div><div class="line">		</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>注意1</strong> 不要使用String的常量加锁，会出现死循环问题<br>案例 com.kaishun.base.sync006.StringLock<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringLock</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">//new String("字符串常量")</span></div><div class="line">		<span class="keyword">synchronized</span> (<span class="string">"字符串常量"</span>) &#123;</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</div><div class="line">					System.out.println(<span class="string">"当前线程 : "</span>  + Thread.currentThread().getName() + <span class="string">"开始"</span>);</div><div class="line">					Thread.sleep(<span class="number">1000</span>);		</div><div class="line">					System.out.println(<span class="string">"当前线程 : "</span>  + Thread.currentThread().getName() + <span class="string">"结束"</span>);</div><div class="line">				&#125;</div><div class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">final</span> StringLock stringLock = <span class="keyword">new</span> StringLock();</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				stringLock.method();</div><div class="line">			&#125;</div><div class="line">		&#125;,<span class="string">"t1"</span>);</div><div class="line">		Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				stringLock.method();</div><div class="line">			&#125;</div><div class="line">		&#125;,<span class="string">"t2"</span>);</div><div class="line">		</div><div class="line">		t1.start();</div><div class="line">		t2.start();</div><div class="line">	&#125;</div><div class="line">-----将会一直输出------</div><div class="line">当前线程 : t1开始</div><div class="line">当前线程 : t1结束</div><div class="line">当前线程 : t1开始</div><div class="line">当前线程 : t1结束</div><div class="line">当前线程 : t1开始</div><div class="line">当前线程 : t1结束</div><div class="line">当前线程 : t1开始</div><div class="line">当前线程 : t1结束</div><div class="line">当前线程 : t1开始</div><div class="line">当前线程 : t1结束</div><div class="line">当前线程 : t1开始</div><div class="line">当前线程 : t1结束</div><div class="line">当前线程 : t1开始</div><div class="line">当前线程 : t1结束</div><div class="line">......</div></pre></td></tr></table></figure></p>
+<p><strong>注意2</strong> 锁对象改变的问题，如果对象本身发生改变的时候，那么持有的锁就不同。如果对象本身不发生改变，那么依然是同步的，即使对象的属性发生了改变。<br>示例1 锁对象的改变问题 com.kaishun.base.sync006.ChangeLock<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.kaishun.base.sync006;</div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 锁对象的改变问题</span></div><div class="line"><span class="comment"> * <span class="doctag">@author</span> alienware</span></div><div class="line"><span class="comment"> *</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChangeLock</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> String lock = <span class="string">"lock"</span>;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">synchronized</span> (lock) &#123;</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				System.out.println(<span class="string">"当前线程 : "</span>  + Thread.currentThread().getName() + <span class="string">"开始"</span>);</div><div class="line">				lock = <span class="string">"change lock"</span>;</div><div class="line">				Thread.sleep(<span class="number">2000</span>);</div><div class="line">				System.out.println(<span class="string">"当前线程 : "</span>  + Thread.currentThread().getName() + <span class="string">"结束"</span>);</div><div class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">	</div><div class="line">		<span class="keyword">final</span> ChangeLock changeLock = <span class="keyword">new</span> ChangeLock();</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				changeLock.method();</div><div class="line">			&#125;</div><div class="line">		&#125;,<span class="string">"t1"</span>);</div><div class="line">		Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				changeLock.method();</div><div class="line">			&#125;</div><div class="line">		&#125;,<span class="string">"t2"</span>);</div><div class="line">		t1.start();</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			Thread.sleep(<span class="number">100</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		t2.start();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div><div class="line">------输出------</div><div class="line">当前线程 : t1开始</div><div class="line">当前线程 : t2开始</div><div class="line">当前线程 : t1结束</div><div class="line">当前线程 : t2结束</div></pre></td></tr></table></figure></p>
+<p>示例2 锁对象的属性发生改变 com.kaishun.base.sync006.ModifyLock<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line">package com.kaishun.base.sync006;</div><div class="line">/**</div><div class="line"> * 同一对象属性的修改不会影响锁的情况</div><div class="line"> * @author alienware</div><div class="line"> *</div><div class="line"> */</div><div class="line">public class ModifyLock &#123;</div><div class="line">	</div><div class="line">	private String name ;</div><div class="line">	private int age ;</div><div class="line">	</div><div class="line">	public String getName() &#123;</div><div class="line">		return name;</div><div class="line">	&#125;</div><div class="line">	public void setName(String name) &#123;</div><div class="line">		this.name = name;</div><div class="line">	&#125;</div><div class="line">	public int getAge() &#123;</div><div class="line">		return age;</div><div class="line">	&#125;</div><div class="line">	public void setAge(int age) &#123;</div><div class="line">		this.age = age;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public synchronized void changeAttributte(String name, int age) &#123;</div><div class="line">		try &#123;</div><div class="line">			System.out.println(&quot;当前线程 : &quot;  + Thread.currentThread().getName() + &quot; 开始&quot;);</div><div class="line">			this.setName(name);</div><div class="line">			this.setAge(age);</div><div class="line">			</div><div class="line">			System.out.println(&quot;当前线程 : &quot;  + Thread.currentThread().getName() + &quot; 修改对象内容为： &quot; </div><div class="line">					+ this.getName() + &quot;, &quot; + this.getAge());</div><div class="line">			</div><div class="line">			Thread.sleep(2000);</div><div class="line">			System.out.println(&quot;当前线程 : &quot;  + Thread.currentThread().getName() + &quot; 结束&quot;);</div><div class="line">		&#125; catch (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		final ModifyLock modifyLock = new ModifyLock();</div><div class="line">		Thread t1 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				modifyLock.changeAttributte(&quot;张三&quot;, 20);</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t1&quot;);</div><div class="line">		Thread t2 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				modifyLock.changeAttributte(&quot;李四&quot;, 21);</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t2&quot;);</div><div class="line">		</div><div class="line">		t1.start();</div><div class="line">		try &#123;</div><div class="line">			Thread.sleep(100);</div><div class="line">		&#125; catch (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		t2.start();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div><div class="line">-----输出------</div><div class="line">当前线程 : t1 开始</div><div class="line">当前线程 : t1 修改对象内容为： 张三, 20</div><div class="line">当前线程 : t1 结束</div><div class="line">当前线程 : t2 开始</div><div class="line">当前线程 : t2 修改对象内容为： 李四, 21</div><div class="line">当前线程 : t2 结束</div></pre></td></tr></table></figure></p>
+<h2 id="1-7-volatile关键字"><a href="#1-7-volatile关键字" class="headerlink" title="1.7 volatile关键字"></a>1.7 volatile关键字</h2><p>volatile概念：volatile关键字的主要作用是使变量在多个线程间可见<br>但是要注意: volatile关键字不具备synchronized关键字的原子性（同步）</p>
+<p><img src="http://or49tneld.bkt.clouddn.com/17-10-4/15410243.jpg" alt="">  </p>
+<p>在java中，每一个线程都会有一块工作内存区，其中放着所有线程共享的主内存的变量值的拷贝。当线程执行时，他在自己的工作区中操作这些变量，为了存取一个工ixangde变量，一个线程通常先获取锁定并清除他的内存工作区，把这些共享变量从所有线程的共享内存区中正确的装入到他自己所在的工作内存区中，当线程解锁时保证该工作内存区中变量的值写回到共享内存中。<br>volatile的作用就是强制线程到主内存（共享内存）里去读取变量，而不去线程工作内存区里面读取，从而实现了多个线程间的变量可见，也满足线程安全的可见性。   </p>
+<p><strong>AtomicInteger 保证原子性</strong><br>AtomicInteger是原子性的，但是，一个方法中的多个StomicInteger却不是原子性的<br>示例:  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicUse</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> AtomicInteger count = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</div><div class="line">	</div><div class="line">	<span class="comment">//多个addAndGet在一个方法内是非原子性的，需要加synchronized进行修饰，保证4个addAndGet整体原子性</span></div><div class="line">	<span class="comment">/**synchronized*/</span></div><div class="line">	<span class="function"><span class="keyword">public</span>  <span class="keyword">int</span> <span class="title">multiAdd</span><span class="params">()</span></span>&#123;</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				Thread.sleep(<span class="number">100</span>);</div><div class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">			count.addAndGet(<span class="number">1</span>);</div><div class="line">			count.addAndGet(<span class="number">2</span>);</div><div class="line">			count.addAndGet(<span class="number">3</span>);</div><div class="line">			count.addAndGet(<span class="number">4</span>); <span class="comment">//+10</span></div><div class="line">			<span class="keyword">return</span> count.get();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		</div><div class="line">		<span class="keyword">final</span> AtomicUse au = <span class="keyword">new</span> AtomicUse();</div><div class="line"></div><div class="line">		List&lt;Thread&gt; ts = <span class="keyword">new</span> ArrayList&lt;Thread&gt;();</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</div><div class="line">			ts.add(<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">				<span class="meta">@Override</span></div><div class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">					System.out.println(au.multiAdd());</div><div class="line">				&#125;</div><div class="line">			&#125;));</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">for</span>(Thread t : ts)&#123;</div><div class="line">			t.start();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">----输出并不是都是<span class="number">10</span>的整数倍-----</div></pre></td></tr></table></figure>
+<p>上述运行并不都是10的整数倍，因为多个AtomicInteger增加后，就不一定是原子的了，想要是原子性的，需要在 multiAdd() 方法加上synchronized修饰。</p>
+<p>– 本文是总结于前人经验，特别感谢互联网架构师教程白鹤翔白老师。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/架构/thread3.html" rel="next" title="【多线程高并发】多线程的设计模式">
+                <i class="fa fa-chevron-left"></i> 【多线程高并发】多线程的设计模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/架构/thread2.html" rel="prev" title="【多线程高并发】线程之间通信">
+                【多线程高并发】线程之间通信 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1_t1dmzks.jpg"
+               alt="zhaikaishun" />
+          <p class="site-author-name" itemprop="name">zhaikaishun</p>
+           
+              <p class="site-description motion-element" itemprop="description">the blog of dangluren</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhaikaishun" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="zhaikaishun@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://stackoverflow.com/users/7030147/k-shun" target="_blank" title="StackOverflow">
+                  
+                    <i class="fa fa-fw fa-stack-overflow"></i>
+                  
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://blog.csdn.net/t1dmzks/" title="csdn博客" target="_blank">csdn博客</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://imbotao.top/" title="wava博客" target="_blank">wava博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程安全"><span class="nav-number">1.</span> <span class="nav-text">线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-synchronized"><span class="nav-number">2.</span> <span class="nav-text">1.1 synchronized</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-多个线程多个锁"><span class="nav-number">3.</span> <span class="nav-text">1.2 多个线程多个锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-对象锁的同步和异步"><span class="nav-number">4.</span> <span class="nav-text">1.3 对象锁的同步和异步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-脏读"><span class="nav-number">5.</span> <span class="nav-text">1.4 脏读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-synchronized代码块"><span class="nav-number">6.</span> <span class="nav-text">1.6 synchronized代码块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-7-volatile关键字"><span class="nav-number">7.</span> <span class="nav-text">1.7 volatile关键字</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaikaishun</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

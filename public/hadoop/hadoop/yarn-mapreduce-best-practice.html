@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="大数据,hadoop," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="mapreduce.job.queuename设置队列名 小文件整合 mapreduce.input.fileinputformat.split.minsize   mapreduce.input.fileinputformat.split.maxsize   mapreduce.input.fileinputformat.split.minsize.per.node   mapreduce.in">
+<meta name="keywords" content="大数据,hadoop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="yarn mapreduce参数最佳实践">
+<meta property="og:url" content="http://dangluren.top/hadoop/hadoop/yarn-mapreduce-best-practice.html">
+<meta property="og:site_name" content="挡路人">
+<meta property="og:description" content="mapreduce.job.queuename设置队列名 小文件整合 mapreduce.input.fileinputformat.split.minsize   mapreduce.input.fileinputformat.split.maxsize   mapreduce.input.fileinputformat.split.minsize.per.node   mapreduce.in">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/mapreduce-conf-best-practice/mapreduce-best-practice.jpg">
+<meta property="og:updated_time" content="2018-11-18T15:34:10.215Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="yarn mapreduce参数最佳实践">
+<meta name="twitter:description" content="mapreduce.job.queuename设置队列名 小文件整合 mapreduce.input.fileinputformat.split.minsize   mapreduce.input.fileinputformat.split.maxsize   mapreduce.input.fileinputformat.split.minsize.per.node   mapreduce.in">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/mapreduce-conf-best-practice/mapreduce-best-practice.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dangluren.top/hadoop/hadoop/yarn-mapreduce-best-practice.html"/>
+
+
+
+
+
+  <title>yarn mapreduce参数最佳实践 | 挡路人</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">挡路人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dangluren.top/hadoop/hadoop/yarn-mapreduce-best-practice.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaikaishun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/1_t1dmzks.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="挡路人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">yarn mapreduce参数最佳实践</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-05T13:46:21+08:00">
+                2018-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hadoop/hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">hadoop</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="mapreduce-job-queuename"><a href="#mapreduce-job-queuename" class="headerlink" title="mapreduce.job.queuename"></a>mapreduce.job.queuename</h2><p>设置队列名</p>
+<h2 id="小文件整合"><a href="#小文件整合" class="headerlink" title="小文件整合"></a>小文件整合</h2><ul>
+<li>mapreduce.input.fileinputformat.split.minsize  </li>
+<li>mapreduce.input.fileinputformat.split.maxsize  </li>
+<li>mapreduce.input.fileinputformat.split.minsize.per.node  </li>
+<li>mapreduce.input.fileinputformat.split.minsize.per.rack  </li>
+</ul>
+<p>mapreduce中map的个数和两个有关，一个是文件的个数，一个是大小，默认split是128M， 如果一个文件大于128M，例如129M，那么会有两个map，一个是128M，一个是1M。<br>又例如有10个文件，每个都是1M，那么map是会有10个的。<br>对于这种小文件太多，或者是我们想讲每一个map处理的数据量大一些，就应该设置上面的几个参数，上面几个参数是byte的单位。<br>例如我们想设置一次处理1G，那么就设置成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mapreduce.input.fileinputformat.split.minsize = 1024*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.maxsize = 2048*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.minsize.per.node = 512*1024*1024</div><div class="line">mapreduce.input.fileinputformat.split.minsize.per.rack = 512*1024*1024</div></pre></td></tr></table></figure></p>
+<h2 id="推测功能"><a href="#推测功能" class="headerlink" title="推测功能"></a>推测功能</h2><p>mapreduce.reduce.speculative<br>默认是true，有时候需要设置成false。<br>参考： <a href="http://itfish.net/article/60389.html或者搜索" target="_blank" rel="external">http://itfish.net/article/60389.html或者搜索</a></p>
+<h2 id="container大小设置最佳实践"><a href="#container大小设置最佳实践" class="headerlink" title="container大小设置最佳实践"></a>container大小设置最佳实践</h2><p><strong>mapreduce.map.memory.mb</strong> 和 <strong>mapreduce.reduce.memory.mb</strong>  和<strong>mapreduce.map.cpu.vcores</strong>和 <strong>mapreduce.reduce.cpu.vcores</strong></p>
+<p>mapreduce.map.memory.mb 默认1024M，一个map启动的container是1024M<br>mapreduce.reduce.memory.mb 默认3072M，一个map启动的container是3072<br>mapreduce.map.cpu.vcores默认1个vcore，一个map任务默认使用一个虚拟核运行<br>mapreduce.reduce.cpu.vcores默认1个vcore，一个reduce任务默认使用一个虚拟核运行。   </p>
+<p><strong>调优就是尽可能的让集群资源充分利用，这里需要根据具体的需求和集群资源情况来定</strong>。<br>例如不考虑内存溢出等情况, 集群资源如下</p>
+<table>
+<thead>
+<tr>
+<th>Memory Total</th>
+<th>VCores Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>320G</td>
+<td>80</td>
+</tr>
+</tbody>
+</table>
+<p>如果数据比较均匀，应该尽可能的设置成如下：  </p>
+<table>
+<thead>
+<tr>
+<th>mapreduce.map.memory.mb</th>
+<th>mapreduce.reduce.memory.mb</th>
+<th>mapreduce.map.cpu.vcores</th>
+<th>mapreduce.reduce.cpu.vcores</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4096</td>
+<td>4096</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>这样并发数能到</p>
+<p>max(320G/4G，80vcore/1vcore)=80<br>上面是map核reduce都到了最大的80的并发，集群利用最充分。  </p>
+<p>一般来说，我们默认mapreduce.map.cpu.vcores和mapreduce.reduce.cpu.vcores为1个就好了，<strong>但是对于一个map和一个reduce的container的内存大小设置成了4G，如果一个map和一个reduce处理的任务很小，那又会很浪费资源，这时，对于map来说，可以用前面说的小文件整合，设置mapreduce.input.fileinputformat.split来解决map的大小，尽可能接近4G，但是又要注意可能出现的内存溢出的情况。<br>对于reduce，1个container启动用了4G内存，那这4G内存也应尽可能的充分使用，这时候，我们尽量的评估进入到reduce的数据大小有多少，合理的设置reduceTask数，这一步是比较麻烦的，因为这里如果出现数据倾斜将会导致oom内存溢出错误</strong>。  </p>
+<p>前面说到了，并发数受到集群总内存/container的限制，同时，并发数也会受到集群vcore的限制，还是上面那个例子，例如集群资源为320G，80vcore，我一个map任务为2G，由于受到cpu的限制，最多同时80个vcore的限制，那么内存使用只能使用160G。这显然是浪费资源了。  </p>
+<p>对于mapreduce.map.cpu.vcores和mapreduce.reduce.cpu.vcores，为什么默认是1呢，在集群的内存/cpu很小的情况下，能否一个map端将这两个值设置成2或者更大呢。这是当然可以的，但是，即使我们将这个设置成2，<strong>任务的并发并不会是 Vcores Total/2的关系，并发仍然将是上面两条决定的</strong>。举个例子，还是320G，80vcore集群。我们设置mapreduce.map.memory.mb为4G，mapreduce.map.cpu.vcores为2， 很多人以为我一个map需要两个核，那么80vcore/2vcore=40，那么我们并发最大只能用到40*4=160G的内存，其实这是错误的，这种情况，我们任然基本上能将内存占满，并发数任然能到80个。这个时候， mapreduce.map.cpu.vcores基本就失效了。后来仔细想了想，一个map或者reduce任务，里面的数据应该并不可能会有多线程并发，但是mapreduce.map.cpu.vcores为什么会有这个参数呢，后来想了一下，一个map或者reduce任务，代码的执行肯定是一个线程，但是任务的状态等监控，垃圾回收等，是可以使用另外一个线程来运行的，这也是将mapreduce.map.cpu.vcores设置成2可能会快一点的效果。<br>我曾经碰到一个cpu十分充足的集群，vcore和内存比例是1比1，但是为了让数据不倾斜，我们的mapreduce.reduce.memory.mb至少要到4G，那么这时候，其实cpu就只能利用1/4了，这时候cpu很充足，我便尝试将mapreduce.map.cpu.vcores设置成2.其实这样也并不是说我一定每个map都能使用到2个vcore，只不过有时候，有的任务状态监控，jvm垃圾回收等，就有了另外一个vcore来运行了。  </p>
+<h2 id="mapreduce-task-io-sort-mb"><a href="#mapreduce-task-io-sort-mb" class="headerlink" title="mapreduce.task.io.sort.mb"></a>mapreduce.task.io.sort.mb</h2><p>这个参数理解需要理解mapreduce的shuffle过程，mapreduce的shuffle中，有一个环形缓冲区（就是一个带有前后两个指针的数组，shuffle过程自行搜索），这个值默认是100兆，配合上有个参数mapreduce.task.io.sort.spill.percent，一般这个参数默认为0.8，那么就意味着，这个数组到了80M，我就要开始进行排序了，然后要往磁盘写数据了。所以这个值越大，就不用导致频繁的溢出了。<br>按照经验，一般这个值和map的输出，reduce的输入的大小相关比较好，但是这个值最好别超过2046，假如一个reduce处理的数据量为1G，那么这个值可以设置成200M， 一般的经验是reduce处理的数据量/5的关系比较好。  </p>
+<h2 id="mapreduce-map-java-opts"><a href="#mapreduce-map-java-opts" class="headerlink" title="mapreduce.map.java.opts"></a>mapreduce.map.java.opts</h2><p>就是一个map container中jvm虚拟机的内存<br>一般设置成mapreduce.map.memory.mb的0.8倍比较合适<br>例如mapreduce.map.memory.mb=4096<br>mapreduce.map.java.opts 设置成 -Xmx3276M</p>
+<h2 id="mapreduce-reduce-java-opts"><a href="#mapreduce-reduce-java-opts" class="headerlink" title="mapreduce.reduce.java.opts"></a>mapreduce.reduce.java.opts</h2><p>就是一个reduce container中jvm虚拟机的内存<br>一般设置成mapreduce.reduce.memory.mb的0.8倍比较合适<br>例如mapreduce.reduce.memory.mb=4096<br>mapreduce.reduce.java.opts 设置成 -Xmx3276M</p>
+<h2 id="yarn-app-mapreduce-am-resource-mb"><a href="#yarn-app-mapreduce-am-resource-mb" class="headerlink" title="yarn.app.mapreduce.am.resource.mb"></a>yarn.app.mapreduce.am.resource.mb</h2><p>MR ApplicationMaster占用的内存量，具体设置TODO，记得有时候小文件太多，超过多少万，这个太小了任务不会运行  </p>
+<h2 id="mapreduce-task-timeout"><a href="#mapreduce-task-timeout" class="headerlink" title="mapreduce.task.timeout"></a>mapreduce.task.timeout</h2><p>mapreduce任务默认超时时间，有时候抢队列的时候，这个会用上，默认值600000就好，不用管</p>
+<h2 id="mapred-max-map-failures-percent"><a href="#mapred-max-map-failures-percent" class="headerlink" title="mapred.max.map.failures.percent"></a>mapred.max.map.failures.percent</h2><p>允许map失败的比例，默认是0，可以根据自己需求，合理设置</p>
+<h2 id="mapred-max-reduce-failures-percent"><a href="#mapred-max-reduce-failures-percent" class="headerlink" title="mapred.max.reduce.failures.percent"></a>mapred.max.reduce.failures.percent</h2><p>允许reduce失败的比例，默认是0，可以根据自己需求，合理设置</p>
+<h2 id="mapreduce-job-reduce-slowstart-completedmaps"><a href="#mapreduce-job-reduce-slowstart-completedmaps" class="headerlink" title="mapreduce.job.reduce.slowstart.completedmaps"></a>mapreduce.job.reduce.slowstart.completedmaps</h2><p>map不用跑完就可以开始reduce了的比例，默认是0.95（网上说的0.05感觉不对啊），也就是map完成到百分之95时就可以开始reduce了，这样的好处是到了map最后几个，其实大多数资源都空闲了，这时候就先进行reduce吧，不然等全部跑完map有点浪费资源了。<br>但是我之前碰到过一次资源死锁饿死的情况，就是map还有几个没跑完，reduce已经起来了，然而reduce需要等待map跑完的数据，reduce端拉不到，然后map端也没完成，并且整个集群的资源都被利用完了，这样map跑不完，reduce也跑不完，就这样相互等待卡着</p>
+<h2 id="HADOOP-CLIENT-OPTS"><a href="#HADOOP-CLIENT-OPTS" class="headerlink" title="HADOOP_CLIENT_OPTS"></a>HADOOP_CLIENT_OPTS</h2><p>hadoop jar启动的时候，client端的jvm内存大小。太小的话，如果跑的文件个数比较多,JOB还未起来就会报OOM错误  </p>
+<p><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/mapreduce-conf-best-practice/mapreduce-best-practice.jpg" alt="hadoop-oom">  </p>
+<p>此配置在hadoop-env.sh中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export HADOOP_CLIENT_OPTS=&quot;-Xmx1024m&quot;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          
+            <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/tool/maven-install.html" rel="next" title="maven-打包的几种方式笔记">
+                <i class="fa fa-chevron-left"></i> maven-打包的几种方式笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/随笔/算法/rabbit-recursive-life.html" rel="prev" title="兔子递归想到的一些道理">
+                兔子递归想到的一些道理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1_t1dmzks.jpg"
+               alt="zhaikaishun" />
+          <p class="site-author-name" itemprop="name">zhaikaishun</p>
+           
+              <p class="site-description motion-element" itemprop="description">the blog of dangluren</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhaikaishun" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="zhaikaishun@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://stackoverflow.com/users/7030147/k-shun" target="_blank" title="StackOverflow">
+                  
+                    <i class="fa fa-fw fa-stack-overflow"></i>
+                  
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://blog.csdn.net/t1dmzks/" title="csdn博客" target="_blank">csdn博客</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://imbotao.top/" title="wava博客" target="_blank">wava博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mapreduce-job-queuename"><span class="nav-number">1.</span> <span class="nav-text">mapreduce.job.queuename</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小文件整合"><span class="nav-number">2.</span> <span class="nav-text">小文件整合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推测功能"><span class="nav-number">3.</span> <span class="nav-text">推测功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#container大小设置最佳实践"><span class="nav-number">4.</span> <span class="nav-text">container大小设置最佳实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapreduce-task-io-sort-mb"><span class="nav-number">5.</span> <span class="nav-text">mapreduce.task.io.sort.mb</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapreduce-map-java-opts"><span class="nav-number">6.</span> <span class="nav-text">mapreduce.map.java.opts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapreduce-reduce-java-opts"><span class="nav-number">7.</span> <span class="nav-text">mapreduce.reduce.java.opts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yarn-app-mapreduce-am-resource-mb"><span class="nav-number">8.</span> <span class="nav-text">yarn.app.mapreduce.am.resource.mb</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapreduce-task-timeout"><span class="nav-number">9.</span> <span class="nav-text">mapreduce.task.timeout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapred-max-map-failures-percent"><span class="nav-number">10.</span> <span class="nav-text">mapred.max.map.failures.percent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapred-max-reduce-failures-percent"><span class="nav-number">11.</span> <span class="nav-text">mapred.max.reduce.failures.percent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapreduce-job-reduce-slowstart-completedmaps"><span class="nav-number">12.</span> <span class="nav-text">mapreduce.job.reduce.slowstart.completedmaps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HADOOP-CLIENT-OPTS"><span class="nav-number">13.</span> <span class="nav-text">HADOOP_CLIENT_OPTS</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaikaishun</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

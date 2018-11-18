@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="scala," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="本文参考至scala编程，菜鸟教程，然后将自己的判断以及重要方法的提取，解释，合并 字符串在 Scala 中，字符串的类型实际上是 Java String，它本身没有 String 类。在 Scala 中，String 是一个不可变的对象，所以该对象不可被修改。这就意味着你如果修改字符串就会产生一个新的字符串对象。    String 对象是不可变的，如果你需要创建一个可以修改的字符串，可以使用">
+<meta name="keywords" content="scala">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scala集合">
+<meta property="og:url" content="http://dangluren.top/programme/scala-collect.html">
+<meta property="og:site_name" content="挡路人">
+<meta property="og:description" content="本文参考至scala编程，菜鸟教程，然后将自己的判断以及重要方法的提取，解释，合并 字符串在 Scala 中，字符串的类型实际上是 Java String，它本身没有 String 类。在 Scala 中，String 是一个不可变的对象，所以该对象不可被修改。这就意味着你如果修改字符串就会产生一个新的字符串对象。    String 对象是不可变的，如果你需要创建一个可以修改的字符串，可以使用">
+<meta property="og:updated_time" content="2018-11-18T15:34:10.192Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="scala集合">
+<meta name="twitter:description" content="本文参考至scala编程，菜鸟教程，然后将自己的判断以及重要方法的提取，解释，合并 字符串在 Scala 中，字符串的类型实际上是 Java String，它本身没有 String 类。在 Scala 中，String 是一个不可变的对象，所以该对象不可被修改。这就意味着你如果修改字符串就会产生一个新的字符串对象。    String 对象是不可变的，如果你需要创建一个可以修改的字符串，可以使用">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dangluren.top/programme/scala-collect.html"/>
+
+
+
+
+
+  <title>scala集合 | 挡路人</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">挡路人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dangluren.top/programme/scala-collect.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaikaishun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/1_t1dmzks.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="挡路人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">scala集合</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-29T21:25:21+08:00">
+                2017-04-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programme/" itemprop="url" rel="index">
+                    <span itemprop="name">programme</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文参考至scala编程，菜鸟教程，然后将自己的判断以及重要方法的提取，解释，合并</p>
+<h1 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a><strong>字符串</strong></h1><p>在 Scala 中，字符串的类型实际上是 Java String，它本身没有 String 类。在 Scala 中，String 是一个不可变的对象，所以该对象不可被修改。这就意味着你如果修改字符串就会产生一个新的字符串对象。  </p>
+<p> String 对象是不可变的，如果你需要创建一个可以修改的字符串，可以使用 String Builder 类，如下实例:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"> <span class="class"><span class="keyword">object</span> <span class="title">Test</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">val</span> buf = <span class="keyword">new</span> <span class="type">StringBuilder</span>;</div><div class="line">      buf += 'a'</div><div class="line">      buf ++= <span class="string">"bcdef"</span></div><div class="line">      println( <span class="string">"buf is : "</span> + buf.toString );</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>同java一样，scala的字符串用过length()方法得到长度，String 类中使用string1.concat(string2); 方法来连接两个字符串<br>也可以直接用+号连接字符串<br>java.lang.String的所有方法，在scala中也可以使用, 这里不仔细介绍</p>
+<h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a><strong>数组</strong></h1><h2 id="声明数组"><a href="#声明数组" class="headerlink" title="声明数组"></a><strong>声明数组</strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var z:Array[String] = new Array[String](3)</div><div class="line"></div><div class="line">或</div><div class="line"></div><div class="line">var z = new Array[String](3)</div></pre></td></tr></table></figure>
+<h2 id="赋值"><a href="#赋值" class="headerlink" title="赋值"></a><strong>赋值</strong></h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">z(<span class="number">0</span>) = <span class="string">"Runoob"</span>; z(<span class="number">1</span>) = <span class="string">"Baidu"</span>; z(<span class="number">4</span>/<span class="number">2</span>) = <span class="string">"Google"</span></div></pre></td></tr></table></figure>
+<p>也可以这样定义一个数组<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> z = <span class="type">Array</span>(<span class="string">"Runoob"</span>, <span class="string">"Baidu"</span>, <span class="string">"Google"</span>)</div></pre></td></tr></table></figure></p>
+<h2 id="处理数组"><a href="#处理数组" class="headerlink" title="处理数组"></a><strong>处理数组</strong></h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">Test</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">var</span> myList = <span class="type">Array</span>(<span class="number">1.9</span>, <span class="number">2.9</span>, <span class="number">3.4</span>, <span class="number">3.5</span>)</div><div class="line">      </div><div class="line">      <span class="comment">// 输出所有数组元素</span></div><div class="line">      <span class="keyword">for</span> ( x &lt;- myList ) &#123;</div><div class="line">         println( x )</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      <span class="comment">// 计算数组所有元素的总和</span></div><div class="line">      <span class="keyword">var</span> total = <span class="number">0.0</span>;</div><div class="line">      <span class="keyword">for</span> ( i &lt;- <span class="number">0</span> to (myList.length - <span class="number">1</span>)) &#123;</div><div class="line">         total += myList(i);</div><div class="line">      &#125;</div><div class="line">      println(<span class="string">"总和为 "</span> + total);</div><div class="line"></div><div class="line">      <span class="comment">// 查找数组中的最大元素</span></div><div class="line">      <span class="keyword">var</span> max = myList(<span class="number">0</span>);</div><div class="line">      <span class="keyword">for</span> ( i &lt;- <span class="number">1</span> to (myList.length - <span class="number">1</span>) ) &#123;</div><div class="line">         <span class="keyword">if</span> (myList(i) &gt; max) max = myList(i);</div><div class="line">      &#125;</div><div class="line">      println(<span class="string">"最大值为 "</span> + max);</div><div class="line">    </div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">-------输出-------</div><div class="line"><span class="number">1.9</span></div><div class="line"><span class="number">2.9</span></div><div class="line"><span class="number">3.4</span></div><div class="line"><span class="number">3.5</span></div><div class="line">总和为 <span class="number">11.7</span></div><div class="line">最大值为 <span class="number">3.5</span></div></pre></td></tr></table></figure>
+<h2 id="多维数组"><a href="#多维数组" class="headerlink" title="多维数组"></a><strong>多维数组</strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">def main(args: Array[String]) &#123;</div><div class="line">      var myMatrix = ofDim[Int](3,3)</div><div class="line">      </div><div class="line">      // 创建矩阵</div><div class="line">      for (i &lt;- 0 to 2) &#123;</div><div class="line">         for ( j &lt;- 0 to 2) &#123;</div><div class="line">            myMatrix(i)(j) = j;</div><div class="line">         &#125;</div><div class="line">      &#125;</div><div class="line">      </div><div class="line">      // 打印二维阵列</div><div class="line">      for (i &lt;- 0 to 2) &#123;</div><div class="line">         for ( j &lt;- 0 to 2) &#123;</div><div class="line">            print(&quot; &quot; + myMatrix(i)(j));</div><div class="line">         &#125;</div><div class="line">         println();</div><div class="line">      &#125;</div><div class="line">    </div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h2 id="合并数组"><a href="#合并数组" class="headerlink" title="合并数组"></a><strong>合并数组</strong></h2><p>使用concat() 方法来合并两个数组<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">var</span> myList1 = <span class="type">Array</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>,)</div><div class="line">      <span class="keyword">var</span> myList2 = <span class="type">Array</span>(<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>)</div><div class="line"></div><div class="line">      <span class="keyword">var</span> myList3 =  concat( myList1, myList2)</div><div class="line">      </div><div class="line">      <span class="comment">// 输出所有数组元素</span></div><div class="line">      <span class="keyword">for</span> ( x &lt;- myList3 ) &#123;</div><div class="line">         println( x )</div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">----------输出-----------</div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">4</span></div><div class="line"><span class="number">5</span></div><div class="line"><span class="number">6</span></div><div class="line"><span class="number">7</span></div><div class="line"><span class="number">8</span></div></pre></td></tr></table></figure></p>
+<h2 id="创建区间数组"><a href="#创建区间数组" class="headerlink" title="创建区间数组"></a><strong>创建区间数组</strong></h2><p>以下实例中，我们使用了 range() 方法来生成一个区间范围内的数组。range() 方法最后一个参数为步长，默认为 1：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">var</span> myList1 = range(<span class="number">10</span>, <span class="number">20</span>, <span class="number">2</span>)</div><div class="line">      <span class="keyword">var</span> myList2 = range(<span class="number">10</span>,<span class="number">20</span>)</div><div class="line"></div><div class="line">      <span class="comment">// 输出所有数组元素</span></div><div class="line">      <span class="keyword">for</span> ( x &lt;- myList1 ) &#123;</div><div class="line">         print( <span class="string">" "</span> + x )</div><div class="line">      &#125;</div><div class="line">      println()</div><div class="line">      <span class="keyword">for</span> ( x &lt;- myList2 ) &#123;</div><div class="line">         print( <span class="string">" "</span> + x )</div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   -----------------输出---------------</div><div class="line"><span class="number">10</span> <span class="number">12</span> <span class="number">14</span> <span class="number">16</span> <span class="number">18</span></div><div class="line"><span class="number">10</span> <span class="number">11</span> <span class="number">12</span> <span class="number">13</span> <span class="number">14</span> <span class="number">15</span> <span class="number">16</span> <span class="number">17</span> <span class="number">18</span> <span class="number">19</span></div></pre></td></tr></table></figure></p>
+<h1 id="Scala-集合List"><a href="#Scala-集合List" class="headerlink" title="Scala 集合List"></a><strong>Scala 集合List</strong></h1><p>Scala 列表类似于数组，它们所有元素的类型都相同，但是它们也有所不同：列表是不可变的，值一旦被定义了就不能改变，其次列表 具有递归的结构（也就是链接表结构）而数组不是。。<br>列表的元素类型 T 可以写成 List[T]。例如，以下列出了多种类型的列表：</p>
+<h2 id="列表构造方式"><a href="#列表构造方式" class="headerlink" title="列表构造方式"></a><strong>列表构造方式</strong></h2><h3 id="构造列表方式一"><a href="#构造列表方式一" class="headerlink" title="构造列表方式一"></a><strong>构造列表方式一</strong></h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 字符串列表</span></div><div class="line"><span class="keyword">val</span> site: <span class="type">List</span>[<span class="type">String</span>] = <span class="type">List</span>(<span class="string">"Runoob"</span>, <span class="string">"Google"</span>, <span class="string">"Baidu"</span>)</div><div class="line"></div><div class="line"><span class="comment">// 整型列表</span></div><div class="line"><span class="keyword">val</span> nums: <span class="type">List</span>[<span class="type">Int</span>] = <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</div><div class="line"></div><div class="line"><span class="comment">// 空列表</span></div><div class="line"><span class="keyword">val</span> empty: <span class="type">List</span>[<span class="type">Nothing</span>] = <span class="type">List</span>()</div><div class="line"></div><div class="line"><span class="comment">// 二维列表</span></div><div class="line"><span class="keyword">val</span> dim: <span class="type">List</span>[<span class="type">List</span>[<span class="type">Int</span>]] =</div><div class="line">   <span class="type">List</span>(</div><div class="line">      <span class="type">List</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>),</div><div class="line">      <span class="type">List</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>),</div><div class="line">      <span class="type">List</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</div><div class="line">   )</div></pre></td></tr></table></figure>
+<h3 id="构造列表方式二"><a href="#构造列表方式二" class="headerlink" title="构造列表方式二"></a><strong>构造列表方式二</strong></h3><p>构造列表的两个基本单位是 Nil 和 ::(发音为cons) Nil代表空列表，中缀符号:: 表示列表从前端扩展。也就是说x::xs代表了一个元素为x，后面紧贴着xs的列表，因此以上实例我们可以写成<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">// 字符串列表</span></div><div class="line"><span class="keyword">val</span> site = <span class="string">"Runoob"</span> :: (<span class="string">"Google"</span> :: (<span class="string">"Baidu"</span> :: <span class="type">Nil</span>))</div><div class="line"></div><div class="line"><span class="comment">// 整型列表</span></div><div class="line"><span class="keyword">val</span> nums = <span class="number">1</span> :: (<span class="number">2</span> :: (<span class="number">3</span> :: (<span class="number">4</span> :: <span class="type">Nil</span>)))</div><div class="line"></div><div class="line"><span class="comment">// 空列表</span></div><div class="line"><span class="keyword">val</span> empty = <span class="type">Nil</span></div><div class="line"></div><div class="line"><span class="comment">// 二维列表</span></div><div class="line"><span class="keyword">val</span> dim = (<span class="number">1</span> :: (<span class="number">0</span> :: (<span class="number">0</span> :: <span class="type">Nil</span>))) ::</div><div class="line">          (<span class="number">0</span> :: (<span class="number">1</span> :: (<span class="number">0</span> :: <span class="type">Nil</span>))) ::</div><div class="line">          (<span class="number">0</span> :: (<span class="number">0</span> :: (<span class="number">1</span> :: <span class="type">Nil</span>))) :: <span class="type">Nil</span></div></pre></td></tr></table></figure></p>
+<h3 id="方式二的简化"><a href="#方式二的简化" class="headerlink" title="方式二的简化"></a><strong>方式二的简化</strong></h3><p>由于以::结尾，::遵循右结合的规则，A::B::C 等价于A::(B::C), 因此，前面定义用到的括号可以去掉<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> names = <span class="number">1</span>::<span class="number">2</span>::<span class="number">3</span>::<span class="number">4</span>::<span class="type">Nil</span></div></pre></td></tr></table></figure></p>
+<p>与前面的names定义一致</p>
+<h2 id="列表的基本操作"><a href="#列表的基本操作" class="headerlink" title="列表的基本操作"></a><strong>列表的基本操作</strong></h2><ul>
+<li>Scala列表有三个基本操作：</li>
+<li>head 返回列表第一个元素</li>
+<li>tail 返回一个列表，包含除了第一元素之外的其他元素</li>
+<li>isEmpty 在列表为空时返回true<br>对于Scala列表的任何操作都可以使用这三个基本操作来表达。实例如下:<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">Test</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">val</span> site = <span class="string">"Runoob"</span> :: (<span class="string">"Google"</span> :: (<span class="string">"Baidu"</span> :: <span class="type">Nil</span>))</div><div class="line">      <span class="keyword">val</span> nums = <span class="type">Nil</span></div><div class="line"></div><div class="line">      println( <span class="string">"第一网站是 : "</span> + site.head )</div><div class="line">      println( <span class="string">"最后一个网站是 : "</span> + site.tail )</div><div class="line">      println( <span class="string">"查看列表 site 是否为空 : "</span> + site.isEmpty )</div><div class="line">      println( <span class="string">"查看 nums 是否为空 : "</span> + nums.isEmpty )</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line">-----------输出--------</div><div class="line">第一网站是 : <span class="type">Runoob</span></div><div class="line">最后一个网站是 : <span class="type">List</span>(<span class="type">Google</span>, <span class="type">Baidu</span>)</div><div class="line">查看列表 site 是否为空 : <span class="literal">false</span></div><div class="line">查看 nums 是否为空 : <span class="literal">true</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="List类的一阶方法"><a href="#List类的一阶方法" class="headerlink" title="List类的一阶方法"></a><strong>List类的一阶方法</strong></h2><h3 id="连接列表"><a href="#连接列表" class="headerlink" title="连接列表"></a><strong>连接列表</strong></h3><p>你可以使用 ::: 运算符或 List.:::() 方法或 List.concat() 方法来连接两个或多个列表。实例如下:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">Test</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">val</span> site1 = <span class="string">"Runoob"</span> :: (<span class="string">"Google"</span> :: (<span class="string">"Baidu"</span> :: <span class="type">Nil</span>))</div><div class="line">      <span class="keyword">val</span> site2 = <span class="string">"Facebook"</span> :: (<span class="string">"Taobao"</span> :: <span class="type">Nil</span>)</div><div class="line"></div><div class="line">      <span class="comment">// 使用 ::: 运算符</span></div><div class="line">      <span class="keyword">var</span> fruit = site1 ::: site2</div><div class="line">      println( <span class="string">"site1 ::: site2 : "</span> + fruit )</div><div class="line">      </div><div class="line">      <span class="comment">// 使用 Set.:::() 方法</span></div><div class="line">      fruit = site1.:::(site2)</div><div class="line">      println( <span class="string">"site1.:::(site2) : "</span> + fruit )</div><div class="line"></div><div class="line">      <span class="comment">// 使用 concat 方法</span></div><div class="line">      fruit = <span class="type">List</span>.concat(site1, site2)</div><div class="line">      println( <span class="string">"List.concat(site1, site2) : "</span> + fruit  )</div><div class="line">      </div><div class="line"></div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="List-fill"><a href="#List-fill" class="headerlink" title="List.fill()"></a><strong>List.fill()</strong></h3><p>我们可以使用 List.fill() 方法来创建一个指定重复数量的元素列表：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">Test</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">val</span> site = <span class="type">List</span>.fill(<span class="number">3</span>)(<span class="string">"Runoob"</span>) <span class="comment">// 重复 Runoob 3次</span></div><div class="line">      println( <span class="string">"site : "</span> + site  )</div><div class="line"></div><div class="line">      <span class="keyword">val</span> num = <span class="type">List</span>.fill(<span class="number">10</span>)(<span class="number">2</span>)         <span class="comment">// 重复元素 2, 10 次</span></div><div class="line">      println( <span class="string">"num : "</span> + num  )</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line">---------输出--------</div><div class="line">site : <span class="type">List</span>(<span class="type">Runoob</span>, <span class="type">Runoob</span>, <span class="type">Runoob</span>)</div><div class="line">num : <span class="type">List</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>)</div></pre></td></tr></table></figure></p>
+<h3 id="List-tabulate"><a href="#List-tabulate" class="headerlink" title="List.tabulate()"></a><strong>List.tabulate()</strong></h3><p>List.tabulate() 方法是通过给定的函数来创建列表。<br>方法的第一个参数为元素的数量，可以是二维的，第二个参数为指定的函数，我们通过指定的函数计算结果并返回值插入到列表中，起始值为 0，实例如下：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">Test</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="comment">// 通过给定的函数创建 5 个元素</span></div><div class="line">      <span class="keyword">val</span> squares = <span class="type">List</span>.tabulate(<span class="number">6</span>)(n =&gt; n * n)</div><div class="line">      println( <span class="string">"一维 : "</span> + squares  )</div><div class="line"></div><div class="line">      <span class="comment">// 创建二维列表</span></div><div class="line">      <span class="keyword">val</span> mul = <span class="type">List</span>.tabulate( <span class="number">4</span>,<span class="number">5</span> )( _ * _ )      </div><div class="line">      println( <span class="string">"多维 : "</span> + mul  )</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line">----------------输出---------</div><div class="line">一维 : <span class="type">List</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">16</span>, <span class="number">25</span>)</div><div class="line">多维 : <span class="type">List</span>(<span class="type">List</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="type">List</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>), <span class="type">List</span>(<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>), <span class="type">List</span>(<span class="number">0</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">9</span>, <span class="number">12</span>))</div></pre></td></tr></table></figure></p>
+<h3 id="列表反转"><a href="#列表反转" class="headerlink" title="列表反转"></a><strong>列表反转</strong></h3><p>List.reverse 用于将列表的顺序反转，实例如下：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">Test</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">val</span> site = <span class="string">"Runoob"</span> :: (<span class="string">"Google"</span> :: (<span class="string">"Baidu"</span> :: <span class="type">Nil</span>))</div><div class="line">      println( <span class="string">"site 反转前 : "</span> + site )</div><div class="line"></div><div class="line">      println( <span class="string">"site 反转前 : "</span> + site.reverse )</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line">------------输出---------------</div><div class="line">$ vim <span class="type">Test</span>.scala </div><div class="line">$ scala <span class="type">Test</span>.scala </div><div class="line">site 反转前 : <span class="type">List</span>(<span class="type">Runoob</span>, <span class="type">Google</span>, <span class="type">Baidu</span>)</div><div class="line">site 反转前 : <span class="type">List</span>(<span class="type">Baidu</span>, <span class="type">Google</span>, <span class="type">Runoob</span>)</div></pre></td></tr></table></figure></p>
+<h3 id="前缀与后缀-drop-take-splitAt"><a href="#前缀与后缀-drop-take-splitAt" class="headerlink" title="前缀与后缀 drop take splitAt"></a><strong>前缀与后缀 drop take splitAt</strong></h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">    <span class="keyword">var</span> ls = <span class="string">"google"</span>::<span class="string">"baidu"</span>::<span class="string">"tenxun"</span>::<span class="string">"alibaba"</span>::<span class="string">"apples"</span>::<span class="type">Nil</span></div><div class="line">    <span class="keyword">var</span> takeTest =ls.take(<span class="number">2</span>)</div><div class="line">    <span class="keyword">var</span> dropTest = ls.drop(<span class="number">2</span>)</div><div class="line">    <span class="keyword">var</span> splitTest = ls.splitAt(<span class="number">3</span>)</div><div class="line">    println(<span class="string">"takeTest: "</span>+takeTest)</div><div class="line">    println(<span class="string">"dropTest: "</span>+dropTest)</div><div class="line">    println(<span class="string">"splitTest: "</span>+splitTest)</div><div class="line">  &#125;</div><div class="line">  </div><div class="line">--------------输出-------------</div><div class="line">takeTest: <span class="type">List</span>(google, baidu)</div><div class="line">dropTest: <span class="type">List</span>(tenxun, alibaba, apples)</div><div class="line">splitTest: (<span class="type">List</span>(google, baidu, tenxun),<span class="type">List</span>(alibaba, apples))</div></pre></td></tr></table></figure>
+<h3 id="元素选择-apply方法和indices方法"><a href="#元素选择-apply方法和indices方法" class="headerlink" title="元素选择 apply方法和indices方法"></a><strong>元素选择 apply方法和indices方法</strong></h3><p>apply方法是获取第几个值，list.apply(2)和list(2)是一样的<br>indices是获取所有的列表的Range,暂时不知道有多大用处<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">    <span class="keyword">var</span> ls = <span class="string">"google"</span>::<span class="string">"baidu"</span>::<span class="string">"tenxun"</span>::<span class="string">"alibaba"</span>::<span class="string">"apples"</span>::<span class="string">"stackoverflow"</span>::<span class="type">Nil</span></div><div class="line">    <span class="keyword">var</span> applyTest = ls.apply(<span class="number">2</span>)</div><div class="line">    <span class="keyword">var</span> indicesTest =  ls.indices</div><div class="line">    println(<span class="string">"applyTest: "</span>+applyTest)</div><div class="line">    println(<span class="string">"applyTest2: "</span>+ls(<span class="number">2</span>))</div><div class="line">    println(<span class="string">"indicesTest: "</span>+indicesTest)</div><div class="line">    <span class="keyword">for</span>(i&lt;-indicesTest)&#123;</div><div class="line">      println(ls(i))</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">-------------输出--------</div><div class="line">applyTest: tenxun</div><div class="line">applyTest2: tenxun</div><div class="line">indicesTest: <span class="type">Range</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</div><div class="line">google</div><div class="line">baidu</div><div class="line">tenxun</div><div class="line">alibaba</div><div class="line">apples</div><div class="line">stackoverflow</div></pre></td></tr></table></figure></p>
+<h3 id="toString和mkString"><a href="#toString和mkString" class="headerlink" title="toString和mkString"></a><strong>toString和mkString</strong></h3><p>toString和java的一样<br>mkString  mkString(start: String,sep: String,end: String): String<br>第一个参数是以什么开始，第二个参数是以什么分割，第三个参数是以什么结尾，函数返回一个String<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">    <span class="keyword">var</span> ls = <span class="string">"google"</span> :: <span class="string">"baidu"</span> :: <span class="string">"tenxun"</span> :: <span class="string">"alibaba"</span> :: <span class="string">"apples"</span> :: <span class="string">"stackoverflow"</span> :: <span class="type">Nil</span></div><div class="line">    println(<span class="string">"toString: "</span>+ls.toString())</div><div class="line">    println(<span class="string">"mkString: "</span>+ls.mkString(<span class="string">"&#123;"</span>,<span class="string">";"</span>,<span class="string">"&#125;"</span>))</div><div class="line">  &#125;</div><div class="line">---------输出----------</div><div class="line">toString: <span class="type">List</span>(google, baidu, tenxun, alibaba, apples, stackoverflow)</div><div class="line">mkString: &#123;google;baidu;tenxun;alibaba;apples;stackoverflow&#123;</div></pre></td></tr></table></figure></p>
+<h3 id="转换列表-toArray-element-iterator"><a href="#转换列表-toArray-element-iterator" class="headerlink" title="转换列表 toArray element iterator"></a><strong>转换列表 toArray element iterator</strong></h3><p>想要在数组Array和列表list之间转换，可以使用List的toArray和Array的toList<br>例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">scala&gt; var ls = &quot;google&quot; :: &quot;baidu&quot; :: &quot;tenxun&quot; :: &quot;alibaba&quot; :: &quot;apples&quot; :: &quot;stackoverflow&quot; :: Nil</div><div class="line">ls: List[String] = List(google, baidu, tenxun, alibaba, apples, stackoverflow)</div><div class="line"></div><div class="line">scala&gt; var arrays = ls.toArray</div><div class="line">arrays: Array[String] = Array(google, baidu, tenxun, alibaba, apples, stackoverflow)</div><div class="line"></div><div class="line">scala&gt; var lists = arrays.toList</div><div class="line">lists: List[String] = List(google, baidu, tenxun, alibaba, apples, stackoverflow)</div></pre></td></tr></table></figure></p>
+<p>element在很旧的版本有，现在已经过时不用了。如果要用枚举器访问列表元素，可以使用iterator<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">    <span class="keyword">var</span> ls = <span class="string">"google"</span> :: <span class="string">"baidu"</span> :: <span class="string">"tenxun"</span> :: <span class="string">"alibaba"</span> :: <span class="string">"apples"</span> :: <span class="string">"stackoverflow"</span> :: <span class="type">Nil</span></div><div class="line">     <span class="keyword">val</span> it =ls.iterator</div><div class="line">      <span class="keyword">while</span>(it.hasNext)&#123;</div><div class="line">        print(it.next()+<span class="string">","</span>)</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">--------------输出------------</div><div class="line">google, baidu, tenxun, alibaba, apples, stackoverflow,</div></pre></td></tr></table></figure></p>
+<h2 id="list类的高阶用法"><a href="#list类的高阶用法" class="headerlink" title="list类的高阶用法"></a><strong>list类的高阶用法</strong></h2><p>在java中，若要提取出满足特点条件的元素，或者检查所有元素是否满足某种性质，或者用某种方式转变列表的所有元素，这样的需求一般都需要使用for或者while循环的固定表达式，在scala中，可以通过使用List的一些高阶方法（函数）来更为简介的实现  </p>
+<h3 id="列表间映射：map、flatMap和foreach"><a href="#列表间映射：map、flatMap和foreach" class="headerlink" title="列表间映射：map、flatMap和foreach"></a><strong>列表间映射：map、flatMap和foreach</strong></h3><ol>
+<li>xs map f 操作返回<strong>把函数f应用在xs的每个列表元素之后</strong>由此<strong>组成的新列表</strong>。如：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt; List(1,2,3).map(_ +1)</div><div class="line">res1: List[Int] = List(2, 3, 4)</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="keyword">val</span> words = <span class="type">List</span>(<span class="string">"zks"</span>,<span class="string">"zhaikaishun"</span>,<span class="string">"kaishun"</span>,<span class="string">"kai"</span>,<span class="string">"xiaozhai"</span>)</div><div class="line">words: <span class="type">List</span>[<span class="type">String</span>] = <span class="type">List</span>(zks, zhaikaishun, kaishun, kai, xiaozhai)</div><div class="line"></div><div class="line">scala&gt; words.map(_.length)</div><div class="line">res2: <span class="type">List</span>[<span class="type">Int</span>] = <span class="type">List</span>(<span class="number">3</span>, <span class="number">11</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">8</span>)</div></pre></td></tr></table></figure>
+<ol>
+<li>flatMap操作符与map类似，不过它的右操作元是能够返回元素列表的函数。它对列表的每个元素调用该方法，<strong>然后连接所有方法</strong>的结果并返回。map与flatMap的差异举例说明如下：<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">scala&gt; words.map(_.toList)</div><div class="line">res3: <span class="type">List</span>[<span class="type">List</span>[<span class="type">Char</span>]] = <span class="type">List</span>(<span class="type">List</span>(z, k, s), <span class="type">List</span>(z, h, a, i, k, a, i, s, h, u, n), <span class="type">List</span>(k, a, i, s, h, u, n), <span class="type">List</span>(k, a, i), <span class="type">List</span>(x, i, a, o, z, h, a, i))</div><div class="line"></div><div class="line">scala&gt; words.flatMap(_.toList)</div><div class="line">res4: <span class="type">List</span>[<span class="type">Char</span>] = <span class="type">List</span>(z, k, s, z, h, a, i, k, a, i, s, h, u, n, k, a, i, s, h, u, n, k, a, i, x, i, a, o, z, h, a, i)</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>map与flatMap的差异和协作可以用下面的例子体会<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span>.range(<span class="number">1</span>, <span class="number">5</span>).flatMap(i =&gt; <span class="type">List</span>.range(<span class="number">1</span>, i).map(j =&gt; (i, j)))</div><div class="line">res9: <span class="type">List</span>[(<span class="type">Int</span>, <span class="type">Int</span>)] = <span class="type">List</span>((<span class="number">2</span>,<span class="number">1</span>), (<span class="number">3</span>,<span class="number">1</span>), (<span class="number">3</span>,<span class="number">2</span>), (<span class="number">4</span>,<span class="number">1</span>), (<span class="number">4</span>,<span class="number">2</span>), (<span class="number">4</span>,<span class="number">3</span>))</div></pre></td></tr></table></figure></p>
+<p>解释 : List.range(1,5)生成了List(1,2,3,4),注意没有5<br>.flatMap对内部的每一个元素进行操作, 后面有个.map是对内部List.range(1, i)的每一个元素进行操作，最后flatMap返回的还是一个List<br>上述例子也可以用for循环+yield来完成<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt;  <span class="keyword">for</span> (i &lt;- <span class="type">List</span>.range(<span class="number">1</span>, <span class="number">5</span>); j &lt;- <span class="type">List</span>.range(<span class="number">1</span>, i)) <span class="keyword">yield</span> (i,j)</div><div class="line">res10: <span class="type">List</span>[(<span class="type">Int</span>, <span class="type">Int</span>)] = <span class="type">List</span>((<span class="number">2</span>,<span class="number">1</span>), (<span class="number">3</span>,<span class="number">1</span>), (<span class="number">3</span>,<span class="number">2</span>), (<span class="number">4</span>,<span class="number">1</span>), (<span class="number">4</span>,<span class="number">2</span>), (<span class="number">4</span>,<span class="number">3</span>))</div></pre></td></tr></table></figure></p>
+<ol>
+<li>foreach是第三种与映射类似的操作。它的右操作元是过程（返回Unit的函数）。它只是对每个列表元素都调用一遍过程。操作的结果仍然是Unit，不会产生结果列表。例如：<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">    <span class="keyword">var</span> sum =<span class="number">0</span></div><div class="line">    <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>) foreach (sum += _)</div><div class="line">    println(sum)</div><div class="line">  &#125;</div><div class="line">-----输出----</div><div class="line"><span class="number">15</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="列表过滤：filter、partition、find、takeWhile、dropWhile和span"><a href="#列表过滤：filter、partition、find、takeWhile、dropWhile和span" class="headerlink" title="列表过滤：filter、partition、find、takeWhile、dropWhile和span"></a><strong>列表过滤：filter、partition、find、takeWhile、dropWhile和span</strong></h3><p>1.xs filter p操作产生xs中符合p（x）为true的所有元素组成的列表。如：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span> (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>) filter (_ % <span class="number">2</span> == <span class="number">0</span>)</div><div class="line">res10: <span class="type">List</span>[<span class="type">Int</span>] = <span class="type">List</span>(<span class="number">2</span>, <span class="number">4</span>)</div><div class="line"></div><div class="line">scala&gt; words filter (_.length == <span class="number">3</span>)</div><div class="line">res11: <span class="type">List</span>[<span class="type">String</span>] = <span class="type">List</span>(the, fox)</div></pre></td></tr></table></figure></p>
+<p>2.partition方法与filter类似，不过返回的是列表对。其中一个包含所有论断为真的元素，另一个包含所有论断为假的元素。<br><strong>xs partition p  等价于 (xs filter p, xs filter (!p()))  </strong><br>举例如下：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>) partition (_ % <span class="number">2</span> ==<span class="number">0</span>)</div><div class="line">res12: (<span class="type">List</span>[<span class="type">Int</span>], <span class="type">List</span>[<span class="type">Int</span>]) = (<span class="type">List</span>(<span class="number">2</span>, <span class="number">4</span>),<span class="type">List</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>))</div></pre></td></tr></table></figure></p>
+<p>3.find方法同样与filter方法类似，不过返回的是第一个满足给定论断的元素，而并不是全部。xs find p 操作以列表xs和论断p为操作元。返回可选值。如果xs中存在元素x使得p（x）为真，Some（x）将返回。否则，若p对所有元素都不成立，None将返回。举例如下：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>) find (_ % <span class="number">2</span> == <span class="number">0</span>)</div><div class="line">res13: <span class="type">Option</span>[<span class="type">Int</span>] = <span class="type">Some</span>(<span class="number">2</span>)</div><div class="line"></div><div class="line">scala&gt; <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>) find (_  &lt;= <span class="number">0</span>)</div><div class="line">res15: <span class="type">Option</span>[<span class="type">Int</span>] = <span class="type">None</span></div></pre></td></tr></table></figure></p>
+<ol>
+<li>xs takeWhile p操作返回列表xs中最长的能够满足p的前缀。例如：<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">-4</span>, <span class="number">5</span>) takeWhile (_ &gt; <span class="number">0</span>)</div><div class="line">res16: <span class="type">List</span>[<span class="type">Int</span>] = <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>5.xs dropWhile p操作移除最长能够满足p的前缀。举例如下：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="keyword">val</span> words = <span class="type">List</span>(<span class="string">"the"</span>, <span class="string">"quick"</span>, <span class="string">"brown"</span>, <span class="string">"fox"</span>)</div><div class="line">words: <span class="type">List</span>[<span class="type">String</span>] = <span class="type">List</span>(the, quick, brown, fox)</div><div class="line"></div><div class="line">scala&gt; words dropWhile (_ startsWith <span class="string">"t"</span>)</div><div class="line">res11: <span class="type">List</span>[<span class="type">String</span>] = <span class="type">List</span>(quick, brown, fox)</div></pre></td></tr></table></figure></p>
+<p>6.span方法把takeWhile和dropWhile组合成一个操作。它返回一对列表，定义与下列等式一致：<br>xs span p 等价于 （xs takeWhile p， xs dropWhile p）<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">-4</span>, <span class="number">5</span>) span (_ &gt;<span class="number">0</span>)</div><div class="line">res18: (<span class="type">List</span>[<span class="type">Int</span>], <span class="type">List</span>[<span class="type">Int</span>]) = (<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>),<span class="type">List</span>(<span class="number">-4</span>, <span class="number">5</span>))</div></pre></td></tr></table></figure></p>
+<h3 id="列表的论断：forall和exists"><a href="#列表的论断：forall和exists" class="headerlink" title="列表的论断：forall和exists"></a><strong>列表的论断：forall和exists</strong></h3><ol>
+<li>xs forall p 如果列表的所有元素满足p则返回true</li>
+<li>xs exists p 如果列表中有一个值满足p就返回true<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">hasZeroRow</span></span>(m: <span class="type">List</span>[<span class="type">List</span>[<span class="type">Int</span>]]) = m.exists(row =&gt; row forall (_ == <span class="number">0</span>))</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">    <span class="keyword">val</span> m= <span class="type">List</span>(<span class="type">List</span>(<span class="number">3</span>,<span class="number">0</span>,<span class="number">0</span>), <span class="type">List</span>(<span class="number">0</span>,<span class="number">3</span>,<span class="number">0</span>), <span class="type">List</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">3</span>))</div><div class="line">    <span class="keyword">var</span> flag :<span class="type">Boolean</span>= hasZeroRow(m)</div><div class="line">    println(flag)</div><div class="line">  &#125;</div><div class="line">----------输出--------</div><div class="line"><span class="literal">false</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="折叠操作"><a href="#折叠操作" class="headerlink" title="折叠操作"></a><strong>折叠操作</strong></h3><p>如果我们把集合看成是一张纸条，每一小段代表一个元素，那么reduceLeft就将这张纸条从左向右”折叠”，最前面的两个元素会首先“重叠”在一起，这时会使用传给reduceLeft的参数函数进行计算，返回的结果就像是已经折叠在一起的两段纸条，它们已经是一个叠加的状态了，所以它，也就是上次重叠的结果会继续做为一个单一的值和下一个元素继续“叠加”，直到折叠到集合的最后一个元素</p>
+<ol>
+<li><p><strong>reduceLeft</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt;  <span class="type">List</span>.range(<span class="number">1</span>, <span class="number">5</span>).reduceLeft(_+_)</div><div class="line">res12: <span class="type">Int</span> = <span class="number">10</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>reduceRight</strong><br>和reduceLeft相似，但是是从右向左折叠,<strong>注意</strong>:==它的操作方向是从右到左，但是参数的顺序却并不是，而是依然第一参数是左边的元素，第二参数是右边的元素==</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span>.range(<span class="number">1</span>, <span class="number">4</span>) reduceRight(_ - _)</div><div class="line">res15: <span class="type">Int</span> = <span class="number">2</span></div><div class="line"><span class="comment">// 2-3 = -1</span></div><div class="line"><span class="comment">// 1-(-1)=2</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>foldLeft</strong><br>类似于reduceLeft, 不过开始折叠的第一个元素不是集合中的第一个元素，而是传入的一个元素，有点类似于先将这个参数放入的集合中的首位，然后在reduceLeft</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span>.range(<span class="number">1</span>, <span class="number">5</span>).foldLeft(<span class="number">1</span>)(_+_)</div><div class="line">res1: <span class="type">Int</span> = <span class="number">11</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>foldRight</strong><br>类似于foldLeft，不过是从右向左，不再举例</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="type">List</span>.range(<span class="number">1</span>, <span class="number">4</span>).foldRight(<span class="number">3</span>)(_-_)</div><div class="line">res1: <span class="type">Int</span> = <span class="number">-1</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="scala-集合Set"><a href="#scala-集合Set" class="headerlink" title="scala 集合Set"></a><strong>scala 集合Set</strong></h1><p>Set和List基本相似，只是所有的元素都是唯一的<br>默认的Set是不可变的,默认引用的是 scala.collection.immutable.Set<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> set = <span class="type">Set</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</div><div class="line">println(set.getClass.getName) <span class="comment">// </span></div><div class="line"></div><div class="line">println(set.exists(_ % <span class="number">2</span> == <span class="number">0</span>)) <span class="comment">//true</span></div><div class="line">println(set.drop(<span class="number">1</span>)) <span class="comment">//Set(2,3)</span></div></pre></td></tr></table></figure></p>
+<p>如果需要使用可变集合需要引入 scala.collection.mutable.Set：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> scala.collection.mutable.<span class="type">Set</span> <span class="comment">// 可以在任何地方引入 可变集合</span></div><div class="line"></div><div class="line"><span class="keyword">val</span> mutableSet = <span class="type">Set</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</div><div class="line">println(mutableSet.getClass.getName) <span class="comment">// scala.collection.mutable.HashSet</span></div><div class="line"></div><div class="line">mutableSet.add(<span class="number">4</span>)</div><div class="line">mutableSet.remove(<span class="number">1</span>)</div><div class="line">mutableSet += <span class="number">5</span></div><div class="line">mutableSet -= <span class="number">2</span></div><div class="line"></div><div class="line">println(mutableSet) <span class="comment">// Set(5, 3, 4)</span></div><div class="line"></div><div class="line"><span class="keyword">val</span> another = mutableSet.toSet</div><div class="line">println(another.getClass.getName) <span class="comment">// scala.collection.immutable.Set</span></div></pre></td></tr></table></figure></p>
+<h2 id="连接集合"><a href="#连接集合" class="headerlink" title="连接集合"></a><strong>连接集合</strong></h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> site = site1 ++ site2</div></pre></td></tr></table></figure>
+<h2 id="查找集合中最大与最小元素"><a href="#查找集合中最大与最小元素" class="headerlink" title="查找集合中最大与最小元素"></a><strong>查找集合中最大与最小元素</strong></h2><p>Set.min<br>Set.max</p>
+<h2 id="交集"><a href="#交集" class="headerlink" title="交集"></a><strong>交集</strong></h2><p>Set.intersect<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">set1.intersect(set2)</div></pre></td></tr></table></figure></p>
+<h1 id="map"><a href="#map" class="headerlink" title="map"></a><strong>map</strong></h1><p>ap(映射)是一种可迭代的键值对（key/value）结构。<br>所有的值都可以通过键来获取。<br>Map 中的键都是唯一的。<br>Map 也叫哈希表（Hash tables）。<br>Map 有两种类型，可变与不可变，区别在于可变对象可以修改它，而不可变对象不可以。<br>默认情况下 Scala 使用不可变 Map。如果你需要使用可变集合，你需要显式的引入 import scala.collection.mutable.Map 类<br>在 Scala 中 你可以同时使用可变与不可变 Map，不可变的直接使用 Map，可变的使用 mutable.Map。以下实例演示了不可变 Map 的应用：<br>不可变map<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="keyword">val</span> colors = <span class="type">Map</span>(<span class="string">"red"</span> -&gt; <span class="string">"#FF0000"</span>, <span class="string">"azure"</span> -&gt; <span class="string">"#F0FFFF"</span>)</div><div class="line">colors: scala.collection.immutable.<span class="type">Map</span>[<span class="type">String</span>,<span class="type">String</span>] = <span class="type">Map</span>(red -&gt; #<span class="type">FF0000</span>, azure -&gt; #<span class="type">F0FFFF</span>)</div><div class="line">```  </div><div class="line">## **<span class="type">Map</span>的赋值**  </div><div class="line">如果需要添加 key-value 对，可以使用 + 号，如下所示：</div><div class="line">```scala</div><div class="line"><span class="comment">// 空哈希表，键为字符串，值为整型</span></div><div class="line"><span class="keyword">var</span> <span class="type">A</span>:<span class="type">Map</span>[<span class="type">Char</span>,<span class="type">Int</span>] = <span class="type">Map</span>()</div><div class="line"><span class="type">A</span> += ('<span class="type">I</span>' -&gt; <span class="number">1</span>)</div><div class="line"><span class="type">A</span> += ('<span class="type">J</span>' -&gt; <span class="number">5</span>)</div><div class="line"><span class="type">A</span> += ('<span class="type">K</span>' -&gt; <span class="number">10</span>)</div><div class="line"><span class="type">A</span> += ('<span class="type">L</span>' -&gt; <span class="number">100</span>)</div><div class="line">println（<span class="type">A</span>）</div><div class="line">-------输出--------</div><div class="line"><span class="type">Map</span>(<span class="type">I</span> -&gt; <span class="number">1</span>, <span class="type">J</span> -&gt; <span class="number">5</span>, <span class="type">K</span> -&gt; <span class="number">10</span>, <span class="type">L</span> -&gt; <span class="number">100</span>)</div></pre></td></tr></table></figure></p>
+<h2 id="Map的基本操作"><a href="#Map的基本操作" class="headerlink" title="Map的基本操作"></a><strong>Map的基本操作</strong></h2><ul>
+<li>keys      返回 Map 所有的键(key)</li>
+<li>values    返回 Map 所有的值(value)</li>
+<li>isEmpty    在 Map 为空时返回true<br>例子<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">object Test &#123;</div><div class="line">   def main(args: Array[String]) &#123;</div><div class="line">      val colors = Map(&quot;red&quot; -&gt; &quot;#FF0000&quot;,</div><div class="line">                       &quot;azure&quot; -&gt; &quot;#F0FFFF&quot;,</div><div class="line">                       &quot;peru&quot; -&gt; &quot;#CD853F&quot;)</div><div class="line"></div><div class="line">      val nums: Map[Int, Int] = Map()</div><div class="line"></div><div class="line">      println( &quot;colors 中的键为 : &quot; + colors.keys )</div><div class="line">      println( &quot;colors 中的值为 : &quot; + colors.values )</div><div class="line">      println( &quot;检测 colors 是否为空 : &quot; + colors.isEmpty )</div><div class="line">      println( &quot;检测 nums 是否为空 : &quot; + nums.isEmpty )</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line">---------输出---------</div><div class="line">colors 中的键为 : Set(red, azure, peru)</div><div class="line">colors 中的值为 : MapLike(#FF0000, #F0FFFF, #CD853F)</div><div class="line">检测 colors 是否为空 : false</div><div class="line">检测 nums 是否为空 : true</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Map-合并"><a href="#Map-合并" class="headerlink" title="Map 合并"></a><strong>Map 合并</strong></h2><p>++ 运算符或 Map.++() 方法来连接两个 Map, Map 合并时会移除重复的 key。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> colors1 = <span class="type">Map</span>(<span class="string">"red"</span> -&gt; <span class="string">"#FF0000"</span>,</div><div class="line">      <span class="string">"azure"</span> -&gt; <span class="string">"#F0FFFF"</span>,</div><div class="line">      <span class="string">"peru"</span> -&gt; <span class="string">"#CD853F"</span>)</div><div class="line">    <span class="keyword">val</span> colors2 = <span class="type">Map</span>(<span class="string">"blue"</span> -&gt; <span class="string">"#0033FF"</span>,</div><div class="line">      <span class="string">"yellow"</span> -&gt; <span class="string">"#FFFF00"</span>,</div><div class="line">      <span class="string">"red"</span> -&gt; <span class="string">"#FF0001"</span>)</div><div class="line"></div><div class="line">    <span class="comment">//  ++ 作为运算符</span></div><div class="line">    <span class="keyword">var</span> colors = colors1 ++ colors2</div><div class="line">    println( <span class="string">"colors1 ++ colors2 : "</span> + colors )</div><div class="line"></div><div class="line">    <span class="comment">//  ++ 作为方法</span></div><div class="line">    colors = colors1.++(colors2)</div><div class="line">    println( <span class="string">"colors1.++(colors2)) : "</span> + colors )</div><div class="line">--------输出--------------------</div><div class="line">colors1 ++ colors2 : <span class="type">Map</span>(blue -&gt; #<span class="number">0033</span>FF, azure -&gt; #<span class="type">F0FFFF</span>, peru -&gt; #<span class="type">CD853F</span>, yellow -&gt; #<span class="type">FFFF00</span>, red -&gt; #<span class="type">FF0001</span>)</div><div class="line">colors1.++(colors2)) : <span class="type">Map</span>(blue -&gt; #<span class="number">0033</span>FF, azure -&gt; #<span class="type">F0FFFF</span>, peru -&gt; #<span class="type">CD853F</span>, yellow -&gt; #<span class="type">FFFF00</span>, red -&gt; #<span class="type">FF0001</span>)</div><div class="line">```  </div><div class="line">## **输出map和key**</div><div class="line">```scala</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</div><div class="line">    <span class="keyword">val</span> sites = <span class="type">Map</span>(<span class="string">"runoob"</span> -&gt; <span class="string">"http://www.runoob.com"</span>,</div><div class="line">      <span class="string">"baidu"</span> -&gt; <span class="string">"http://www.baidu.com"</span>,</div><div class="line">      <span class="string">"taobao"</span> -&gt; <span class="string">"http://www.taobao.com"</span>)</div><div class="line">    sites.keys.foreach&#123;</div><div class="line">      i=&gt;print(<span class="string">"key: "</span>+i)</div><div class="line">        println(<span class="string">"value: "</span>+sites(i))</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">----------输出-----</div><div class="line">key: runoobvalue: http:<span class="comment">//www.runoob.com</span></div><div class="line">key: baiduvalue: http:<span class="comment">//www.baidu.com</span></div><div class="line">key: taobaovalue: http:<span class="comment">//www.taobao.com</span></div><div class="line">```  </div><div class="line">##  **<span class="type">Map</span>.contains查看是否存在指定的key**</div><div class="line"></div><div class="line">## **元组**</div><div class="line">元组可以把固定数量的条目组合在一起以便于整体的传送，不像数组或者列表，元祖可以保存不同类型的对象    </div><div class="line">元组的值是通过将单个的值包含在圆括号中构成的。例如</div><div class="line">```scala</div><div class="line"><span class="keyword">val</span> t = (<span class="number">1</span>, <span class="number">3.14</span>, <span class="string">"Fred"</span>)</div></pre></td></tr></table></figure></p>
+<p>以上实例在元组中定义了三个元素，对应的类型分别为[Int, Double, java.lang.String]。<br>此外我们也可以使用以下方式来定义：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> t = <span class="keyword">new</span> <span class="type">Tuple3</span>(<span class="number">1</span>, <span class="number">3.14</span>, <span class="string">"Fred"</span>)</div><div class="line">```  </div><div class="line">### **定义与取值**</div><div class="line">元组的实际类型取决于它的元素的类型，比如 (<span class="number">99</span>, <span class="string">"runoob"</span>) 是 <span class="type">Tuple2</span>[<span class="type">Int</span>, <span class="type">String</span>]。 ('u', 'r', <span class="string">"the"</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="string">"me"</span>) 为 <span class="type">Tuple6</span>[<span class="type">Char</span>, <span class="type">Char</span>, <span class="type">String</span>, <span class="type">Int</span>, <span class="type">Int</span>, <span class="type">String</span>]。  </div><div class="line">目前 <span class="type">Scala</span> 支持的元组最大长度为 <span class="number">22</span>。对于更大长度你可以使用集合，或者扩展元组。</div><div class="line">访问元组的元素可以通过数字索引，如下一个元组：  </div><div class="line">我们可以使用 t.\_1 访问第一个元素， t.\_2 访问第二个元素，如下所示：  </div><div class="line">```scala</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">    <span class="keyword">val</span> t = (<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>)</div><div class="line"></div><div class="line">    <span class="keyword">val</span> sum = t._1 + t._2 + t._3 + t._4</div><div class="line">    <span class="keyword">var</span> secondTuple=t._2</div><div class="line">    println(<span class="string">"第二个元素为: "</span>+secondTuple)</div><div class="line">    println( <span class="string">"元素之和为: "</span>  + sum )</div><div class="line">  &#125;</div><div class="line">----输出----------</div><div class="line">第二个元素为: <span class="number">3</span></div><div class="line">元素之和为: <span class="number">10</span></div></pre></td></tr></table></figure></p>
+<h3 id="迭代元组"><a href="#迭代元组" class="headerlink" title="迭代元组"></a><strong>迭代元组</strong></h3><p>你可以使用 Tuple.productIterator() 方法来迭代输出元组的所有元素：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">    <span class="keyword">val</span> t = (<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>)</div><div class="line">    t.productIterator.foreach(i=&gt;println(<span class="string">"value: "</span>+i))</div><div class="line">  &#125;</div><div class="line">--------输出--------------</div><div class="line">value: <span class="number">4</span></div><div class="line">value: <span class="number">3</span></div><div class="line">value: <span class="number">2</span></div><div class="line">value: <span class="number">1</span></div><div class="line">```  </div><div class="line">### **元组转为字符串**</div><div class="line"><span class="type">Tuple</span>.toString()  </div><div class="line">### **元素交换**</div><div class="line"><span class="type">Tuple</span>.swap 方法来交换元组的元素  </div><div class="line">```scala</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">val</span> t = <span class="keyword">new</span> <span class="type">Tuple2</span>(<span class="string">"www.google.com"</span>, <span class="string">"http://blog.csdn.net/t1dmzks"</span>)</div><div class="line">      println(<span class="string">"交换后的元组: "</span> + t )</div><div class="line">    &#125;</div><div class="line">-------输出-----------</div><div class="line">交换后的元组: (www.google.com,www.runoob.com)</div><div class="line">```  </div><div class="line"># **<span class="type">Scala</span> <span class="type">Option</span>**</div><div class="line"><span class="type">TODO</span></div><div class="line"></div><div class="line"># **<span class="type">Scala</span> <span class="type">Iterator</span>**</div><div class="line"><span class="type">Scala</span> <span class="type">Iterator</span>（迭代器）不是一个集合，它是一种用于访问集合的方法。</div><div class="line">迭代器 it 的两个基本操作是 next 和 hasNext。</div><div class="line">调用 it.next() 会返回迭代器的下一个元素，并且更新迭代器的状态。</div><div class="line">调用 it.hasNext() 用于检测集合中是否还有元素。</div><div class="line">让迭代器 it 逐个返回所有元素最简单的方法是使用 <span class="keyword">while</span> 循环：</div><div class="line">```scala</div><div class="line"><span class="class"><span class="keyword">object</span> <span class="title">Test</span> </span>&#123;</div><div class="line">   <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]) &#123;</div><div class="line">      <span class="keyword">val</span> it = <span class="type">Iterator</span>(<span class="string">"Baidu"</span>, <span class="string">"Google"</span>, <span class="string">"Runoob"</span>, <span class="string">"Taobao"</span>)</div><div class="line">      </div><div class="line">      <span class="keyword">while</span> (it.hasNext)&#123;</div><div class="line">         println(it.next())</div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="查找最大与最小元素"><a href="#查找最大与最小元素" class="headerlink" title="查找最大与最小元素"></a><strong>查找最大与最小元素</strong></h2><p> it.min 和 it.max 方法</p>
+<h2 id="获取迭代器的长度"><a href="#获取迭代器的长度" class="headerlink" title="获取迭代器的长度"></a><strong>获取迭代器的长度</strong></h2><p>it.size 或 it.length </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/scala/" rel="tag"># scala</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/programme/scala-higher-order-functions.html" rel="next" title="scala高阶函数学习">
+                <i class="fa fa-chevron-left"></i> scala高阶函数学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/programme/scala-basic.html" rel="prev" title="scala编程基础">
+                scala编程基础 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1_t1dmzks.jpg"
+               alt="zhaikaishun" />
+          <p class="site-author-name" itemprop="name">zhaikaishun</p>
+           
+              <p class="site-description motion-element" itemprop="description">the blog of dangluren</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhaikaishun" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="zhaikaishun@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://stackoverflow.com/users/7030147/k-shun" target="_blank" title="StackOverflow">
+                  
+                    <i class="fa fa-fw fa-stack-overflow"></i>
+                  
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://blog.csdn.net/t1dmzks/" title="csdn博客" target="_blank">csdn博客</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://imbotao.top/" title="wava博客" target="_blank">wava博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串"><span class="nav-number">1.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数组"><span class="nav-number">2.</span> <span class="nav-text">数组</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#声明数组"><span class="nav-number">2.1.</span> <span class="nav-text">声明数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#赋值"><span class="nav-number">2.2.</span> <span class="nav-text">赋值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理数组"><span class="nav-number">2.3.</span> <span class="nav-text">处理数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多维数组"><span class="nav-number">2.4.</span> <span class="nav-text">多维数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#合并数组"><span class="nav-number">2.5.</span> <span class="nav-text">合并数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建区间数组"><span class="nav-number">2.6.</span> <span class="nav-text">创建区间数组</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Scala-集合List"><span class="nav-number">3.</span> <span class="nav-text">Scala 集合List</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#列表构造方式"><span class="nav-number">3.1.</span> <span class="nav-text">列表构造方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构造列表方式一"><span class="nav-number">3.1.1.</span> <span class="nav-text">构造列表方式一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构造列表方式二"><span class="nav-number">3.1.2.</span> <span class="nav-text">构造列表方式二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方式二的简化"><span class="nav-number">3.1.3.</span> <span class="nav-text">方式二的简化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#列表的基本操作"><span class="nav-number">3.2.</span> <span class="nav-text">列表的基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List类的一阶方法"><span class="nav-number">3.3.</span> <span class="nav-text">List类的一阶方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#连接列表"><span class="nav-number">3.3.1.</span> <span class="nav-text">连接列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#List-fill"><span class="nav-number">3.3.2.</span> <span class="nav-text">List.fill()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#List-tabulate"><span class="nav-number">3.3.3.</span> <span class="nav-text">List.tabulate()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表反转"><span class="nav-number">3.3.4.</span> <span class="nav-text">列表反转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前缀与后缀-drop-take-splitAt"><span class="nav-number">3.3.5.</span> <span class="nav-text">前缀与后缀 drop take splitAt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元素选择-apply方法和indices方法"><span class="nav-number">3.3.6.</span> <span class="nav-text">元素选择 apply方法和indices方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#toString和mkString"><span class="nav-number">3.3.7.</span> <span class="nav-text">toString和mkString</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转换列表-toArray-element-iterator"><span class="nav-number">3.3.8.</span> <span class="nav-text">转换列表 toArray element iterator</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list类的高阶用法"><span class="nav-number">3.4.</span> <span class="nav-text">list类的高阶用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#列表间映射：map、flatMap和foreach"><span class="nav-number">3.4.1.</span> <span class="nav-text">列表间映射：map、flatMap和foreach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表过滤：filter、partition、find、takeWhile、dropWhile和span"><span class="nav-number">3.4.2.</span> <span class="nav-text">列表过滤：filter、partition、find、takeWhile、dropWhile和span</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表的论断：forall和exists"><span class="nav-number">3.4.3.</span> <span class="nav-text">列表的论断：forall和exists</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#折叠操作"><span class="nav-number">3.4.4.</span> <span class="nav-text">折叠操作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#scala-集合Set"><span class="nav-number">4.</span> <span class="nav-text">scala 集合Set</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#连接集合"><span class="nav-number">4.1.</span> <span class="nav-text">连接集合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查找集合中最大与最小元素"><span class="nav-number">4.2.</span> <span class="nav-text">查找集合中最大与最小元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交集"><span class="nav-number">4.3.</span> <span class="nav-text">交集</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#map"><span class="nav-number">5.</span> <span class="nav-text">map</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Map的基本操作"><span class="nav-number">5.1.</span> <span class="nav-text">Map的基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map-合并"><span class="nav-number">5.2.</span> <span class="nav-text">Map 合并</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#迭代元组"><span class="nav-number">5.2.1.</span> <span class="nav-text">迭代元组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查找最大与最小元素"><span class="nav-number">5.3.</span> <span class="nav-text">查找最大与最小元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取迭代器的长度"><span class="nav-number">5.4.</span> <span class="nav-text">获取迭代器的长度</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaikaishun</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

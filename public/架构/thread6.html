@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="关键字：Concurrent.util常用类，CountDownLacth，CyclicBarrier，Callable和Future， 重入锁ReentrantLock， 锁的等待、通知，lock锁， 单Condition，多Condition,ReentrantReadWriteLock 读写锁, github 地址： https://github.com/zhaikaishun/concur">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【多线程高并发】java锁的高级">
+<meta property="og:url" content="http://dangluren.top/架构/thread6.html">
+<meta property="og:site_name" content="挡路人">
+<meta property="og:description" content="关键字：Concurrent.util常用类，CountDownLacth，CyclicBarrier，Callable和Future， 重入锁ReentrantLock， 锁的等待、通知，lock锁， 单Condition，多Condition,ReentrantReadWriteLock 读写锁, github 地址： https://github.com/zhaikaishun/concur">
+<meta property="og:updated_time" content="2018-11-18T15:34:10.227Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【多线程高并发】java锁的高级">
+<meta name="twitter:description" content="关键字：Concurrent.util常用类，CountDownLacth，CyclicBarrier，Callable和Future， 重入锁ReentrantLock， 锁的等待、通知，lock锁， 单Condition，多Condition,ReentrantReadWriteLock 读写锁, github 地址： https://github.com/zhaikaishun/concur">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dangluren.top/架构/thread6.html"/>
+
+
+
+
+
+  <title>【多线程高并发】java锁的高级 | 挡路人</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">挡路人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dangluren.top/架构/thread6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaikaishun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/1_t1dmzks.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="挡路人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【多线程高并发】java锁的高级</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-26T21:25:21+08:00">
+                2017-08-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/架构/" itemprop="url" rel="index">
+                    <span itemprop="name">架构</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>关键字</strong>：Concurrent.util常用类，CountDownLacth，CyclicBarrier，Callable和Future， 重入锁ReentrantLock， 锁的等待、通知，lock锁， 单Condition，多Condition,ReentrantReadWriteLock 读写锁,</p>
+<p>github 地址： <a href="https://github.com/zhaikaishun/concurrent_programming" target="_blank" rel="external">https://github.com/zhaikaishun/concurrent_programming</a><br>本篇文章代码在Multi_006 中</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h1 id="Concurrent-util常用类"><a href="#Concurrent-util常用类" class="headerlink" title="Concurrent.util常用类"></a>Concurrent.util常用类</h1><h2 id="CountDownLacth使用"><a href="#CountDownLacth使用" class="headerlink" title="CountDownLacth使用:"></a>CountDownLacth使用:</h2><p>它经常用于监听某些初始化操作，等初始化执行完毕后通知主线程继续工作。<br>举例com.kaishun.height.concurrent019下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">public class UseCountDownLatch &#123;</div><div class="line"></div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		</div><div class="line">		final CountDownLatch countDown = new CountDownLatch(2);</div><div class="line">		</div><div class="line">		Thread t1 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				try &#123;</div><div class="line">					System.out.println(&quot;进入线程t1&quot; + &quot;等待其他线程处理完成...&quot;);</div><div class="line">					countDown.await();</div><div class="line">					System.out.println(&quot;t1线程继续执行...&quot;);</div><div class="line">				&#125; catch (InterruptedException e) &#123;</div><div class="line">					e.printStackTrace();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t1&quot;);</div><div class="line">		</div><div class="line">		Thread t2 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				try &#123;</div><div class="line">					System.out.println(&quot;t2线程进行初始化操作...&quot;);</div><div class="line">					Thread.sleep(3000);</div><div class="line">					System.out.println(&quot;t2线程初始化完毕，通知t1线程继续...&quot;);</div><div class="line">					countDown.countDown();</div><div class="line">				&#125; catch (InterruptedException e) &#123;</div><div class="line">					e.printStackTrace();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		Thread t3 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				try &#123;</div><div class="line">					System.out.println(&quot;t3线程进行初始化操作...&quot;);</div><div class="line">					Thread.sleep(4000);</div><div class="line">					System.out.println(&quot;t3线程初始化完毕，通知t1线程继续...&quot;);</div><div class="line">					countDown.countDown();</div><div class="line">				&#125; catch (InterruptedException e) &#123;</div><div class="line">					e.printStackTrace();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		</div><div class="line">		t1.start();</div><div class="line">		t2.start();</div><div class="line">		t3.start();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="CyclicBarrier使用"><a href="#CyclicBarrier使用" class="headerlink" title="CyclicBarrier使用:"></a>CyclicBarrier使用:</h2><p>假设有只有的一个场景：每个线程代表一个跑步运动员，当运动员都准备好后，才一起出发，只要有一个人没准备好，大家都等待<br>举例：UseCyclicBarrier<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UseCyclicBarrier</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Runner</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;  </div><div class="line">	    <span class="keyword">private</span> CyclicBarrier barrier;  </div><div class="line">	    <span class="keyword">private</span> String name;  </div><div class="line">	    </div><div class="line">	    <span class="function"><span class="keyword">public</span> <span class="title">Runner</span><span class="params">(CyclicBarrier barrier, String name)</span> </span>&#123;  </div><div class="line">	        <span class="keyword">this</span>.barrier = barrier;  </div><div class="line">	        <span class="keyword">this</span>.name = name;  </div><div class="line">	    &#125;  </div><div class="line">	    <span class="meta">@Override</span>  </div><div class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;  </div><div class="line">	        <span class="keyword">try</span> &#123;  </div><div class="line">	            Thread.sleep(<span class="number">1000</span> * (<span class="keyword">new</span> Random()).nextInt(<span class="number">5</span>));  </div><div class="line">	            System.out.println(name + <span class="string">" 准备OK."</span>);  </div><div class="line">	            barrier.await();  </div><div class="line">	        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </div><div class="line">	            e.printStackTrace();  </div><div class="line">	        &#125; <span class="keyword">catch</span> (BrokenBarrierException e) &#123;  </div><div class="line">	            e.printStackTrace();  </div><div class="line">	        &#125;  </div><div class="line">	        System.out.println(name + <span class="string">" Go!!"</span>);  </div><div class="line">	    &#125;  </div><div class="line">	&#125; </div><div class="line">	</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;  </div><div class="line">        CyclicBarrier barrier = <span class="keyword">new</span> CyclicBarrier(<span class="number">3</span>);  <span class="comment">// 3 </span></div><div class="line">        ExecutorService executor = Executors.newFixedThreadPool(<span class="number">3</span>);  </div><div class="line">        </div><div class="line">        executor.submit(<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runner(barrier, <span class="string">"zhangsan"</span>)));  </div><div class="line">        executor.submit(<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runner(barrier, <span class="string">"lisi"</span>)));  </div><div class="line">        executor.submit(<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runner(barrier, <span class="string">"wangwu"</span>)));  </div><div class="line">  </div><div class="line">        executor.shutdown();  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">&#125;  </div><div class="line">-------输出-------------</div><div class="line">lisi 准备OK.</div><div class="line">zhangsan 准备OK.</div><div class="line">wangwu 准备OK.</div><div class="line">wangwu Go!!</div><div class="line">lisi Go!!</div><div class="line">zhangsan Go!!</div></pre></td></tr></table></figure></p>
+<h2 id="Callable和Future使用"><a href="#Callable和Future使用" class="headerlink" title="Callable和Future使用"></a>Callable和Future使用</h2><p>这个例子其实就是我们之前实现的Future模式，jdk给与我们衣蛾实现的封装，使用非常简单， Future模式非常适合在处理耗时很长的业务逻辑时使用，可以有效地减少系统的响应时间，提高系统的吞吐量。<br>示例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UseFuture</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt;</span>&#123;</div><div class="line">	<span class="keyword">private</span> String para;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">UseFuture</span><span class="params">(String para)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.para = para;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line"><span class="comment">	 * 这里是真实的业务逻辑，其执行可能很慢</span></div><div class="line"><span class="comment">	 */</span></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		<span class="comment">//模拟执行耗时</span></div><div class="line">		Thread.sleep(<span class="number">5000</span>);</div><div class="line">		String result = <span class="keyword">this</span>.para + <span class="string">"处理完成"</span>;</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">//主控制函数</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		String queryStr = <span class="string">"query"</span>;</div><div class="line">		<span class="comment">//构造FutureTask，并且传入需要真正进行业务逻辑处理的类,该类一定是实现了Callable接口的类</span></div><div class="line">		FutureTask&lt;String&gt; future = <span class="keyword">new</span> FutureTask&lt;String&gt;(<span class="keyword">new</span> UseFuture(queryStr));</div><div class="line">		</div><div class="line">		FutureTask&lt;String&gt; future2 = <span class="keyword">new</span> FutureTask&lt;String&gt;(<span class="keyword">new</span> UseFuture(queryStr));</div><div class="line">		<span class="comment">//创建一个固定线程的线程池且线程数为1,</span></div><div class="line">		ExecutorService executor = Executors.newFixedThreadPool(<span class="number">2</span>);</div><div class="line">		<span class="comment">//这里提交任务future,则开启线程执行RealData的call()方法执行</span></div><div class="line">		<span class="comment">//submit和execute的区别： 第一点是submit可以传入实现Callable接口的实例对象， 第二点是submit方法有返回值</span></div><div class="line">		</div><div class="line">		Future f1 = executor.submit(future);		<span class="comment">//单独启动一个线程去执行的</span></div><div class="line">		Future f2 = executor.submit(future2);</div><div class="line">		System.out.println(<span class="string">"请求完毕"</span>);</div><div class="line">		</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">//这里可以做额外的数据操作，也就是主程序执行其他业务逻辑</span></div><div class="line">			System.out.println(<span class="string">"处理实际的业务逻辑..."</span>);</div><div class="line">			Thread.sleep(<span class="number">1000</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		<span class="comment">//调用获取数据方法,如果call()方法没有执行完成,则依然会进行等待</span></div><div class="line">		System.out.println(<span class="string">"数据："</span> + future.get());</div><div class="line">		System.out.println(<span class="string">"数据："</span> + future2.get());</div><div class="line">		</div><div class="line">		executor.shutdown();</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line">-----------输出-------------------</div><div class="line">请求完毕</div><div class="line">处理实际的业务逻辑...</div><div class="line">数据：query处理完成</div><div class="line">数据：query处理完成</div></pre></td></tr></table></figure></p>
+<h2 id="重入锁ReentrantLock"><a href="#重入锁ReentrantLock" class="headerlink" title="重入锁ReentrantLock"></a>重入锁ReentrantLock</h2><p>重入锁，在需要进行同步的代码部分加上锁定，但不要忘记最后一定要释放锁定，不然会造成锁永远无法释放，其他线程永远进不来的结果。  【com.kaishun.height.lock020.UseReentrantLock】  </p>
+<p>使用方法： </p>
+<ol>
+<li>实例化一个锁： Lock lock = new ReentrantLock();  </li>
+<li>在需要加锁的地方使用lock.lock();  </li>
+<li>记住加锁的代码需要加上try catch finally  , finally的时候，一定要释放锁 lock.unlock</li>
+</ol>
+<p>举例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UseReentrantLock</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(<span class="string">"当前线程:"</span> + Thread.currentThread().getName() + <span class="string">"进入method1.."</span>);</div><div class="line">			Thread.sleep(<span class="number">1000</span>);</div><div class="line">			System.out.println(<span class="string">"当前线程:"</span> + Thread.currentThread().getName() + <span class="string">"退出method1.."</span>);</div><div class="line">			Thread.sleep(<span class="number">1000</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(<span class="string">"当前线程:"</span> + Thread.currentThread().getName() + <span class="string">"进入method2.."</span>);</div><div class="line">			Thread.sleep(<span class="number">2000</span>);</div><div class="line">			System.out.println(<span class="string">"当前线程:"</span> + Thread.currentThread().getName() + <span class="string">"退出method2.."</span>);</div><div class="line">			Thread.sleep(<span class="number">1000</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">final</span> UseReentrantLock ur = <span class="keyword">new</span> UseReentrantLock();</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				ur.method1();</div><div class="line">				ur.method2();</div><div class="line">			&#125;</div><div class="line">		&#125;, <span class="string">"t1"</span>);</div><div class="line"></div><div class="line">		t1.start();</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			Thread.sleep(<span class="number">10</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		<span class="comment">//System.out.println(ur.lock.getQueueLength());</span></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">&#125;</div><div class="line"></div><div class="line">-----------输出----------------</div><div class="line">当前线程:t1进入method1..</div><div class="line">当前线程:t1退出method1..</div><div class="line">当前线程:t1进入method2..</div><div class="line">当前线程:t1退出method2..</div></pre></td></tr></table></figure></p>
+<h2 id="锁的等待、通知"><a href="#锁的等待、通知" class="headerlink" title="锁的等待、通知"></a>锁的等待、通知</h2><p>还记得我们在使用synchronized的时候，如果需要多线程间进行协作工作则需要Object的wait()和notify方法进行配合工作。<br>那么同样，我们在使用Lock的时候，可以使用一个新的等待、通知的类，他就是Condition, 这个份Cibdutuib一定是针对具体某一吧锁的。也就是只有在有锁的情况下才会产生Condition.<br>使用方法：  </p>
+<ol>
+<li>Condition condition = lock.newCondition();  </li>
+<li>等待调用condition.await();  </li>
+<li>唤醒调用condition.signal();      </li>
+</ol>
+<h3 id="单Condition"><a href="#单Condition" class="headerlink" title="单Condition"></a>单Condition</h3><p>举例说明：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UseCondition</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</div><div class="line">	<span class="keyword">private</span> Condition condition = lock.newCondition();</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(<span class="string">"当前线程："</span> + Thread.currentThread().getName() + <span class="string">"进入等待状态.."</span>);</div><div class="line">			Thread.sleep(<span class="number">3000</span>);</div><div class="line">			System.out.println(<span class="string">"当前线程："</span> + Thread.currentThread().getName() + <span class="string">"释放锁.."</span>);</div><div class="line">			condition.await();	<span class="comment">// Object wait</span></div><div class="line">			System.out.println(<span class="string">"当前线程："</span> + Thread.currentThread().getName() +<span class="string">"继续执行..."</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(<span class="string">"当前线程："</span> + Thread.currentThread().getName() + <span class="string">"进入.."</span>);</div><div class="line">			Thread.sleep(<span class="number">3000</span>);</div><div class="line">			System.out.println(<span class="string">"当前线程："</span> + Thread.currentThread().getName() + <span class="string">"发出唤醒.."</span>);</div><div class="line">			condition.signal();		<span class="comment">//Object notify</span></div><div class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		</div><div class="line">		<span class="keyword">final</span> UseCondition uc = <span class="keyword">new</span> UseCondition();</div><div class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				uc.method1();</div><div class="line">			&#125;</div><div class="line">		&#125;, <span class="string">"t1"</span>);</div><div class="line">		Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">				uc.method2();</div><div class="line">			&#125;</div><div class="line">		&#125;, <span class="string">"t2"</span>);</div><div class="line">		t1.start();</div><div class="line"></div><div class="line">		t2.start();</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">```  </div><div class="line">t1线程进入method1，然后wait释放锁， t2线程得到锁唤醒了t1  </div><div class="line">输出结果：</div></pre></td></tr></table></figure></p>
+<p>当前线程：t1进入等待状态..<br>当前线程：t1释放锁..<br>当前线程：t2进入..<br>当前线程：t2发出唤醒..<br>当前线程：t1继续执行…<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">### 多Condition</div><div class="line">我们可以通过一个Lock对象产生多个Condition进行多线程间的交互，非常的灵活。可以使得部分需要唤醒的线程被唤醒，其他线程则继续等待通知。  </div><div class="line">例如下面这个例子，我们队一个lock，new出了2个Condition 一个是c1一个是c2 . </div><div class="line">m1和m2方法使用c1.wait。 m3方法使用c2.wait。 m4方法唤醒了c1.signalAll， m5方法唤醒的是c2.signal</div><div class="line"></div><div class="line">代码：  </div><div class="line">```java</div><div class="line">public class UseManyCondition &#123;</div><div class="line"></div><div class="line">	private ReentrantLock lock = new ReentrantLock();</div><div class="line">	private Condition c1 = lock.newCondition();</div><div class="line">	private Condition c2 = lock.newCondition();</div><div class="line">	</div><div class="line">	public void m1()&#123;</div><div class="line">		try &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(&quot;当前线程：&quot; +Thread.currentThread().getName() + &quot;进入方法m1等待..&quot;);</div><div class="line">			c1.await();</div><div class="line">			System.out.println(&quot;当前线程：&quot; +Thread.currentThread().getName() + &quot;方法m1继续..&quot;);</div><div class="line">		&#125; catch (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; finally &#123;</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public void m2()&#123;</div><div class="line">		try &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(&quot;当前线程：&quot; +Thread.currentThread().getName() + &quot;进入方法m2等待..&quot;);</div><div class="line">			c1.await();</div><div class="line">			System.out.println(&quot;当前线程：&quot; +Thread.currentThread().getName() + &quot;方法m2继续..&quot;);</div><div class="line">		&#125; catch (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; finally &#123;</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public void m3()&#123;</div><div class="line">		try &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(&quot;当前线程：&quot; +Thread.currentThread().getName() + &quot;进入方法m3等待..&quot;);</div><div class="line">			c2.await();</div><div class="line">			System.out.println(&quot;当前线程：&quot; +Thread.currentThread().getName() + &quot;方法m3继续..&quot;);</div><div class="line">		&#125; catch (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; finally &#123;</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public void m4()&#123;</div><div class="line">		try &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(&quot;当前线程：&quot; +Thread.currentThread().getName() + &quot;唤醒..&quot;);</div><div class="line">			c1.signalAll();</div><div class="line">		&#125; catch (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; finally &#123;</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public void m5()&#123;</div><div class="line">		try &#123;</div><div class="line">			lock.lock();</div><div class="line">			System.out.println(&quot;当前线程：&quot; +Thread.currentThread().getName() + &quot;唤醒..&quot;);</div><div class="line">			c2.signal();</div><div class="line">		&#125; catch (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; finally &#123;</div><div class="line">			lock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		</div><div class="line">		</div><div class="line">		final UseManyCondition umc = new UseManyCondition();</div><div class="line">		Thread t1 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				umc.m1();</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t1&quot;);</div><div class="line">		Thread t2 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				umc.m2();</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t2&quot;);</div><div class="line">		Thread t3 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				umc.m3();</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t3&quot;);</div><div class="line">		Thread t4 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				umc.m4();</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t4&quot;);</div><div class="line">		Thread t5 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				umc.m5();</div><div class="line">			&#125;</div><div class="line">		&#125;,&quot;t5&quot;);</div><div class="line">		</div><div class="line">		t1.start();	// c1</div><div class="line">		t2.start();	// c1</div><div class="line">		t3.start();	// c2</div><div class="line">		</div><div class="line"></div><div class="line">		try &#123;</div><div class="line">			Thread.sleep(2000);</div><div class="line">		&#125; catch (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		t4.start();	// c1</div><div class="line">		try &#123;</div><div class="line">			Thread.sleep(10000);</div><div class="line">		&#125; catch (InterruptedException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		t5.start();	// c2</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>输出</strong><br>先输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">当前线程：t1进入方法m1等待..</div><div class="line">当前线程：t3进入方法m3等待..</div><div class="line">当前线程：t2进入方法m2等待..</div><div class="line"></div><div class="line">```  </div><div class="line">2秒后输出</div></pre></td></tr></table></figure></p>
+<p>当前线程：t4唤醒..<br>当前线程：t1方法m1继续..<br>当前线程：t2方法m2继续..<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">10秒后输出</div></pre></td></tr></table></figure></p>
+<p>当前线程：t5唤醒..<br>当前线程：t3方法m3继续..<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## ReentrantReadWriteLock 读写锁  </div><div class="line">读写锁ReentrantReadWriteLock, 其核心就是实现读写分离的锁，在高并发访问下，尤其是读多写少的情况下，性能要远高于重入锁。  </div><div class="line">之前学synchronized, ReentrantLock时，我们知道，同一时间内，只能有一个线程进行访问被锁定的代码，而读写锁不同，在读锁，多个线程可以并发的访问，而在写锁的时候，只能一个一个顺序的访问  </div><div class="line">口诀：  读读共享， 写写互斥， 读写互斥。  </div><div class="line">举例：  </div><div class="line">```java</div><div class="line"></div><div class="line">public class UseReentrantReadWriteLock &#123;</div><div class="line"></div><div class="line">	private ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();</div><div class="line">	private ReadLock readLock = rwLock.readLock();</div><div class="line">	private WriteLock writeLock = rwLock.writeLock();</div><div class="line">	</div><div class="line">	public void read()&#123;</div><div class="line">		try &#123;</div><div class="line">			readLock.lock();</div><div class="line">			System.out.println(&quot;当前线程:&quot; + Thread.currentThread().getName() + &quot;进入...&quot;);</div><div class="line">			Thread.sleep(3000);</div><div class="line">			System.out.println(&quot;当前线程:&quot; + Thread.currentThread().getName() + &quot;退出...&quot;);</div><div class="line">		&#125; catch (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; finally &#123;</div><div class="line">			readLock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public void write()&#123;</div><div class="line">		try &#123;</div><div class="line">			writeLock.lock();</div><div class="line">			System.out.println(&quot;当前线程:&quot; + Thread.currentThread().getName() + &quot;进入...&quot;);</div><div class="line">			Thread.sleep(3000);</div><div class="line">			System.out.println(&quot;当前线程:&quot; + Thread.currentThread().getName() + &quot;退出...&quot;);</div><div class="line">		&#125; catch (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; finally &#123;</div><div class="line">			writeLock.unlock();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		</div><div class="line">		final UseReentrantReadWriteLock urrw = new UseReentrantReadWriteLock();</div><div class="line">		</div><div class="line">		Thread t1 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				urrw.read();</div><div class="line">			&#125;</div><div class="line">		&#125;, &quot;t1&quot;);</div><div class="line">		Thread t2 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				urrw.read();</div><div class="line">			&#125;</div><div class="line">		&#125;, &quot;t2&quot;);</div><div class="line">		Thread t3 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				urrw.write();</div><div class="line">			&#125;</div><div class="line">		&#125;, &quot;t3&quot;);</div><div class="line">		Thread t4 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				urrw.write();</div><div class="line">			&#125;</div><div class="line">		&#125;, &quot;t4&quot;);		</div><div class="line">		</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当运行下面语句时输出,读和读可以并发运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">		t1.start();</div><div class="line">		t2.start();</div><div class="line">---------输出----------</div><div class="line">当前线程:t2进入...</div><div class="line">当前线程:t1进入...</div><div class="line">当前线程:t1退出...</div><div class="line">当前线程:t2退出...</div><div class="line"></div><div class="line">```  </div><div class="line">当运行下面读和写两个线程时, 读写互斥</div></pre></td></tr></table></figure></p>
+<pre><code>t1.start(); // R
+t3.start(); // W  
+</code></pre><p>———-输出———<br>当前线程:t1进入…<br>当前线程:t1退出…<br>当前线程:t3进入…<br>当前线程:t3退出…<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">当运行两个写的时候，写写互斥  </div><div class="line">```java</div><div class="line">		t3.start();</div><div class="line">		t4.start();</div><div class="line">--------输出---------</div><div class="line">当前线程:t3进入...</div><div class="line">当前线程:t3退出...</div><div class="line">当前线程:t4进入...</div><div class="line">当前线程:t4退出...</div></pre></td></tr></table></figure></p>
+<p>特别感谢互联网架构师白鹤翔老师，本文大多出自他的视频讲解。<br>笔者主要是记录笔记，以便之后翻阅，正所谓好记性不如烂笔头，烂笔头不如云笔记</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/架构/thread7.html" rel="next" title="【多线程高并发】ThreadLocal，高并发下的单例模式">
+                <i class="fa fa-chevron-left"></i> 【多线程高并发】ThreadLocal，高并发下的单例模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/架构/thread5.html" rel="prev" title="【多线程高并发】java线程池">
+                【多线程高并发】java线程池 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1_t1dmzks.jpg"
+               alt="zhaikaishun" />
+          <p class="site-author-name" itemprop="name">zhaikaishun</p>
+           
+              <p class="site-description motion-element" itemprop="description">the blog of dangluren</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhaikaishun" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="zhaikaishun@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://stackoverflow.com/users/7030147/k-shun" target="_blank" title="StackOverflow">
+                  
+                    <i class="fa fa-fw fa-stack-overflow"></i>
+                  
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://blog.csdn.net/t1dmzks/" title="csdn博客" target="_blank">csdn博客</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://imbotao.top/" title="wava博客" target="_blank">wava博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Concurrent-util常用类"><span class="nav-number"></span> <span class="nav-text">Concurrent.util常用类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CountDownLacth使用"><span class="nav-number">1.</span> <span class="nav-text">CountDownLacth使用:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CyclicBarrier使用"><span class="nav-number">2.</span> <span class="nav-text">CyclicBarrier使用:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Callable和Future使用"><span class="nav-number">3.</span> <span class="nav-text">Callable和Future使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重入锁ReentrantLock"><span class="nav-number">4.</span> <span class="nav-text">重入锁ReentrantLock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁的等待、通知"><span class="nav-number">5.</span> <span class="nav-text">锁的等待、通知</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单Condition"><span class="nav-number">5.1.</span> <span class="nav-text">单Condition</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaikaishun</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

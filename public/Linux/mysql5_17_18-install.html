@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="关键字： centos 编译安装mysql5.7.18 rpm安装5.7.18,ubuntu apt -get 安装mysql">
+<meta name="keywords" content="linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos6编译安装Mysql5.7.18, rpm 安装mysql5.7.18，ubuntu apt安装mysql">
+<meta property="og:url" content="http://dangluren.top/linux/mysql5_17_18-install.html">
+<meta property="og:site_name" content="挡路人">
+<meta property="og:description" content="关键字： centos 编译安装mysql5.7.18 rpm安装5.7.18,ubuntu apt -get 安装mysql">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494956471263&di=a8e8616a1c50ff82d6b310f24ceb7350&imgtype=jpg&src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D1421471404%2C1366921536%26fm%3D214%26gp%3D0.jpg">
+<meta property="og:updated_time" content="2018-11-18T15:34:10.141Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Centos6编译安装Mysql5.7.18, rpm 安装mysql5.7.18，ubuntu apt安装mysql">
+<meta name="twitter:description" content="关键字： centos 编译安装mysql5.7.18 rpm安装5.7.18,ubuntu apt -get 安装mysql">
+<meta name="twitter:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494956471263&di=a8e8616a1c50ff82d6b310f24ceb7350&imgtype=jpg&src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D1421471404%2C1366921536%26fm%3D214%26gp%3D0.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dangluren.top/linux/mysql5_17_18-install.html"/>
+
+
+
+
+
+  <title>Centos6编译安装Mysql5.7.18, rpm 安装mysql5.7.18，ubuntu apt安装mysql | 挡路人</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">挡路人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dangluren.top/linux/mysql5_17_18-install.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaikaishun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/1_t1dmzks.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="挡路人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Centos6编译安装Mysql5.7.18, rpm 安装mysql5.7.18，ubuntu apt安装mysql</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-30T21:25:21+08:00">
+                2017-08-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>关键字： centos 编译安装mysql5.7.18 rpm安装5.7.18,ubuntu apt -get 安装mysql<br><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1494956471263&amp;di=a8e8616a1c50ff82d6b310f24ceb7350&amp;imgtype=jpg&amp;src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D1421471404%2C1366921536%26fm%3D214%26gp%3D0.jpg" alt="mysql安装"><br><a id="more"></a></p>
+<h1 id="一-编译安装前的准备"><a href="#一-编译安装前的准备" class="headerlink" title="一. 编译安装前的准备"></a><strong>一. 编译安装前的准备</strong></h1><h2 id="1-1-卸载原有的Mysql"><a href="#1-1-卸载原有的Mysql" class="headerlink" title="1.1 卸载原有的Mysql"></a><strong>1.1 卸载原有的Mysql</strong></h2><p><strong>在root用户下操作</strong>  找出mysql的相关目录<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@master hadoop]# find / -name mysql</div></pre></td></tr></table></figure></p>
+<p>显示<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">[root@master hadoop]# find / -name mysql</div><div class="line">/usr/share/mysql</div><div class="line">/usr/lib64/mysql</div><div class="line">```  </div><div class="line">通过命令rm -rf将mysql有关目录都删除掉，例如我这里只有上述的两个目录  </div><div class="line">```shell</div><div class="line">[root@master hadoop]# rm -rf /usr/share/mysql</div><div class="line">[root@master hadoop]# rm -rf /usr/lib64/mysql</div><div class="line">```  </div><div class="line"><span class="meta">#</span># **1.2 下载自己想要的版本的mysql**  </div><div class="line">**官网太慢，不建议去下载，建议sohu Mysql的镜像站中下载**  </div><div class="line">http://mirrors.sohu.com/mysql/  </div><div class="line">例如我要下载5.7的，那么进入 http://mirrors.sohu.com/mysql/MySQL-5.7/  </div><div class="line">**Ctrl+F查找到 tar.gz **   ，**找到mysql-boost-5.7.18.tar.gz进行下载**   </div><div class="line"></div><div class="line">为什么我要找mysql-boost-5.7.18.tar.gz  而不是 mysql-5.7.18.tar.gz, 因为在Mysql5.7版本更新后有很多变化，比如json等，连安装都有变化，他安装必须要BOOST库，所以我们下载 mysql-boost-5.7.18.tar.gz, 如果是5.6版本，那么就下载  mysql-5.6.35.tar.gz 就可以了  5.5 版本，就下载 mysql-5.5.54.tar.gz  反正自己去镜像库中找就可以了</div><div class="line"></div><div class="line"><span class="meta">#</span># **1.3 把Mysql的压缩包放在/root下**</div><div class="line">```shell</div><div class="line">[root@master Downloads]# mv mysql-boost-5.7.18.tar.gz /root/</div><div class="line">```  </div><div class="line"><span class="meta">#</span># **1.4 安装编译源码所需的工具和库**  </div><div class="line">```shell</div><div class="line">[root@master Downloads]# yum install gcc gcc-c++ ncurses-devel perl</div><div class="line">```  </div><div class="line"><span class="meta">#</span># **1.5 安装cmake编译工具**</div><div class="line">```shell</div><div class="line">[root@master Downloads]# yum install cmake -y</div><div class="line">```  </div><div class="line"><span class="meta">#</span> **二、设置MySQL用户和组**  </div><div class="line"><span class="meta">#</span># **2.1新增mysql用户组**</div><div class="line">```shell</div><div class="line">[root@master Downloads]# groupadd mysql</div></pre></td></tr></table></figure></p>
+<h2 id="2-2新增mysql用户"><a href="#2-2新增mysql用户" class="headerlink" title="2.2新增mysql用户"></a><strong>2.2新增mysql用户</strong></h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@master Downloads]# useradd -r -g mysql mysql</div><div class="line">```  </div><div class="line"><span class="meta">#</span> **三、新建MySQL所需要的目录**</div><div class="line"><span class="meta">#</span># **3.1新建mysql安装目录**  </div><div class="line">```shell</div><div class="line">[root@master Downloads]# mkdir -p /usr/local/mysql</div></pre></td></tr></table></figure>
+<h2 id="3-2新建mysql数据库数据文件目录"><a href="#3-2新建mysql数据库数据文件目录" class="headerlink" title="3.2新建mysql数据库数据文件目录"></a><strong>3.2新建mysql数据库数据文件目录</strong></h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@master Downloads]# mkdir -p /data/mysqldb</div></pre></td></tr></table></figure>
+<h2 id="3-3解压mysql压缩包"><a href="#3-3解压mysql压缩包" class="headerlink" title="3.3解压mysql压缩包"></a><strong>3.3解压mysql压缩包</strong></h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//进入到mysql压缩包的目录下 </div><div class="line">[root@master Downloads]# cd /root/</div><div class="line">//解压 </div><div class="line">[root@master ~]# tar -zxvf mysql-boost-5.7.18.tar.gz</div></pre></td></tr></table></figure>
+<h2 id="3-4进入到mysql目录"><a href="#3-4进入到mysql目录" class="headerlink" title="3.4进入到mysql目录"></a><strong>3.4进入到mysql目录</strong></h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">[root@master ~]# cd mysql-5.7.18</div><div class="line">```  </div><div class="line"><span class="meta">#</span> **四、编译安装MySQL**  </div><div class="line"><span class="meta">#</span># **4.1 设置编译参数**</div><div class="line">```shell</div><div class="line">[root@master mysql-5.7.18]# cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \</div><div class="line">-DMYSQL_UNIX_ADDR=/usr/local/mysql/mysql.sock -DDEFAULT_CHARSET=utf8 \</div><div class="line">-DWITH_BOOST=boost -DDEFAULT_COLLATION=utf8_general_ci \</div><div class="line">-DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 \ </div><div class="line">-DWITH_BLACKHOLE_STORAGE_ENGINE=1 -DMYSQL_DATADIR=/data/mysqldb \</div><div class="line">-DMYSQL_TCP_PORT=3306 -DENABLE_DOWNLOADS=1 \</div><div class="line">```    </div><div class="line">当最后有以下显示说明成功， 可能上面有一些 Failed 的报错，但是貌似是正常情况，具体情况有待考究</div></pre></td></tr></table></figure>
+<p>– Configuring done<br>– Generating done<br>– Build files have been written to: /root/mysql-5.7.18<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">参数说明：  </div><div class="line">**在mysql-5.7中，多了一个  -DWITH_BOOST=boost**  </div><div class="line">在其他的版本，不需要 -DWITH_BOOST=boost</div></pre></td></tr></table></figure></p>
+<p>-DCMAKE_INSTALL_PREFIX=dir_name    设置mysql安装目录<br>-DMYSQL_UNIX_ADDR=file_name    设置监听套接字路径，这必须是一个绝对路径名。默认为/tmp/mysql.sock<br>-DDEFAULT_CHARSET=charset_name    设置服务器的字符集。<br>缺省情况下，MySQL使用latin1的（CP1252西欧）字符集。cmake/character_sets.cmake文件包含允许的字符集名称列表。<br>-DDEFAULT_COLLATION=collation_name    设置服务器的排序规则。<br>-DWITH_INNOBASE_STORAGE_ENGINE=1<br>-DWITH_ARCHIVE_STORAGE_ENGINE=1<br>-DWITH_BLACKHOLE_STORAGE_ENGINE=1<br>-DWITH_PERFSCHEMA_STORAGE_ENGINE=1    存储引擎选项：</p>
+<p>MyISAM，MERGE，MEMORY，和CSV引擎是默认编译到服务器中，并不需要明确地安装。</p>
+<p>静态编译一个存储引擎到服务器，使用-DWITH_engine_STORAGE_ENGINE= 1</p>
+<p>可用的存储引擎值有：ARCHIVE, BLACKHOLE, EXAMPLE, FEDERATED, INNOBASE<br>(InnoDB), PARTITION (partitioning support), 和PERFSCHEMA (Performance Schema)<br>-DMYSQL_DATADIR=dir_name    设置mysql数据库文件目录<br>-DMYSQL_TCP_PORT=port_num    设置mysql服务器监听端口，默认为3306<br>-DENABLE_DOWNLOADS=bool<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">**注**：重新运行配置，需要删除CMakeCache.txt文件  </div><div class="line">## **4.2编译源码** </div><div class="line">建议执行完下面的命令，去喝杯茶，休息休息，因为5.7的编译需要好几十分钟（我是看了一集多的权力的游戏才编译完），5.6的可能几分钟就ok了</div><div class="line">```shell</div><div class="line">[root@master mysql-5.7.18]# make</div></pre></td></tr></table></figure></p>
+<h2 id="4-3-安装"><a href="#4-3-安装" class="headerlink" title="4.3 安装"></a><strong>4.3 安装</strong></h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@master mysql-5.7.18]# make install</div><div class="line">```  </div><div class="line"><span class="meta">#</span> **五、将mysql目录得所有权交给mysql用户和mysql用户组**  </div><div class="line"><span class="meta">#</span>## **5.1修改mysql安装目录**</div><div class="line">进入到mysql安装目录(上面已经定义了)</div><div class="line">```shell</div><div class="line">[root@master mysql-5.7.18]# cd /usr/local/mysql/</div></pre></td></tr></table></figure>
+<p>赋予当前目录下所有文件的所有权为mysql, 注意别忘了后面的 <strong>.</strong> 号<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@master mysql]# chown -R mysql:mysql .</div></pre></td></tr></table></figure></p>
+<h3 id="5-2修改mysql数据库文件目录"><a href="#5-2修改mysql数据库文件目录" class="headerlink" title="5.2修改mysql数据库文件目录"></a><strong>5.2修改mysql数据库文件目录</strong></h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@master mysql]# cd /data/mysqldb/  </div><div class="line">[root@master mysqldb]# chown -R mysql:mysql .</div></pre></td></tr></table></figure>
+<h2 id="六、初始化mysql数据库"><a href="#六、初始化mysql数据库" class="headerlink" title="六、初始化mysql数据库"></a><strong>六、初始化mysql数据库</strong></h2><p>进入到mysql安装目录<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@master mysqldb]# cd /usr/local/mysql/</div></pre></td></tr></table></figure></p>
+<p>初始化mysql数据库<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line">[root@master mysql]# ./bin/mysql_install_db  --user=mysql --datadir=/data/mysqldb/  </div><div class="line">```  </div><div class="line">注意： 如果是5.7以下的版本，应该这样 // scripts/mysql_install_db  --user=mysql --datadir=/data/mysqldb/  </div><div class="line"></div><div class="line">即使是5.7 上述执行后还是报错</div><div class="line">```shell</div><div class="line">2017-04-30 21:57:19 [WARNING] mysql_install_db is deprecated. Please consider switching to mysqld --initialize</div><div class="line">2017-04-30 21:57:48 [WARNING] The bootstrap log isn't empty:</div><div class="line">2017-04-30 21:57:48 [WARNING] 2017-04-30T13:57:20.320409Z 0 [Warning] --bootstrap is deprecated. Please consider using --initialize instead</div><div class="line">2017-04-30T13:57:20.329799Z 0 [Warning] Changed limits: max_open_files: 1024 (requested 5000)</div><div class="line">2017-04-30T13:57:20.329842Z 0 [Warning] Changed limits: table_open_cache: 431 (requested 2000)</div><div class="line">```  </div><div class="line">原因是 之前版本mysql_install_db是在mysql_basedir/script下，5.7放在了mysql_install_db/bin目录下,且已被废弃</div><div class="line">应该这样</div><div class="line">```shell</div><div class="line">[root@master mysql]# bin/mysqld --initialize --user=mysql --datadir=/data/mysqldb/</div><div class="line">```  </div><div class="line">下面会显示</div><div class="line">```shell</div><div class="line">2017-04-30T14:28:37.187266Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</div><div class="line">2017-04-30T14:28:40.862777Z 0 [Warning] InnoDB: New log files created, LSN=45790</div><div class="line">2017-04-30T14:28:42.292320Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</div><div class="line">2017-04-30T14:28:42.589111Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 4f97ab23-2db1-11e7-9084-000c293c28f1.</div><div class="line">2017-04-30T14:28:42.591907Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.</div><div class="line">2017-04-30T14:28:42.594730Z 1 [Note] A temporary password is generated for root@localhost: OxxO=A0:lB_T</div><div class="line">```  </div><div class="line">由上面的提示可以知道，5.7初始化会自动生成一个初始化密码，我这里的密码是OxxO=A0:lB_T,一定要把密码给记住，以后有用  若是5.5， 5.6版本的，初始化的密码是空  </div><div class="line">注： 如果需要重新初始化，需要先删除掉数据库data文件夹, 例如我这里</div><div class="line">```shell</div><div class="line">[root@master mysqldb]# rm -rf /data/mysqldb</div><div class="line">```  </div><div class="line"><span class="meta">#</span> **七、复制mysql服务启动配置文件**  </div><div class="line">**5.7和5.6，5.7的不一样，不能像以前一样cp /usr/local/mysql/support-files/my-small.cnf /etc/my.cnf了**。  </div><div class="line">**需要进入到/etc/my.cnf*  修改datadir=/data/mysqldb  socket=/usr/local/mysql/mysql.sock</div><div class="line">注： /data/mysqldb为前面定义的数据存放目录，/usr/local/mysql/ 是数据安装目录， log-error， pid-file 我暂时没有修改</div><div class="line">```shell</div><div class="line">[root@master hadoop]# vim /etc/my.cnf  </div><div class="line">最终my.cnf如下  </div><div class="line">[mysqld]</div><div class="line"><span class="meta">#</span> datadir=/var/lib/mysql</div><div class="line">datadir=/data/mysqldb</div><div class="line"><span class="meta">#</span>socket=/var/lib/mysql/mysql.sock</div><div class="line">socket=/usr/local/mysql/mysql.sock</div><div class="line">user=mysql</div><div class="line"><span class="meta">#</span> Disabling symbolic-links is recommended to prevent assorted security risks</div><div class="line">symbolic-links=0</div><div class="line"></div><div class="line">[mysqld_safe]</div><div class="line">log-error=/var/log/mysqld.log</div><div class="line">pid-file=/var/run/mysqld/mysqld.pid</div><div class="line">```  </div><div class="line"><span class="meta">#</span> **八、复制mysql服务启动脚本**</div><div class="line">```shell</div><div class="line">[root@master hadoop]# cd /usr/local/mysql/</div><div class="line">[root@master hadoop]# cp support-files/mysql.server /etc/init.d/mysqld</div><div class="line">```  </div><div class="line"><span class="meta">#</span> **九、启动mysql服务并加入开机自启动**  </div><div class="line">启动service  mysqld start， 出现OK说明启动成功</div><div class="line">```shell</div><div class="line">[root@master mysql]# service  mysqld start</div><div class="line">Starting MySQL                                             [  OK  ]</div><div class="line">```  </div><div class="line">加入开机自启动</div><div class="line">```shell</div><div class="line">[root@master mysql]# chkconfig --level 35 mysqld on</div><div class="line">```  </div><div class="line"><span class="meta">#</span> **十、检查mysql服务是否启动**  </div><div class="line"><span class="meta">#</span># **1.  查看端口有没有被占用**</div></pre></td></tr></table></figure></p>
+<p>[root@master mysql]# netstat -tulnp | grep 3306<br>tcp        0      0 :::3306                     :::*                        LISTEN      2474/mysqld<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">## **2. 查看数据库版本** </div><div class="line"></div><div class="line">```shell</div><div class="line">[root@master mysql]# [root@master etc]# mysql --version</div><div class="line">有可能出现</div><div class="line">bash: mysql: command not found</div><div class="line">```  </div><div class="line">这是由于系统默认会查找/usr/bin下的命令，如果这个命令不在这个目录下，当然会找不到命令，我们需要做的就是映射一个链接到/usr/bin目录下，相当于建立一个链接文件, /usr/local/mysql是我们的安装目录 </div><div class="line">```shell</div><div class="line">[root@master mysql]# ln -s /usr/local/mysql/bin/mysql /usr/bin/</div><div class="line">```    </div><div class="line"></div><div class="line">## **3. 登陆数据库**  </div><div class="line">账号为-uroot, 密码为前面初始化数据库的时候生成的密码</div><div class="line">```shell</div><div class="line">[root@master etc]# mysql -uroot -pOxxO=A0:lB_T</div><div class="line">```  </div><div class="line">登陆成功</div><div class="line">```shell</div><div class="line">[root@master etc]# mysql -uroot -p</div><div class="line">Enter password: </div><div class="line">ERROR 1045 (28000): Access denied for user &apos;root&apos;@&apos;localhost&apos; (using password: YES)</div><div class="line">[root@master etc]# mysql -uroot -pOxxO=A0:lB_T</div><div class="line">mysql: [Warning] Using a password on the command line interface can be insecure.</div><div class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</div><div class="line">Your MySQL connection id is 5</div><div class="line">Server version: 5.7.18</div><div class="line"></div><div class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</div><div class="line"></div><div class="line">Oracle is a registered trademark of Oracle Corporation and/or its</div><div class="line">affiliates. Other names may be trademarks of their respective</div><div class="line">owners.</div><div class="line"></div><div class="line">Type &apos;help;&apos; or &apos;\h&apos; for help. Type &apos;\c&apos; to clear the current input statement.</div><div class="line"></div><div class="line">mysql&gt; </div><div class="line">```  </div><div class="line">查看数据库</div></pre></td></tr></table></figure></p>
+<p>mysql&gt; show databases;<br>出现You must reset your password using ALTER USER statement before executing this statement.提示需要重置密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">重置密码，我这里设置成shun</div></pre></td></tr></table></figure></p>
+<p>mysql&gt; SET PASSWORD = PASSWORD(‘shun’);<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">退出重新登陆，成功</div><div class="line"></div><div class="line"># **rpm 安装mysql**</div><div class="line">编译安装实在是太麻烦了，编译按照的好处在于可以自己定制想要的功能，rpm就方便很多</div><div class="line">## 先下载rpm包，同样的去http://mirrors.sohu.com/mysql/  去找，也可以去官方网站下载，大概有400兆，然后解压</div></pre></td></tr></table></figure></p>
+<p>[root@master hadoop]# wget <a href="http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-5.7.18-1.el6.x86_64.rpm-bundle.tar" target="_blank" rel="external">http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-5.7.18-1.el6.x86_64.rpm-bundle.tar</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## 删除已有的mysql</div></pre></td></tr></table></figure>
+<p>[root@node01 Downloads]# rpm -qa|grep mysql<br>mysql-libs-5.1.71-1.el6.x86_64<br>[root@node01 Downloads]# rpm -e –nodeps mysql-libs-5.1.71-1.el6.x86_64<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">## rpm安装，最好按照我这个顺序来  </div><div class="line">这些全部是上面下载的包解压得到的</div></pre></td></tr></table></figure></p>
+<p>[root@node01 Downloads]# rpm -ivh  mysql-community-common-5.7.18-1.el6.x86_64.rpm<br>[root@node01 Downloads]# rpm -ivh mysql-community-libs-5.7.18-1.el6.x86_64.rpm<br>[root@node01 Downloads]# rpm -ivh mysql-community-libs-compat-5.7.18-1.el6.x86_64.rpm<br>[root@node01 Downloads]# rpm -ivh mysql-community-client-5.7.18-1.el6.x86_64.rpm<br>[root@node01 Downloads]# rpm -ivh  mysql-community-server-5.7.18-1.el6.x86_64.rpm<br>[root@node01 Downloads]# rpm -ivh   mysql-community-devel-5.7.18-1.el6.x86_64.rpm<br>[root@node01 Downloads]# rpm -ivh  mysql-community-embedded-5.7.18-1.el6.x86_64.rpm<br>[root@node01 Downloads]# rpm -ivh  mysql-community-embedded-devel-5.7.18-1.el6.x86_64.rpm<br>[root@node01 Downloads]# rpm -ivh mysql-community-test-5.7.18-1.el6.x86_64.rpm</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">安装过程中如果报下面的错误，说明缺少一些包</div></pre></td></tr></table></figure>
+<p>warning: mysql-community-test-5.7.18-1.el6.x86_64.rpm: Header V3 DSA/SHA1 Signature, key ID 5072e1f5: NOKEY<br>error: Failed dependencies:<br>        perl(JSON) is needed by mysql-community-test-5.7.18-1.el6.x86_64<br>        perl(Time::HiRes) is needed by mysql-community-test-5.7.18-1.el6.x86_64 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">**yum 安装依赖包**</div></pre></td></tr></table></figure>
+<p>[root@node01 Downloads]# yum install perl -y<br>[root@node01 Downloads]# yum install perl-JSON.noarch<br>yum install perl-Time-HiRes<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## 初始化数据库</div></pre></td></tr></table></figure></p>
+<p>[root@node01 Downloads]# mysqld –initialize  –user=mysql<br>如果要自定义目录<br> –datadir=你要设置的目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## 查看生成的密码</div></pre></td></tr></table></figure></p>
+<p>[root@node01 log]# vim /var/log/mysqld.log<br>显示如下，我的用户名是root, 密码是 0a.efyjoekuF<br>2017-05-15T07:30:10.907363Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use –explicit_defaults_for_timestamp server option (see documentation for more details).<br>2017-05-15T08:11:33.040718Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use –explicit_defaults_for_timestamp server option (see documentation for more details).<br>2017-05-15T08:11:34.346242Z 0 [Warning] InnoDB: New log files created, LSN=45790<br>2017-05-15T08:11:34.547761Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.<br>2017-05-15T08:11:34.760728Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 1c8d4b8e-3946-11e7-a555-000c29ad881f.<br>2017-05-15T08:11:34.836260Z 0 [Warning] Gtid table is not ready to be used. Table ‘mysql.gtid_executed’ cannot be opened.<br>2017-05-15T08:11:34.838073Z 1 [Note] A temporary password is generated for root@localhost: kwjoAoUmF1!e<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">如果有问题，想重新初始化数据库，需要删除datadir 的目录(没设置就是默认目录)和/var/lib/mysql 目录</div><div class="line"></div><div class="line">## 启动数据库</div></pre></td></tr></table></figure></p>
+<p>[root@node01 log]# service  mysqld start<br>Initializing MySQL database:                               [  OK  ]<br>Installing validate password plugin:                       [  OK  ]<br>Starting mysqld:                                           [  OK  ]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">## 查看端口</div></pre></td></tr></table></figure>
+<p>[root@node01 log]# netstat -tulnp | grep 3306<br>tcp        0      0 :::3306                     :::*                        LISTEN      5255/mysqld<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## 登录</div></pre></td></tr></table></figure></p>
+<p>[root@node01 mysql]# mysql -uroot -p0a.efyjoekuF</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">## 改密码</div></pre></td></tr></table></figure>
+<p>SET PASSWORD = PASSWORD(‘你的密码’);<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># **Ubuntu apt 按照mysql5.6, 5.7**  </div><div class="line">很久没用ubuntu了，貌似ubuntu的还不支持5.7.18，但是apt 有5.7以上的版本了，ubuntu 安装mysql 非常的简单</div><div class="line">参考 http://blog.csdn.net/t1dmzks/article/details/52079791</div><div class="line">```shell</div><div class="line">sudo apt-get install mysql-5.6</div><div class="line">更新软件源 </div><div class="line">sudo apt-get update</div><div class="line">```  </div><div class="line">按照提示一路走即可</div><div class="line">**安装Mysql5.7**</div></pre></td></tr></table></figure></p>
+<p>sudo apt-get install mysql-server-5.7<br>```</p>
+<hr>
+<blockquote>
+<p>希望各位都能顺利的安装成mysql<br>由于作者水平有限,本文章错漏缺点在所难免,希望读者批评指正。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/programme/resource1.html" rel="next" title="资源学习网站，不断更新">
+                <i class="fa fa-chevron-left"></i> 资源学习网站，不断更新
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/linux/linux-NAT-Bridge.html" rel="prev" title="centos虚拟机网络配置NAT模式和桥接模式总结">
+                centos虚拟机网络配置NAT模式和桥接模式总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1_t1dmzks.jpg"
+               alt="zhaikaishun" />
+          <p class="site-author-name" itemprop="name">zhaikaishun</p>
+           
+              <p class="site-description motion-element" itemprop="description">the blog of dangluren</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhaikaishun" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="zhaikaishun@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://stackoverflow.com/users/7030147/k-shun" target="_blank" title="StackOverflow">
+                  
+                    <i class="fa fa-fw fa-stack-overflow"></i>
+                  
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://blog.csdn.net/t1dmzks/" title="csdn博客" target="_blank">csdn博客</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://imbotao.top/" title="wava博客" target="_blank">wava博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-编译安装前的准备"><span class="nav-number">1.</span> <span class="nav-text">一. 编译安装前的准备</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-卸载原有的Mysql"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 卸载原有的Mysql</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2新增mysql用户"><span class="nav-number">1.2.</span> <span class="nav-text">2.2新增mysql用户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2新建mysql数据库数据文件目录"><span class="nav-number">1.3.</span> <span class="nav-text">3.2新建mysql数据库数据文件目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3解压mysql压缩包"><span class="nav-number">1.4.</span> <span class="nav-text">3.3解压mysql压缩包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4进入到mysql目录"><span class="nav-number">1.5.</span> <span class="nav-text">3.4进入到mysql目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-安装"><span class="nav-number">1.6.</span> <span class="nav-text">4.3 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2修改mysql数据库文件目录"><span class="nav-number">1.6.1.</span> <span class="nav-text">5.2修改mysql数据库文件目录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、初始化mysql数据库"><span class="nav-number">1.7.</span> <span class="nav-text">六、初始化mysql数据库</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaikaishun</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

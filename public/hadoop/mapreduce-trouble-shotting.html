@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="hadoop," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="发现问题：在家里的测试集群测试数据，发现如下问题：程序map阶段很慢，然后通过hadoop的集群界面，几乎大多数的task都是在几分钟就执行完，看到有几个task非常慢，执行了4个多小时还不到一半。  分析原因要么数据和代码问题，要么测试集群问题   初步查看测试集群问题通过hadoop UI 和hdfs UI 并没有发现有任何问题，测试集群11个节点都是Active。   初步检查代码和数据问题">
+<meta name="keywords" content="hadoop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mapreduce的map阶段中某几个task非常慢的一次排错过程与总结">
+<meta property="og:url" content="http://dangluren.top/hadoop/mapreduce-trouble-shotting.html">
+<meta property="og:site_name" content="挡路人">
+<meta property="og:description" content="发现问题：在家里的测试集群测试数据，发现如下问题：程序map阶段很慢，然后通过hadoop的集群界面，几乎大多数的task都是在几分钟就执行完，看到有几个task非常慢，执行了4个多小时还不到一半。  分析原因要么数据和代码问题，要么测试集群问题   初步查看测试集群问题通过hadoop UI 和hdfs UI 并没有发现有任何问题，测试集群11个节点都是Active。   初步检查代码和数据问题">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/task慢开始.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/health.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/jvisualvm.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/pid.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cpuAndMemMonitor.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/thread-dump.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/jconsole线程Main锁定.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/tcp已经锁定.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/iotop.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/网卡.png">
+<meta property="og:updated_time" content="2018-11-18T15:45:33.878Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mapreduce的map阶段中某几个task非常慢的一次排错过程与总结">
+<meta name="twitter:description" content="发现问题：在家里的测试集群测试数据，发现如下问题：程序map阶段很慢，然后通过hadoop的集群界面，几乎大多数的task都是在几分钟就执行完，看到有几个task非常慢，执行了4个多小时还不到一半。  分析原因要么数据和代码问题，要么测试集群问题   初步查看测试集群问题通过hadoop UI 和hdfs UI 并没有发现有任何问题，测试集群11个节点都是Active。   初步检查代码和数据问题">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/task慢开始.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dangluren.top/hadoop/mapreduce-trouble-shotting.html"/>
+
+
+
+
+
+  <title>mapreduce的map阶段中某几个task非常慢的一次排错过程与总结 | 挡路人</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">挡路人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dangluren.top/hadoop/mapreduce-trouble-shotting.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaikaishun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/1_t1dmzks.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="挡路人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">mapreduce的map阶段中某几个task非常慢的一次排错过程与总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T21:25:21+08:00">
+                2018-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="发现问题："><a href="#发现问题：" class="headerlink" title="发现问题："></a>发现问题：</h3><p>在家里的测试集群测试数据，发现如下问题：<br>程序map阶段很慢，然后通过hadoop的集群界面，几乎大多数的task都是在几分钟就执行完，看到有几个task非常慢，执行了4个多小时还不到一半。<br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/task慢开始.png" alt="task"> </p>
+<h3 id="分析原因"><a href="#分析原因" class="headerlink" title="分析原因"></a>分析原因</h3><p>要么数据和代码问题，要么测试集群问题  </p>
+<h2 id="初步查看测试集群问题"><a href="#初步查看测试集群问题" class="headerlink" title="初步查看测试集群问题"></a>初步查看测试集群问题</h2><p>通过hadoop UI 和hdfs UI 并没有发现有任何问题，测试集群11个节点都是Active。<br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/health.png" alt="health">  </p>
+<h3 id="初步检查代码和数据问题"><a href="#初步检查代码和数据问题" class="headerlink" title="初步检查代码和数据问题"></a>初步检查代码和数据问题</h3><p><strong>排除数据倾斜问题</strong>： map阶段是不会数据倾斜的，而且我们一个map是设置了跑多少数据的，我们所设置的是6G，也就是一个map跑6G的数据<br>查看代码问题： 因为我们的程序之前都运行过，并没发现什么问题，但是也是有点担心最近有改动或者某些异常数据导致程序出问题了。<br><strong>代码问题可能的情况</strong>：  </p>
+<ol>
+<li>某个地方try cache了，try cache肯定会导致很慢，但是也不至于这么慢，基本排除这个问题。</li>
+<li>进入了死循环或者某个大循环（复杂度很高的运算），通过task查看，确实好几分钟都没有变化了</li>
+<li>程序等原因等可能导致MapContainer内存不足，或许大量GC  </li>
+</ol>
+<h3 id="进一步分析问题"><a href="#进一步分析问题" class="headerlink" title="进一步分析问题"></a>进一步分析问题</h3><p>通过界面这几个慢的task可以分析出，并不是说某一台机器慢，他们分别分散在不同的节点中，那么我就随便取了一个慢的节点进行查看。<br>jvm分析，我还是建议使用命令行的摸索，例如jmap，jstack等命令，占用的内存会比较少，我这里是比较懒，直接用的界面程序查看。<br><strong>1. 使用xstart远程桌面连接</strong>  因为我对jvm的界面工具比较熟悉<br><strong>2. 找到jdk按照目录，先打开jvisualVM, 监控某个container的cpu和内存 </strong><br>如下所示<br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/jvisualvm.png" alt="jvisualVM">  </p>
+<p><strong>3. 找到我们的这个container</strong>：<br>如何找是哪个container呢？ 我们其实可以通过每个container运行的时间去找，一个一个找，找到一个时间和我们hadoop ui上这个task运行时间一样的，那么就可以确定是这个container了，然后我找到的是这个container 。（当然，在linux界面上，查看ps -ef |grep pid，可以看到全名，其中有个attmpt_task_id， 这个也可以确定是哪个container）<br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/pid.png" alt="pid"> </p>
+<p><strong>4. 监控container</strong><br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cpuAndMemMonitor.png" alt="cpuAndMemmonitor"> </p>
+<p><strong>分析问题</strong>：<br>从图中可以看出，cpu占用率很低： 那么排除是死循环或者大循环问题<br>右边堆内存最大3个G，我们程序占用1G不到，而且右边和左边都可以看出，没有发生GC， 说明内存充足。  </p>
+<p>这时候我就暂时卡住了，感觉很诡异，不是cpu，也不是内存，到底是什么问题呢？<br>看看线程栈，将线程dump下来查看：<br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/thread-dump.png" alt="threaddump"><br>通过分析，发现是maptask再等待拉的操作，我们主线程是runnable状态，但是cpu利用很低。是在线程的wait阶段。 OK，这里很容易就猜到是在进行IO等操作导致的了，由于这个稍微比较卡，我又用回jconsole了，因为为了给同事看，我就没用jstack工具。  </p>
+<p>打开jconsole工具具体查看线程栈<br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/jconsole线程Main锁定.png" alt="jconsole线程Main锁定"><br>发现是在读取hdfs的时候，由于是同步IO，main方法一直在等待读取hdfs的数据<br>然后同时查看TCP传输的方法， 也同样卡在io流的地方，占用了一个锁，一直不释放（占用锁不释放是正常的，但是这个读取的操作，每个文件都会是一个锁，我dump多次都发现是一样的锁，那么就发现可能是io问题了）<br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/tcp已经锁定.png" alt="tcp已经锁定">  </p>
+<p><strong>IO问题</strong>： 我们可以基本猜测（确定）是IO问题了。  </p>
+<p>登录到刚才有问题的这个container所在的节点，查看一下IO负载，因为担心是不是说某些程序在占用IO，发现后并不是，并且读取hdfs的速度很慢，一秒钟才1M，后来想了想那一小时才3个多G的读取速度，肯定慢啊。<br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/iotop.png" alt="iotop">    </p>
+<p>查看是哪个节点比较慢<br><strong>界面中看log知道这个mapTask跑的是这些数据</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00235:805306368+130232698,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239:0+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239:134217728+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239:268435456+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239:402653184+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239:536870912+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239:671088640+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239:805306368+110006092,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00277:0+134217728</div><div class="line">,/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00277:134217728+134217728</div><div class="line">,/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00277:268435456+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00277:402653184+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00277:536870912+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00277:671088640+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00277:805306368+111362066</div><div class="line">,/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00278:0+134217728,</div><div class="line">/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00278:134217728+134217728</div><div class="line"></div><div class="line"></div><div class="line">``` </div><div class="line">**在界面中可以知道跑到了百分之16**， ok，这时候估计是在第二个文件（因为每个文件的大小都差不多）  </div><div class="line">查看第二个文件在哪个节点</div><div class="line"> hadoop fsck /mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239  -files -locations -blocks  </div><div class="line"> </div><div class="line"> 显示</div></pre></td></tr></table></figure></p>
+<p> DEPRECATED: Use of this script to execute hdfs command is deprecated.<br>Instead use the hdfs command for it.</p>
+<p>SLF4J: Class path contains multiple SLF4J bindings.<br>SLF4J: Found binding in [jar:file:/home/hmaster/MyCloudera/APP/hadoop/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]<br>SLF4J: Found binding in [jar:file:/home/hmaster/MyCloudera/APP/hbase/hbase-1.2.5/lib/slf4j-log4j12-1.7.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]<br>SLF4J: See <a href="http://www.slf4j.org/codes.html#multiple_bindings" target="_blank" rel="external">http://www.slf4j.org/codes.html#multiple_bindings</a> for an explanation.<br>SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]<br>Connecting to namenode via <a href="http://master:50070/fsck?ugi=hmaster&amp;files=1&amp;locations=1&amp;blocks=1&amp;path=%2Fmt_wlyh%2FData%2FBeiJing%2Fmroxdrmerge%2Fxdr_loc%2Fdata_01_180125%2FXDR_LOCATION_01_180125%2FxdrLocation-r-00239" target="_blank" rel="external">http://master:50070/fsck?ugi=hmaster&amp;files=1&amp;locations=1&amp;blocks=1&amp;path=%2Fmt_wlyh%2FData%2FBeiJing%2Fmroxdrmerge%2Fxdr_loc%2Fdata_01_180125%2FXDR_LOCATION_01_180125%2FxdrLocation-r-00239</a><br>FSCK started by hmaster (auth:SIMPLE) from /192.168.1.31 for path /mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239 at Thu Aug 02 19:10:29 CST 2018<br>/mt_wlyh/Data/BeiJing/mroxdrmerge/xdr_loc/data_01_180125/XDR_LOCATION_01_180125/xdrLocation-r-00239 915312460 bytes, 7 block(s):  OK</p>
+<ol>
+<li>BP-369656756-192.168.1.65-1441938871593:blk_1091923684_18278024 len=134217728 repl=1 [DatanodeInfoWithStorage[192.168.1.72:50010,DS-5ce4cd2a-bda2-4c02-9fd6-cc008f589945,DISK]]</li>
+<li>BP-369656756-192.168.1.65-1441938871593:blk_1091923705_18278045 len=134217728 repl=1 [DatanodeInfoWithStorage[192.168.1.72:50010,DS-5ce4cd2a-bda2-4c02-9fd6-cc008f589945,DISK]]</li>
+<li>BP-369656756-192.168.1.65-1441938871593:blk_1091923724_18278064 len=134217728 repl=1 [DatanodeInfoWithStorage[192.168.1.72:50010,DS-5ce4cd2a-bda2-4c02-9fd6-cc008f589945,DISK]]</li>
+<li>BP-369656756-192.168.1.65-1441938871593:blk_1091923736_18278076 len=134217728 repl=1 [DatanodeInfoWithStorage[192.168.1.72:50010,DS-5ce4cd2a-bda2-4c02-9fd6-cc008f589945,DISK]]</li>
+<li>BP-369656756-192.168.1.65-1441938871593:blk_1091923744_18278084 len=134217728 repl=1 [DatanodeInfoWithStorage[192.168.1.72:50010,DS-5ce4cd2a-bda2-4c02-9fd6-cc008f589945,DISK]]</li>
+<li>BP-369656756-192.168.1.65-1441938871593:blk_1091923751_18278091 len=134217728 repl=1 [DatanodeInfoWithStorage[192.168.1.72:50010,DS-5ce4cd2a-bda2-4c02-9fd6-cc008f589945,DISK]]</li>
+<li>BP-369656756-192.168.1.65-1441938871593:blk_1091923762_18278102 len=110006092 repl=1 [DatanodeInfoWithStorage[192.168.1.72:50010,DS-5ce4cd2a-bda2-4c02-9fd6-cc008f589945,DISK]]</li>
+</ol>
+<p>Status: HEALTHY<br> Total size:    915312460 B<br> Total dirs:    0<br> Total files:   1<br> Total symlinks:                0<br> Total blocks (validated):      7 (avg. block size 130758922 B)<br> Minimally replicated blocks:   7 (100.0 %)<br> Over-replicated blocks:        0 (0.0 %)<br> Under-replicated blocks:       0 (0.0 %)<br> Mis-replicated blocks:         0 (0.0 %)<br> Default replication factor:    1<br> Average block replication:     1.0<br> Corrupt blocks:                0<br> Missing replicas:              0 (0.0 %)<br> Number of data-nodes:          11<br> Number of racks:               1<br>FSCK ended at Thu Aug 02 19:10:29 CST 2018 in 0 milliseconds<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"> </div><div class="line"> **说明这个数据在65和72节点**  </div><div class="line"></div><div class="line"></div><div class="line">**进一步查看**，确实发现72节点（node002）有问题，ping很慢  </div><div class="line">![ping速度](https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/ping速度.png)    </div><div class="line">ping node002发现很慢，但是ping其他的发现还好</div><div class="line"></div><div class="line">再测试一下node002的网络传输性能</div></pre></td></tr></table></figure></p>
+<p>dd if=/dev/zero of=/dev/null bs=50 count=100M<br>```<br>SCP到master节点的时候，发现速度很慢，平均就是1.2M每秒。  </p>
+<p><strong>找来一位运维的同事，然后他发现了问题</strong><br><img src="https://raw.githubusercontent.com/zhaikaishun/blog_img/master/blog/map%E4%B8%AD%E6%9F%90%E4%B8%AAtask%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/网卡.png" alt="网卡问题"><br>其他的节点都是1000M的网卡，而这个节点确实10M的网卡，肯定慢啊，也证实了前面的1.2M的scp和1M的hdfs读取速度就是这个问题引起的。    </p>
+<p>后来发现可能是网线还是什么的问题，后来解决后，集群也就恢复了正常，程序也能正常运行了。  </p>
+<h3 id="排错总结："><a href="#排错总结：" class="headerlink" title="排错总结："></a>排错总结：</h3><ol>
+<li>冷静，这是测试集群，操作起来还比较方便，如果是正式环境，操作起来会比较麻烦，这时候更要冷静思考，不要放弃  </li>
+<li>理论指导实践，需要对jvm，hadoop等原理有所了解，需要对分布式，IO流，网络，linux等有所了解。即使没有经验，也能依靠自己的理论知识来指导实践  </li>
+<li>合理猜测中进行，最后验证猜测，除非很有经验，否则还是要在猜测中不断的证实自己的猜测，要大胆的猜测，有规划的验证  </li>
+<li>总结排错经验总结，对以后很有帮助</li>
+<li>jvm定位技巧还是需要点火候的，堆内存溢出还比较简单，堆栈dump转存是比较考验一个人能力的。</li>
+<li>感觉在spark中，界面显示更友好一些，mapreduce中的排错，可能是经常会用上述到这种方法的</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/java/jvm01.html" rel="next" title="java程序线上排错经验1之了解JVM相关知识">
+                <i class="fa fa-chevron-left"></i> java程序线上排错经验1之了解JVM相关知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/tool/maven-install.html" rel="prev" title="maven-打包的几种方式笔记">
+                maven-打包的几种方式笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1_t1dmzks.jpg"
+               alt="zhaikaishun" />
+          <p class="site-author-name" itemprop="name">zhaikaishun</p>
+           
+              <p class="site-description motion-element" itemprop="description">the blog of dangluren</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhaikaishun" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="zhaikaishun@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://stackoverflow.com/users/7030147/k-shun" target="_blank" title="StackOverflow">
+                  
+                    <i class="fa fa-fw fa-stack-overflow"></i>
+                  
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://blog.csdn.net/t1dmzks/" title="csdn博客" target="_blank">csdn博客</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://imbotao.top/" title="wava博客" target="_blank">wava博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#发现问题："><span class="nav-number">1.</span> <span class="nav-text">发现问题：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析原因"><span class="nav-number">2.</span> <span class="nav-text">分析原因</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初步查看测试集群问题"><span class="nav-number"></span> <span class="nav-text">初步查看测试集群问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初步检查代码和数据问题"><span class="nav-number">1.</span> <span class="nav-text">初步检查代码和数据问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进一步分析问题"><span class="nav-number">2.</span> <span class="nav-text">进一步分析问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#排错总结："><span class="nav-number">3.</span> <span class="nav-text">排错总结：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaikaishun</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="关键字:  同步容器，队列，ConcurrentMap, Copy-On-Write容器,并发Queue,   ConcurrentLinkedQueue, BlockQueue接口, ArrayBlockingQueue , LinkedBlockingQueue, PriorityBlockingQueue, DelayQueue, SynchronousQueuegithub地址： http">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【多线程高并发】 同步容器和队列">
+<meta property="og:url" content="http://dangluren.top/架构/thread4.html">
+<meta property="og:site_name" content="挡路人">
+<meta property="og:description" content="关键字:  同步容器，队列，ConcurrentMap, Copy-On-Write容器,并发Queue,   ConcurrentLinkedQueue, BlockQueue接口, ArrayBlockingQueue , LinkedBlockingQueue, PriorityBlockingQueue, DelayQueue, SynchronousQueuegithub地址： http">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-10-4/46638058.jpg">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-10-4/72036961.jpg">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-10-4/51989061.jpg">
+<meta property="og:updated_time" content="2018-11-18T15:34:10.223Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【多线程高并发】 同步容器和队列">
+<meta name="twitter:description" content="关键字:  同步容器，队列，ConcurrentMap, Copy-On-Write容器,并发Queue,   ConcurrentLinkedQueue, BlockQueue接口, ArrayBlockingQueue , LinkedBlockingQueue, PriorityBlockingQueue, DelayQueue, SynchronousQueuegithub地址： http">
+<meta name="twitter:image" content="http://or49tneld.bkt.clouddn.com/17-10-4/46638058.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dangluren.top/架构/thread4.html"/>
+
+
+
+
+
+  <title>【多线程高并发】 同步容器和队列 | 挡路人</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">挡路人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dangluren.top/架构/thread4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaikaishun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/1_t1dmzks.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="挡路人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【多线程高并发】 同步容器和队列</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-18T21:25:21+08:00">
+                2017-08-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/架构/" itemprop="url" rel="index">
+                    <span itemprop="name">架构</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>关键字:</strong>  同步容器，队列，ConcurrentMap, Copy-On-Write容器,并发Queue,   ConcurrentLinkedQueue, BlockQueue接口, ArrayBlockingQueue , LinkedBlockingQueue, PriorityBlockingQueue, DelayQueue, SynchronousQueue<br>github地址： <a href="https://github.com/zhaikaishun/concurrent_programming" target="_blank" rel="external">https://github.com/zhaikaishun/concurrent_programming</a><br><a id="more"></a><br>代码主要在 Multi_003 ,  Multi_003\Multi_003\src\com\kaishun\base\coll013</p>
+<h2 id="1-1-同步容器"><a href="#1-1-同步容器" class="headerlink" title="1.1 同步容器"></a>1.1 同步容器</h2><p>同步容器都是线程安全的，但是在某些场景下可能需要加锁来保护复合操作，复合类操作如 迭代，跳转，条件运算等，这些复合操作在多线程并发执行的时候。可能会出现意外行为，最经典的便是ConcurrentModificationException，原因是当容器迭代的过程中，被并发的修改了内容。<br>同步类容器： 如古老的Vector，HashTable。这些容器的同步功能其实都是由JDK的Collections.synchronized等工厂方法去实现的，其底层的机制无非就是用传统的synchronized关键字对每个公用的方法都进行同步，使得每次只能有一个线程访问容器的状态。这很明显不符合今天互联网时代高并发的需求，在保证线程安全的同时，也必须要有足够好的性能。  </p>
+<p>JDK5.0以后提供了多种并发容器来替代同步容器从而改善性能。并发容器是专门针对并发设计的，使用ConcurrentHashMap来代替给予散列的HashTable，而且在ConcurrentHashMap中，添加了一些常见复合操作的支持，以及使用CopyOnWriteArrayList代替Voctor, 并发的CopyOnWriteArraySet, 以及并发的Queue， ConcurrentLinkedQueue和LinkedBlockingQueue, 前者是高性能的队列，后者是以阻塞形式的队列，具体实现Queue还有很多，例如ArrayBlockingQueue, PriorityBlockingQueue, SynchronousQueue等。  </p>
+<h2 id="1-2-ConcurrentMap"><a href="#1-2-ConcurrentMap" class="headerlink" title="1.2 ConcurrentMap"></a>1.2 ConcurrentMap</h2><p>ConcurrentMap接口有两个重要的实现  </p>
+<ul>
+<li>ConcurrentHashMap  </li>
+<li>ConcurrentSkipListMap(支持并发排序功能，弥补ConcurrnetHashMap)<br>ConcurrentHashMap主要是利用了Segment(段)的方式，来减小锁的粒度，从而实现提高并发性能的机制, 最大可以分成16段。并且代码中大多共享变量使用Volatile关键字声明，目的是第一时间获取修改的内容，性能非常好<br>如图，传统的HashTable，只有一段，对整个map进行加锁，锁的粒度比较大。而CorrentHashMap, 对这个map的某一个小Segment来进行加锁，在哪一段操作，只锁定哪一个段，其他段不影响，锁的粒度比较小，从而提高并发的性能<br><img src="http://or49tneld.bkt.clouddn.com/17-10-4/46638058.jpg" alt="correntHashMap">      </li>
+</ul>
+<p>具体如何使用，和之前的HashMap几乎是一模一样的，还是随便看个例子吧<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ConcurrentHashMap&lt;String, Object&gt; chm = <span class="keyword">new</span> ConcurrentHashMap&lt;String, Object&gt;();</div><div class="line">chm.put(<span class="string">"k1"</span>, <span class="string">"v1"</span>);</div><div class="line">chm.put(<span class="string">"k2"</span>, <span class="string">"v2"</span>);</div><div class="line">chm.put(<span class="string">"k3"</span>, <span class="string">"v3"</span>);</div><div class="line">chm.putIfAbsent(<span class="string">"k4"</span>, <span class="string">"vvvv"</span>); <span class="comment">// 如果key不存在，就加进去</span></div></pre></td></tr></table></figure></p>
+<h2 id="1-3-Copy-On-Write容器"><a href="#1-3-Copy-On-Write容器" class="headerlink" title="1.3 Copy-On-Write容器"></a>1.3 Copy-On-Write容器</h2><p>Copy-On-Write简称COW， 是一种用于程序设计中的优化策略。<br>Copy容器即写时复制的容器，先将当前容器进行Copy,复制出一个新的容器，然后想信的容器里面添加元素，添加完后，在讲原容器的引用指向新的容器。这样的好处是我们可以对CopyOnWrite容器进行并发的读而不用加锁，因为当前容器不会添加任何元素，所以CopyOnWrite也是一种读写分离的思想，读和写不同的容器，适用于读多写少的场景。<br>JDK里的COW容器有两种：CopyOnWriteArrayList和CopyOnWriteArraySet, COW容器非常有用，可以在非常多的并发容器场景中使用到。<br>使用方法也和原始的ArrayList, set一样<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">CopyOnWriteArrayList&lt;String&gt; cwal = <span class="keyword">new</span> CopyOnWriteArrayList&lt;String&gt;();</div><div class="line">CopyOnWriteArraySet&lt;String&gt; cwas = <span class="keyword">new</span> CopyOnWriteArraySet&lt;String&gt;();</div></pre></td></tr></table></figure></p>
+<h2 id="2-1-并发Queue"><a href="#2-1-并发Queue" class="headerlink" title="2.1 并发Queue"></a>2.1 并发Queue</h2><p>在并发队列上JDK提供了两套实现，一个是以ConcurrentLinkedQueue为代表的高性能队列，一个是以BlockingQueue接口为代表的阻塞队列，无论哪种都继承自Queue<br><img src="http://or49tneld.bkt.clouddn.com/17-10-4/72036961.jpg" alt="Queue的实现类"><br><img src="http://or49tneld.bkt.clouddn.com/17-10-4/51989061.jpg" alt="Queue的实现类1">  </p>
+<h2 id="2-2-ConcurrentLinkedQueue"><a href="#2-2-ConcurrentLinkedQueue" class="headerlink" title="2.2 ConcurrentLinkedQueue"></a>2.2 ConcurrentLinkedQueue</h2><p>ConcurrentLinkedQueue: 是一个适用于高并发场景下的队列，通过无锁的方式，实现了高并发状态下的高性能，通常ConcurrentLinkedQueue性能好于BlockingQueue,他是一个基于链接节点的无界线程安全队列，该队列的元素遵循先进先出的原则，头是最新加入，尾是最近加入。该队列不允许null元素。  </p>
+<p>ConcurrentLinkedQueue重要方法：<br>add()和offer都是加入元素的方法(在ConcurrentLinkedQueue中，这两个方法没有任何区别)<br>poll()和peek()都是取头元素节点，区别在于前者会删除元素，后者不会。<br>示例：<br>com.kaishun.base.coll013.UseQueue<br><strong>高性能无阻塞无界队列：ConcurrentLinkedQueue</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">//高性能无阻塞无界队列：ConcurrentLinkedQueue</div><div class="line"></div><div class="line">ConcurrentLinkedQueue&lt;String&gt; q = new ConcurrentLinkedQueue&lt;String&gt;();</div><div class="line">q.offer(&quot;a&quot;);</div><div class="line">q.offer(&quot;b&quot;);</div><div class="line">q.offer(&quot;c&quot;);</div><div class="line">q.offer(&quot;d&quot;);</div><div class="line">q.add(&quot;e&quot;);</div><div class="line"></div><div class="line">System.out.println(q.poll());	//a 从头部取出元素，并从队列里删除</div><div class="line">System.out.println(q.size());	//4</div><div class="line">System.out.println(q.peek());	//b</div><div class="line">System.out.println(q.size());	//4</div><div class="line"></div><div class="line">----输出-----</div><div class="line">a</div><div class="line">4</div><div class="line">b</div><div class="line">4</div><div class="line"></div><div class="line">```  </div><div class="line"></div><div class="line">## 2.3 BlockQueue接口  </div><div class="line">有5种queue的实现。  </div><div class="line">### ArrayBlockingQueue  </div><div class="line">基于数组的阻塞队列实现，在ArrayBlockingQueue内部，维护了一个定常数组，一边缓存队列中的数据对象，其内部没有实现读写分离，也就意味着生产和消费不能完全并行，长度是需要定义的，可以指定先进先出或者先进后出。也叫**有界队列**，在很多场合下非常适用。  </div><div class="line">```java</div><div class="line">		ArrayBlockingQueue&lt;String&gt; array = new ArrayBlockingQueue&lt;String&gt;(5);</div><div class="line">		array.put(&quot;a&quot;);</div><div class="line">		array.put(&quot;b&quot;);</div><div class="line">		array.add(&quot;c&quot;);</div><div class="line">		array.add(&quot;d&quot;);</div><div class="line">		array.add(&quot;e&quot;);</div><div class="line">//		array.add(&quot;f&quot;);</div><div class="line">		System.out.println(array.offer(&quot;a&quot;, 3, TimeUnit.SECONDS));</div><div class="line">```  </div><div class="line">由于指定的是5个长度，前面已经加了5个了，后面再次添加的时候，3秒内都加不进去，3秒后返回一个false，输出</div></pre></td></tr></table></figure></p>
+<p>false<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">若超过了还是用add方法，就会抛异常 IllegalStateException: Queue full ，例如  </div><div class="line">```java</div><div class="line">		ArrayBlockingQueue&lt;String&gt; array = new ArrayBlockingQueue&lt;String&gt;(5);</div><div class="line">		array.put(&quot;a&quot;);</div><div class="line">		array.put(&quot;b&quot;);</div><div class="line">		array.add(&quot;c&quot;);</div><div class="line">		array.add(&quot;d&quot;);</div><div class="line">		array.add(&quot;e&quot;);</div><div class="line">		array.add(&quot;f&quot;);  //这里接回抛异常</div><div class="line">		System.out.println(array.offer(&quot;a&quot;, 3, TimeUnit.SECONDS));</div><div class="line">```  </div><div class="line"></div><div class="line"></div><div class="line">### LinkedBlockingQueue:  </div><div class="line"></div><div class="line">基于链表的阻塞队列，同ArrayBlockingQueue类似，其内部也维护者一个数据缓冲队列（该队列是由一个链表构成），LinkBlockingQueue之所以能够搞笑的处理并发数据，是因为其内部实现了读写分离锁，从而实现了生产者和消费者的完全并行运行，他是一个**无界队列**。  </div><div class="line">```java</div><div class="line">		//阻塞队列</div><div class="line">		LinkedBlockingQueue&lt;String&gt; q = new LinkedBlockingQueue&lt;String&gt;();</div><div class="line">		q.offer(&quot;a&quot;);</div><div class="line">		q.offer(&quot;b&quot;);</div><div class="line">		q.offer(&quot;c&quot;);</div><div class="line">		q.offer(&quot;d&quot;);</div><div class="line">		q.offer(&quot;e&quot;);</div><div class="line">		q.add(&quot;f&quot;);</div><div class="line">		System.out.println(q.size());</div><div class="line">		</div><div class="line">		for (Iterator iterator = q.iterator(); iterator.hasNext();) &#123;</div><div class="line">			String string = (String) iterator.next();</div><div class="line">			System.out.println(string);</div><div class="line">		&#125;</div><div class="line">-----------输出-----------</div><div class="line">6</div><div class="line">a</div><div class="line">b</div><div class="line">c</div><div class="line">d</div><div class="line">e</div><div class="line">f</div></pre></td></tr></table></figure></p>
+<p>drainTo一次取多个元素<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">		<span class="comment">//阻塞队列</span></div><div class="line">		LinkedBlockingQueue&lt;String&gt; q = <span class="keyword">new</span> LinkedBlockingQueue&lt;String&gt;();</div><div class="line">		q.offer(<span class="string">"a"</span>);</div><div class="line">		q.offer(<span class="string">"b"</span>);</div><div class="line">		q.offer(<span class="string">"c"</span>);</div><div class="line">		q.offer(<span class="string">"d"</span>);</div><div class="line">		q.offer(<span class="string">"e"</span>);</div><div class="line">		q.add(<span class="string">"f"</span>);</div><div class="line">		System.out.println(q.size());</div><div class="line"></div><div class="line">		List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">		<span class="comment">//取3个元素，放入到 list 集合中去</span></div><div class="line">		System.out.println(q.drainTo(list, <span class="number">3</span>));</div><div class="line">		System.out.println(list.size());</div><div class="line">		<span class="keyword">for</span> (String string : list) &#123;</div><div class="line">			System.out.println(string);</div><div class="line">		&#125;</div><div class="line">-----------输出-----------</div><div class="line"><span class="number">6</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">3</span></div><div class="line">a</div><div class="line">b</div><div class="line">c</div></pre></td></tr></table></figure></p>
+<h3 id="PriorityBlockingQueue"><a href="#PriorityBlockingQueue" class="headerlink" title="PriorityBlockingQueue:"></a>PriorityBlockingQueue:</h3><p>基于优先级的阻塞队列（优先级的判断通过构造函数传入的Compator对象来决定，也就是说传入队列的对象必须实现Comparable接口），在实现PriorityBlockingQueue时，内部控制线程同步的锁采用的是公平锁，他也是一个无界的队列。<br>示例：<br>Task类，实现了Comparable的方法，重写compareTo方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">Task</span>&gt;</span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id ;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Task task)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.id &gt; task.id ? <span class="number">1</span> : (<span class="keyword">this</span>.id &lt; task.id ? -<span class="number">1</span> : <span class="number">0</span>);  </div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.id + <span class="string">","</span> + <span class="keyword">this</span>.name;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>UsePriorityBlockingQueue</strong>类<br>测试是否是有序队列<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">public class UsePriorityBlockingQueue &#123;</div><div class="line"></div><div class="line">	</div><div class="line">	public static void main(String[] args) throws Exception&#123;</div><div class="line">		</div><div class="line">		</div><div class="line">		PriorityBlockingQueue&lt;Task&gt; q = new PriorityBlockingQueue&lt;Task&gt;();</div><div class="line">		</div><div class="line">		Task t1 = new Task();</div><div class="line">		t1.setId(3);</div><div class="line">		t1.setName(&quot;id为3&quot;);</div><div class="line">		Task t2 = new Task();</div><div class="line">		t2.setId(4);</div><div class="line">		t2.setName(&quot;id为4&quot;);</div><div class="line">		Task t3 = new Task();</div><div class="line">		t3.setId(1);</div><div class="line">		t3.setName(&quot;id为1&quot;);</div><div class="line">		</div><div class="line">		//return this.id &gt; task.id ? 1 : 0;</div><div class="line">		q.add(t1);	//3</div><div class="line">		q.add(t2);	//4</div><div class="line">		q.add(t3);  //1</div><div class="line">		</div><div class="line">		// 1 3 4</div><div class="line">		System.out.println(&quot;容器：&quot; + q);</div><div class="line">		System.out.println(q.take().getId());</div><div class="line">		System.out.println(&quot;容器：&quot; + q);</div><div class="line">		System.out.println(q.take().getId());</div><div class="line">		System.out.println(q.take().getId());</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">```  </div><div class="line">输出  </div><div class="line">```java</div><div class="line">容器：[1,id为1, 4,id为4, 3,id为3]</div><div class="line">1</div><div class="line">容器：[3,id为3, 4,id为4]</div><div class="line">3</div><div class="line">4</div><div class="line">```  </div><div class="line">说明，这种队列在没有take的时候，还不是排序的，take()时，才利用了排序，比较的方法  </div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">### DelayQueue:   </div><div class="line">带有延迟时间的Queue, 其中的元素只有当其指定的延迟时间到了，才能够从队列中获取到该元素， **DelayQueue的元素必须实现Delayed 接口**， DelayQueue是一个没有大小限制的队列，应用场景很多，比如对缓存超时的数据进行一处，任务超时处理，空闲连接的关闭等等。   </div><div class="line">经典的网吧上机案例：  </div><div class="line">Wangmin 实现了Delayed接口</div></pre></td></tr></table></figure></p>
+<p>public class Wangmin implements Delayed {  </p>
+<pre><code>private String name;  
+//身份证  
+private String id;  
+//截止时间  
+private long endTime;  
+//定义时间工具类
+private TimeUnit timeUnit = TimeUnit.SECONDS;
+
+public Wangmin(String name,String id,long endTime){  
+    this.name=name;  
+    this.id=id;  
+    this.endTime = endTime;  
+}  
+
+public String getName(){  
+    return this.name;  
+}  
+
+public String getId(){  
+    return this.id;  
+}  
+
+/** 
+ * 用来判断是否到了截止时间 
+ */  
+@Override  
+public long getDelay(TimeUnit unit) { 
+    //return unit.convert(endTime, TimeUnit.MILLISECONDS) - unit.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+    return endTime - System.currentTimeMillis();
+}  
+
+/** 
+ * 相互批较排序用 
+ */  
+@Override  
+public int compareTo(Delayed delayed) {  
+    Wangmin w = (Wangmin)delayed;  
+    return this.getDelay(this.timeUnit) - w.getDelay(this.timeUnit) &gt; 0 ? 1:0;  
+} 
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">WangBa类  </div><div class="line">```java</div><div class="line">public class WangBa implements Runnable &#123;  </div><div class="line">    </div><div class="line">    private DelayQueue&lt;Wangmin&gt; queue = new DelayQueue&lt;Wangmin&gt;();  </div><div class="line">    </div><div class="line">    public boolean yinye =true;  </div><div class="line">      </div><div class="line">    public void shangji(String name,String id,int money)&#123;  </div><div class="line">        Wangmin man = new Wangmin(name, id, 1000 * money + System.currentTimeMillis());  </div><div class="line">        System.out.println(&quot;网名&quot;+man.getName()+&quot; 身份证&quot;+man.getId()+&quot;交钱&quot;+money+&quot;块,开始上机...&quot;);  </div><div class="line">        this.queue.add(man);  </div><div class="line">    &#125;  </div><div class="line">      </div><div class="line">    public void xiaji(Wangmin man)&#123;  </div><div class="line">        System.out.println(&quot;网名&quot;+man.getName()+&quot; 身份证&quot;+man.getId()+&quot;时间到下机...&quot;);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    @Override  </div><div class="line">    public void run() &#123;  </div><div class="line">        while(yinye)&#123;  </div><div class="line">            try &#123;  </div><div class="line">                Wangmin man = queue.take();  </div><div class="line">                xiaji(man);  </div><div class="line">            &#125; catch (InterruptedException e) &#123;  </div><div class="line">                e.printStackTrace();  </div><div class="line">            &#125;  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">      </div><div class="line">    public static void main(String args[])&#123;  </div><div class="line">        try&#123;  </div><div class="line">            System.out.println(&quot;网吧开始营业&quot;);  </div><div class="line">            WangBa siyu = new WangBa();  </div><div class="line">            Thread shangwang = new Thread(siyu);  </div><div class="line">            shangwang.start();  </div><div class="line">              </div><div class="line">            siyu.shangji(&quot;路人甲&quot;, &quot;123&quot;, 1);  </div><div class="line">            siyu.shangji(&quot;路人乙&quot;, &quot;234&quot;, 10);  </div><div class="line">            siyu.shangji(&quot;路人丙&quot;, &quot;345&quot;, 5);  </div><div class="line">        &#125;  </div><div class="line">        catch(Exception e)&#123;  </div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;  </div><div class="line">  </div><div class="line">    &#125;  </div><div class="line">&#125;  </div><div class="line"></div><div class="line">```  </div><div class="line">输出</div></pre></td></tr></table></figure>
+<p>网吧开始营业<br>网名路人甲 身份证123交钱1块,开始上机…<br>网名路人乙 身份证234交钱10块,开始上机…<br>网名路人丙 身份证345交钱5块,开始上机…<br>网名路人甲 身份证123时间到下机…<br>网名路人丙 身份证345时间到下机…<br>网名路人乙 身份证234时间到下机…<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">### SynchronousQueue: </div><div class="line">一种没有缓冲的队列，生产者产生的数据直接会被消费者获取并消费   </div><div class="line">个人理解为虚拟队列，这个队列不存元素，生产与消费相互扔而已</div><div class="line">```java</div><div class="line">		final SynchronousQueue&lt;String&gt; q = new SynchronousQueue&lt;String&gt;();</div><div class="line">		Thread t1 = new Thread(new Runnable() &#123;</div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				try &#123;</div><div class="line">					System.out.println(q.take());</div><div class="line">				&#125; catch (InterruptedException e) &#123;</div><div class="line">					e.printStackTrace();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		t1.start();</div><div class="line">		Thread t2 = new Thread(new Runnable() &#123;</div><div class="line"></div><div class="line">			@Override</div><div class="line">			public void run() &#123;</div><div class="line">				q.add(&quot;asdasd&quot;);</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">		t2.start();</div><div class="line">---------输出-------</div><div class="line">asdasd</div></pre></td></tr></table></figure></p>
+<p>– 本文总结自前人经验，总结得挺累的，特别感谢互联网架构师白鹤翔老师</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/架构/thread5.html" rel="next" title="【多线程高并发】java线程池">
+                <i class="fa fa-chevron-left"></i> 【多线程高并发】java线程池
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/架构/thread3.html" rel="prev" title="【多线程高并发】多线程的设计模式">
+                【多线程高并发】多线程的设计模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1_t1dmzks.jpg"
+               alt="zhaikaishun" />
+          <p class="site-author-name" itemprop="name">zhaikaishun</p>
+           
+              <p class="site-description motion-element" itemprop="description">the blog of dangluren</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhaikaishun" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="zhaikaishun@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://stackoverflow.com/users/7030147/k-shun" target="_blank" title="StackOverflow">
+                  
+                    <i class="fa fa-fw fa-stack-overflow"></i>
+                  
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://blog.csdn.net/t1dmzks/" title="csdn博客" target="_blank">csdn博客</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://imbotao.top/" title="wava博客" target="_blank">wava博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-同步容器"><span class="nav-number">1.</span> <span class="nav-text">1.1 同步容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-ConcurrentMap"><span class="nav-number">2.</span> <span class="nav-text">1.2 ConcurrentMap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Copy-On-Write容器"><span class="nav-number">3.</span> <span class="nav-text">1.3 Copy-On-Write容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-并发Queue"><span class="nav-number">4.</span> <span class="nav-text">2.1 并发Queue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-ConcurrentLinkedQueue"><span class="nav-number">5.</span> <span class="nav-text">2.2 ConcurrentLinkedQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PriorityBlockingQueue"><span class="nav-number">5.1.</span> <span class="nav-text">PriorityBlockingQueue:</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaikaishun</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="算法,动态规划,数学," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="怀念曾经 曾经大学学过的数学当中，最喜欢的就是高等数学和运筹学，不仅仅和自己兴趣有关，也和老师的敬业、以及负责性有关。运筹学，本就以实际例子为例讲解，模型设计极为巧妙，优化方法非常有趣，并且叫我们运筹学的老师年轻漂亮，教学效果还很好。所以虽然这么久了。我依然还记得很多里面的内容。由于最近工作碰到几个算法，属于道路优化相关，设计到了运筹学的一些知识，于是又花时间将将运筹学给看了一遍，突然发现运筹学博">
+<meta name="keywords" content="算法,动态规划,数学">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动态规划之基本概念">
+<meta property="og:url" content="http://dangluren.top/算法/dynamic-programming-1.html">
+<meta property="og:site_name" content="挡路人">
+<meta property="og:description" content="怀念曾经 曾经大学学过的数学当中，最喜欢的就是高等数学和运筹学，不仅仅和自己兴趣有关，也和老师的敬业、以及负责性有关。运筹学，本就以实际例子为例讲解，模型设计极为巧妙，优化方法非常有趣，并且叫我们运筹学的老师年轻漂亮，教学效果还很好。所以虽然这么久了。我依然还记得很多里面的内容。由于最近工作碰到几个算法，属于道路优化相关，设计到了运筹学的一些知识，于是又花时间将将运筹学给看了一遍，突然发现运筹学博">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-8-9/17192166.jpg">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-8-9/43656059.jpg">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-8-9/17192166.jpg">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-8-11/60633773.jpg">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-8-11/27116428.jpg">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-8-11/44220787.jpg">
+<meta property="og:image" content="http://or49tneld.bkt.clouddn.com/17-8-11/51124770.jpg">
+<meta property="og:updated_time" content="2018-11-18T15:34:10.237Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="动态规划之基本概念">
+<meta name="twitter:description" content="怀念曾经 曾经大学学过的数学当中，最喜欢的就是高等数学和运筹学，不仅仅和自己兴趣有关，也和老师的敬业、以及负责性有关。运筹学，本就以实际例子为例讲解，模型设计极为巧妙，优化方法非常有趣，并且叫我们运筹学的老师年轻漂亮，教学效果还很好。所以虽然这么久了。我依然还记得很多里面的内容。由于最近工作碰到几个算法，属于道路优化相关，设计到了运筹学的一些知识，于是又花时间将将运筹学给看了一遍，突然发现运筹学博">
+<meta name="twitter:image" content="http://or49tneld.bkt.clouddn.com/17-8-9/17192166.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dangluren.top/算法/dynamic-programming-1.html"/>
+
+
+
+
+
+  <title>动态规划之基本概念 | 挡路人</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">挡路人</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">阎罗之岛挡路人，繁华无现奈何门，苦寻无我之境者，风风雨雨又一春。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dangluren.top/算法/dynamic-programming-1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaikaishun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/1_t1dmzks.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="挡路人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">动态规划之基本概念</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-25T21:25:21+08:00">
+                2017-06-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="怀念曾经"><a href="#怀念曾经" class="headerlink" title="怀念曾经"></a><strong>怀念曾经</strong></h2><p> 曾经大学学过的数学当中，最喜欢的就是高等数学和运筹学，不仅仅和自己兴趣有关，也和老师的敬业、以及负责性有关。运筹学，本就以实际例子为例讲解，模型设计极为巧妙，优化方法非常有趣，并且叫我们运筹学的老师年轻漂亮，教学效果还很好。所以虽然这么久了。我依然还记得很多里面的内容。由于最近工作碰到几个算法，属于道路优化相关，设计到了运筹学的一些知识，于是又花时间将将运筹学给看了一遍，突然发现运筹学博大精深，不仅仅在计算机中，在控制论，经济学，以及整个人生都存在，多年后再看运筹学，已经不是以前的只为考试了，慢慢体会到运筹学中动态规划的意义了，本文大多属于书上的内容，这里算是做做笔记把。 </p>
+<a id="more"></a>
+<h2 id="是一种方法而不是算法"><a href="#是一种方法而不是算法" class="headerlink" title="是一种方法而不是算法"></a><strong>是一种方法而不是算法</strong></h2><font color="#be1a21" size="3" face="黑体">动态规划的方法，动态规划作为一种数学方法，是解决某类问题的一种途径，是一种思维，而非特定的某种算法</font>，不能像快排，线性规划一样，有具体的规则，本篇文章主要介绍动态规划的相关理念和方法。<br><br>## <strong>引出问题-线路网络问题</strong><br>在这个方法之前，先引出一个问题,下图是一个线路网络，两点之间的连线代表两点间的距离，试求一条从A到G的道路，使总距离为最短<br><img src="http://or49tneld.bkt.clouddn.com/17-8-9/17192166.jpg" alt="运筹学最短路径"><br><br>## <strong>最原始的解决方法：穷举法</strong><br>即把从A到G的所有路线都列出来，然后相互之间找出最短的路线。这样，从A到G，一共有2 <em> 3 </em> 2  <em> 2 </em> 2 <em> 1 = 48 条不同的路线, 这样需要进行比较47次（最后一次不需要比较），在计算距离的时候，需要计算多少次加法呢，总共需要计算6 + 12 + 24 +48 +48 = 138 次加法运算， 这个数是怎么算的呢， 如果稍微敏感点的都应该知道了，如果你知道或者相信这就是138次加法运算，就跳过下面几个阶段的描述<br><strong>A到B阶段</strong>： 有两种情况，A-&gt;B1或者A-&gt;B2, 这一次计算距离不需要使用加法。<br><strong>B到C时阶段:</strong> B1到C有3情况种，这时候都要和A到B1的数值5相加， B2到C也有三种情况，也要和A到B2的数值3相加，所以, B到C，需要计算2</em>3=6次加法。    也可以这样理解，A到B总共有两条路线，B发出有三条路线，那么B到C 有2 <em> 3 =6 个加法。<br><strong>C到D阶段</strong>：因为从A到C总共有2 </em> 3=6 条路线，每条路线发出2条到D1， 那么总共有 6 <em> 2=12条方法。<br><em>*D到E，E到F，F到G就不累赘了</em></em><br><br><font color="#be1a21" size="3" face="黑体">这里先记住这道题的这个结论，这道题使用穷举法，需要把这48条路都给比较一次,总共需要比较47次，并且计算出这48条路每条路的距离，需要计算138次加法运算</font>
+
+
+
+<h2 id="概念原理原理-gt-例子"><a href="#概念原理原理-gt-例子" class="headerlink" title="概念原理原理-&gt;例子"></a><strong>概念原理原理-&gt;例子</strong></h2><p>我学习大多数知识（什么算法，大数据，hadoop，spark，微积分，机器学习等等等等）都有个习惯，一般都是先看原理，再看解决问题的例子，最后再倒过来看原理。 第一次看原理的时候，可能是看不懂的，这时候没关系，直接看案例，最后搞懂案例，再回过来思考原理，然后站在一个较高的的位置再看例子。我还是以根据这种方法 我们先来看一下原理</p>
+<h3 id="动态规划的基本概念"><a href="#动态规划的基本概念" class="headerlink" title="动态规划的基本概念"></a><strong>动态规划的基本概念</strong></h3><p><strong>1. 阶段</strong><br>把所给问题的过程, 恰当地分为若干个相互联的阶段, 以便能按一定的次序去求解。描述阶段的变量称为阶段变量 , 常用 k 表示,如上面那一个题目，可分为6个阶段来求解 , k分别等于 1、2、3、4、5、6。<br><img src="http://or49tneld.bkt.clouddn.com/17-8-9/43656059.jpg" alt="动态规划阶段"></p>
+<p><strong>2. 状态</strong><br>状态表示每个阶段开始所处的自然状况或客观条件(可能太深奥无法理解，可以暂时不去思考这句话),<strong>通常一个阶段有若干个状态</strong>, 第一阶段有一个状态就是点A,第二阶段有两个状态, 即点集合{B1, B2} , <strong>一般第 k 阶段的状态就是第 k 阶段所有始点的集合</strong><br>描述过程状态的变量称为状态变量。 它可用一个数、一组数或一向量(多维情形)来<br>描述。 常用 Sk 表示第 k 阶段的状态变量<br>如在上个例子第三阶段有四个状态 , 则状态变量 Sk 可取四个值, 即 C1、C2、C3、C4 。点集合{C1, C2, C3, C4 }就称 为第三阶段的 <strong>可达状态集合</strong>， 也可以叫做<strong>某阶段的状态集合</strong><br>有时候为了方便，直接记做 S3 = {1 ,2 ,3 ,4}。 第 k 阶段的可达状态集合就记为Sk  </p>
+<p><font color="#be1a21" size="3" face="黑体">这里所说的状态应具有下面的性质 : 如果某阶段状态给定后 , 则在这阶段以后过程的<br>发展不受这阶段以前各段状态的影响，这个性质称为<strong>无后效性</strong></font><br>还是上面那个例子，如果说确定了从A到G要经过D2， 那么1 2 3 阶段无论是怎么样的，456阶段都没有影响。  </p>
+<p><strong>3. 决策</strong><br>决策表示当过程处于某一阶段的某个状态时 , 可以作出不同的决定( 或选择) , 从而确<br>定下一阶段的状态 , 这种决定称为决策<br>常用<br><span><br>$u_k(s_k)$<br></span><br>表示第k阶段当状态<br>处于 sk 时的决策变量。 它是状态变量的函数, 某一个状态，其决策时有限的，我们某个限制下的所有决策放在集合中，称这个集合为允许决策集合<br><span><br>$u_k(s_k) \varepsilon D_k(S<em>k)$<br></em></span><br><strong>4. 策略</strong><br>决策排好顺序，比如第一阶段的一个决策，第二阶段的一个决策，第三阶段的一个决策，一个一个的排好顺序，就叫做策略，所以,<strong>策略是一个按顺序排列的决策组成的集合</strong>,由过程的第 k 阶段开始到终止状态为止的过程 , 称为问题的<strong>后部子过程</strong>，记做<br><span><br>$p{k,n}(s_k) ={u_k(s<em>k), u</em>{k + 1}(s_{k+1}) ,… u_n(s<em>n)}$<br></em></span><br>当 k = 1 时 , 此决策函数序列称为全过程的一个策略, 简称策略,记为<br><span><br>$p{1,n}(s_k) ={u_1(s_1), u_2(s_2) ,… u_n(s_n)} $<br></span><br>在实际问题中 , 可供选择的策略有一定的范围 , 此范围称为<strong>允许策略</strong>集, 用P表<br>示。 从允许策略集合中找出达到最优效果的策略称为<strong>最优策略</strong></p>
+<p><strong>5. 状态转移方程</strong><br>这一点非常重要，一定要理解：</p>
+<p><font color="#be1a21" size="3" face="黑体">所谓的状态转移方程，就是<strong>从一个状态到另外一个状态的一种转移规律</strong>，可以这样理解，一个状态，经过一定的变化，到达下一个状态，这个变化的函数，为状态转移函数，这个转移的规律，就是状态转移方程</font></p>
+<p><span><br>$s_{k+1} = T_k (s_k,u_k)$<br></span></p>
+<p>上述方程可以理解为， sk，这个sk阶段的决策变量uk已经确定，那么下一个状态s(k+1)也已经确定.  </p>
+<p><strong>6. 指标函数和最优值函数</strong><br>就是每段过程中，我们想要的最优化的结果，例如上面那个问题，我们想要的结果是A到G的总路线最短，最优函数就是各个阶段指标之和  </p>
+<h3 id="线路网络例子"><a href="#线路网络例子" class="headerlink" title="线路网络例子"></a><strong>线路网络例子</strong></h3><p>再再次把问题列一下： 求A到G的最短路线<br><img src="http://or49tneld.bkt.clouddn.com/17-8-9/17192166.jpg" alt="运筹学最短路径"></p>
+<p><strong>先说一个重要特性，这是解决这一问题最重要的一个特性</strong></p>
+<p>==如果由起点A经过P点和H点而到达终点G是一条<br>最短路线 , 则由点P出发经过H点到达终点G的这条子路线,对于从点P出发到达终点<br>的所有可能选择的不同路线来说, 必定也是最短路线==<br>例如 例如, 在最短路线问题中, 若找到了 A→ B1 → C2 → D1 → E2 → F2 → G 是由A到G的最短路线 , 则 E2 → F2 → G 应该是 由<br>E2 出发到 G 点的所有可能选择的不同路线中的 最短路线。这个仔细想想就能想通了，如果要证明，就要用反证法了，例如E2到G有另外一个路线，更加快，那么原来的路线到E2，再经过这条路线才能是最短的，然而这样与原来的路线是最短路线矛盾。  </p>
+<p>根据最短路线这一特性, 寻找最短路线的方法, 就是从最后一段开始, 用由后向前逐步 递推的方法, 求出各点到G点的最短路线,最后求得由A点到G点的最短路线，所以,动态规<br>划的方法是从终点逐段向始点方向寻找最短路线的一种方法。</p>
+<p><strong>下面是解题思路</strong>  </p>
+<p><img src="http://or49tneld.bkt.clouddn.com/17-8-11/60633773.jpg" alt="动态规划解题1"><br><img src="http://or49tneld.bkt.clouddn.com/17-8-11/27116428.jpg" alt="动态规划解题2"><br><img src="http://or49tneld.bkt.clouddn.com/17-8-11/44220787.jpg" alt="动态规划解题3">  </p>
+<h3 id="动态规划的基本方程"><a href="#动态规划的基本方程" class="headerlink" title="动态规划的基本方程"></a><strong>动态规划的基本方程</strong></h3><p><img src="http://or49tneld.bkt.clouddn.com/17-8-11/51124770.jpg" alt="动态规划基本方程">  </p>
+<h3 id="动态规划和穷举法对比的优点"><a href="#动态规划和穷举法对比的优点" class="headerlink" title="动态规划和穷举法对比的优点"></a><strong>动态规划和穷举法对比的优点</strong></h3><ol>
+<li><strong>减少了计算量</strong>，还是以这道题为例子，穷举法（计算机中一般采用递归）要比较47次，加法计算138次，而动态规划方法，只需要进行3+3+4+4+1=15次比较，每次比较有两次加法，实际只有28次运算。如果阶段更多，这种减少的效果会更明显。</li>
+<li><strong>丰富了计算结果</strong>。在逆序排序中，我们得到了所有点出发到G点的距离，这在很多实际分析中将十分有用</li>
+</ol>
+<h2 id="如果建立动态规划模型"><a href="#如果建立动态规划模型" class="headerlink" title="如果建立动态规划模型"></a>如果建立动态规划模型</h2><ol>
+<li>将问题的过程分成恰当的阶段，正确选择状态变量SK。</li>
+<li>正确选择状态变量 sk , 使它既能描述过程的演变 , 又要满足无后效性。</li>
+<li>确定决策变量 uk 及每阶段的允许决策集合 D k ( sk )。</li>
+<li>正确写出状态转移方程。</li>
+<li>正确写出指标函数 V k, n 的关系</li>
+</ol>
+<p>未来，将继续介绍动态规划的另外几个例子，来自运筹学中的排序问题，背包问题，货郎担问题，算法导论中的钢条分割，最长公共子序列，以及图论中的一些问题等<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">参考资料：</div><div class="line">运筹学第三版(胡运权)  清华大学出版社</div><div class="line">马尔科夫决策规划-1981-董泽清</div><div class="line">算法导论第三版</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/算法/" rel="tag"># 算法</a>
+          
+            <a href="/tags/动态规划/" rel="tag"># 动态规划</a>
+          
+            <a href="/tags/数学/" rel="tag"># 数学</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/programme/xml-parse1.html" rel="next" title="解析XML文件的几种方式">
+                <i class="fa fa-chevron-left"></i> 解析XML文件的几种方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/算法/offer-harvester.html" rel="prev" title="剑指offer前10题">
+                剑指offer前10题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1_t1dmzks.jpg"
+               alt="zhaikaishun" />
+          <p class="site-author-name" itemprop="name">zhaikaishun</p>
+           
+              <p class="site-description motion-element" itemprop="description">the blog of dangluren</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">98</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhaikaishun" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="zhaikaishun@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://stackoverflow.com/users/7030147/k-shun" target="_blank" title="StackOverflow">
+                  
+                    <i class="fa fa-fw fa-stack-overflow"></i>
+                  
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://blog.csdn.net/t1dmzks/" title="csdn博客" target="_blank">csdn博客</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://imbotao.top/" title="wava博客" target="_blank">wava博客</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#怀念曾经"><span class="nav-number">1.</span> <span class="nav-text">怀念曾经</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#是一种方法而不是算法"><span class="nav-number">2.</span> <span class="nav-text">是一种方法而不是算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概念原理原理-gt-例子"><span class="nav-number">3.</span> <span class="nav-text">概念原理原理->例子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#动态规划的基本概念"><span class="nav-number">3.1.</span> <span class="nav-text">动态规划的基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线路网络例子"><span class="nav-number">3.2.</span> <span class="nav-text">线路网络例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态规划的基本方程"><span class="nav-number">3.3.</span> <span class="nav-text">动态规划的基本方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态规划和穷举法对比的优点"><span class="nav-number">3.4.</span> <span class="nav-text">动态规划和穷举法对比的优点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如果建立动态规划模型"><span class="nav-number">4.</span> <span class="nav-text">如果建立动态规划模型</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaikaishun</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
